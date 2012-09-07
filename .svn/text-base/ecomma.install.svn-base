@@ -1,0 +1,278 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function ecomma_install() {
+	//if(!db_table_exists('ecomma_range')):
+		drupal_install_schema('ecomma');
+	//endif;
+	module_load_include('module', 'taxonomy', 'taxonomy');
+  drupal_load('module', 'content');
+  content_notify('install', 'ecomma');
+	//ecomma_save_cck_node();
+	$content = array();
+	$t = get_t();/**/
+	ecomma_default_insert('field_ecomma_txt', 'ecomma_node', 1);
+  
+
+
+/**
+ * Create the vocabulary programatically.
+ */
+ 
+/*	$vid_existing = db_result(db_query("SELECT vid FROM {vocabulary} WHERE name='ecomma'"));
+	if(!$vid_existing):
+			$vocab = array(
+				'name' => 'ecomma',
+				'description' => $t('To use with ecomma.'),
+				'help' => 0,
+				'relations' => 0,
+				'hierarchy' => 0,
+				'multiple' => 0,
+				'required' => 0,
+				'tags' => 1,
+				'module' => 'taxonomy',
+				'weight' => 0,
+				'nodes' => array('ecomma_node' => 'ecomma_node'),
+			);
+		 
+			taxonomy_save_vocabulary($vocab);
+			$vid = $vocab['vid'];
+			
+			// Create the term programatically.
+			$term = array(
+				'name' => 'Partner1',
+				'vid' => $vid,
+				'description' => $t('Frame element label'),
+			);
+		 
+			taxonomy_save_term($term);
+			
+			$term2 = array(
+				'name' => 'Partner2',
+				'vid' => $vid,
+				'description' => $t('Frame element label'),
+			);
+		 
+			taxonomy_save_term($term2);
+			
+			$term3 = array(
+				'name' => 'Partners',
+				'vid' => $vid,
+				'description' => $t('Frame element label'),
+			);
+		 
+			taxonomy_save_term($term3);
+			$ct_enabled_vocabularies[$vid]['is_enabled']=1;
+			$ct_enabled_vocabularies[$vid]['types']['ecomma_node']['is_valid']=1;
+			$ct_enabled_vocabularies[$vid]['types']['ecomma_node']['display_handler']=tagadelic;
+			$ct_enabled_vocabularies[$vid]['types']['ecomma_node']['opmode']=1;
+			variable_set('community_tags_vocabularies', $ct_enabled_vocabularies);
+			
+	endif;*/
+}
+
+/**
+ * Adding ecomma example content type().
+ */
+/*function ecomma_save_cck_node() {	
+	$field_name_str="'".$field_name."'";
+	
+	$q = db_query("SELECT type FROM {content_node_field} WHERE field_name=$field_name_str");
+	while ($r = db_fetch_array($q)) {
+		$type = $r['type'];
+	}
+
+	$type = db_result(db_query("SELECT type FROM {content_node_field} WHERE field_name=$field_name_str"));
+	if($type!=""){
+			module_load_include('inc', 'ecomma', 'ecomma_content_type');
+			$content = ecomma_cck_export();
+			$form_state = array();
+			$form = content_copy_import_form($form_state, $type_name);
+			$form_state['values']['type_name'] = $type_name ? $type_name : '';
+			$form_state['values']['macro'] = '$content = '. var_export($content, 1) .';';
+			$form_state['values']['op'] = t('Import');
+			content_copy_import_form_submit($form, $form_state);
+	}
+}*/
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function ecomma_uninstall() {
+	drupal_uninstall_schema('ecomma');
+	/*$vocabs = taxonomy_get_vocabularies();
+	foreach ($vocabs as $vocab_item) {
+		if ($vocab_item->name == 'ecomma') {
+			$vid = $vocab_item->vid;
+		}
+	}
+	taxonomy_del_vocabulary($vid);
+	drupal_load('module', 'content');
+  content_notify('uninstall', 'ecomma');*/
+}
+
+
+function ecomma_enable() {
+  drupal_load('module', 'content');
+  content_notify('enable', 'ecomma');
+}
+
+function ecomma_disable() {
+  drupal_load('module', 'content');
+  content_notify('disable', 'ecomma');
+}
+
+
+/**
+ * Implementation of hook_schema().
+ */
+
+function ecomma_schema() {
+	
+	  /*$schema['ecomma'] = array(
+		
+    'fields' => array(
+      'form_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ), 
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'vid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'ecomma_word_form' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'ecomma_word_count' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ), 
+    'primary key' => array('form_id'),
+  );*/
+	
+	  $schema['ecomma_range'] = array(
+		
+    'fields' => array(
+      'rid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ), 
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'vid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'tid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'cid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'beg' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'end' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+      'created' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ), 
+    ), 
+    'primary key' => array('rid'),
+  );
+	
+	
+	  $schema['ecomma_field_enabled'] = array(
+		
+    'fields' => array(
+      'field_name' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'content_type_name' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'ecomma_enabled' => array(
+        'description' => t('MY TIMESTAMP'),
+        'type' => 'int',
+        'not null' => true,
+      ),
+    ), 
+  );
+	
+	return $schema;
+
+}
+
+
+/**
+* Enables ecomma_txt_field for ecomma annotation in ecomma_field_enabled table
+*
+* @param $field_name name of ecomma_txt_field
+* @param $type_name content type in which specific ecomma_txt_field appears
+* @param $checkbox_value status of ecomma_txt_field
+*/
+function ecomma_default_insert($field_name, $type_name, $checkbox_value) {
+		$sql = "INSERT INTO {ecomma_field_enabled} (field_name, content_type_name, ecomma_enabled) VALUES ('%s', '%s', '%d')";
+		db_query($sql, $field_name, $type_name, $checkbox_value);
+}
+
+
+function ecomma_update_6100() {
+	//db_create_table($ret, 'table', $schema['table']);
+	
+	$ret = array();
+  $ret[] = update_sql("DROP TABLE {ecomma}");
+  $ret[] = update_sql("ALTER TABLE {ecomma_range} ADD uid int NOT NULL Default '1' AFTER `vid` ");
+  $ret[] = update_sql("ALTER TABLE {ecomma_range} ADD created  int NOT NULL AFTER `end` ");
+  //$ret[] = update_sql("ALTER TABLE {ecomma_range} ADD created TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER `end` ");
+  //$ret[] = update_sql("ALTER TABLE {ecomma_range} ADD modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER `created` ");
+  //$ret[] = update_sql("ALTER TABLE {ecomma_range} MODIFY uid int Default '1'");
+  //$ret[] = update_sql("RENAME TABLE {ecomma_field_enabled} TO ecomma_field");
+  return $ret;
+}
