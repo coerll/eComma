@@ -2,7 +2,6 @@ name = eComma
 description = This module enables annotation features for CCK textarea fields and provides views and node panel template.
 package = Other
 dependencies[] = content
-dependencies[] = content_copy
 dependencies[] = text
 dependencies[] = panels
 dependencies[] = tagadelic
@@ -10,6 +9,7 @@ dependencies[] = taxonomy
 dependencies[] = community_tags
 dependencies[] = page_manager
 dependencies[] = jquery_update
+dependencies[] = jquery_ui
 dependencies[] = views_bonus_export
 dependencies[] = comment_delete
 

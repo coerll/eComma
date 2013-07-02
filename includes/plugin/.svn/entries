@@ -1,19 +1,0 @@
-8
-
-dir
-279
-svn+ssh://nsteinfeld@source.la.utexas.edu/repos/drupal/modules/custom/ecomma/includes/plugin
-svn+ssh://nsteinfeld@source.la.utexas.edu/repos/drupal
-
-
-
-2012-02-07T17:01:53.792575Z
-279
-nsteinfeld
-
-
-svn:special svn:externals svn:needs-lock
-
-layouts
-dir
-

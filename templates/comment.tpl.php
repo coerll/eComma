@@ -1,7 +1,6 @@
 <?php
-
 /**
- * @file comment.tpl.php
+ * @file
  * Default theme implementation for comments.
  *
  * Available variables:
@@ -25,10 +24,9 @@
  * @see theme_comment()
  */
 ?>
-<div class="comment<?php print ($comment->new) ? ' comment-new' : ''; print ' '. $status ?> clear-block">
+
+<div class="comment<?php print ($comment->new) ? ' comment-new' : ''; print ' ' . $status ?> clear-block">
   <?php print $picture ?>
-
-
 
   <div class="submitted">
     <?php print $submitted ?>
@@ -46,6 +44,5 @@
   <?php if ($comment->new): ?>
     <span class="new"><?php print $new ?></span>
   <?php endif; ?>
-  <?php //print_r($comment_links); ?>
   <?php print $links ?>
 </div>
