@@ -1,7 +1,8 @@
 <?php
 /**
  * @file
- * ecomma module to enable annotation for CCK textfield (textarea widget).
+ * eComma text annotation module main file.
+ * Provides annotation for CCK textarea widget.
  */
 
 /**
@@ -734,10 +735,17 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
 
     case 'community_tags_form':
       global $user;
+      global $base_url;
       $form['tags']['#title'] = 'Delete your tags';
       if ($user->uid == 0) {
         $form['new']['#type'] = 'markup';
-        $form['new']['#value'] = '<div class="login-prompt"><a href="/drupal/user/login?destination = node%2F' . arg(1) . '">Login</a> or <a href="/drupal/user/register?destination = node%2F' . arg(1) . '">register</a> to add tags</div>';
+        //$form['new']['#value'] = '<div class="login-prompt"><a href="' . $base_url . '/user/login?destination = node%23' . arg(1) . '">Login</a> or <a href="' . $base_url . '/user/register?destination = node%23' . arg(1) . '">register</a> to add tags</div>';
+        $redirect = 'destination='.drupal_get_path_alias(substr(urldecode(drupal_get_destination()), 12) );
+        $login_link = l(t('Login'), 'user', array( 'query' => $redirect, 'alias' => TRUE ));
+        $register_link = l(t('Register'), 'user/register', array( 'query' => $redirect, 'alias' => TRUE ));
+        $user_utilities = $login_link . t(' or ') . $register_link;
+        $form['new']['#value'] = '<div class="login-prompt">'.$user_utilities.' to add tags</div>';
+        
         unset($form['tags']);
         unset($form['submit']);
       }
