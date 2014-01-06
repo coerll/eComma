@@ -10,6 +10,7 @@ MODULE DEPENDENCIES
 - page_manager
 - jquery_update
 - jquery_ui (with latest jQuery UI 1.7 release)
+- views
 - views_bonus_export
 - comment_delete
 

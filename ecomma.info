@@ -11,6 +11,7 @@ dependencies[] = page_manager
 dependencies[] = jquery_update
 dependencies[] = jquery_ui
 dependencies[] = libraries
+dependencies[] = views
 dependencies[] = views_bonus_export
 dependencies[] = comment_delete
 
