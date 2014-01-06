@@ -20,26 +20,39 @@ INSTALLATION OF ECOMMA MODULE
 Instructions below are based on navigation in admin menu (admin_menu module).
 
 1.  Site building > Modules: enable ecomma module and dependencies
+2.  As Described in the jquery_ui module: 
+	-Download the latest jQuery UI 1.7 release from:
+     http://code.google.com/p/jquery-ui/downloads/list?q=1.7
+     
+	-Put the downloaded archive into the directory:
+     /sites/all/libraries/jquery.ui-1.7.zip
+     
+	-Extract the archive.  This will create the following sub-directory:
+     /sites/all/libraries/jquery.ui-1.7/
+     
+	-Rename the sub-directory into "jquery.ui":
+     /sites/all/libraries/jquery.ui/
+
 (Go to content management > Content types for step 2-4)
-2.  Add content type: Add custom content type.
-3.  Edit new content type > Comment settings > Preview comment:Optional
-4.  Edit new content type > Comment settings > Display below post or comments
-5.  Manage fields > Add a new text area field with unlimited values
-6.  Enable ecomma commentary features for that text area field in the settings.
-7.  Taxonomy: Add Vocabulary and enable it for the new content type.
-8.  Taxonomy: Check Settings > Tags checkbox
-9.  Site Configurations > Community tags: Enable new vocabulary
-10.  New content type  > Workflow settings > Community tagging form:Select Block
+3.  Add content type: Add custom content type.
+4.  Edit new content type > Comment settings > Preview comment:Optional
+5.  Edit new content type > Comment settings > Display below post or comments
+6.  Manage fields > Add a new text area field with unlimited values
+7.  Enable ecomma commentary features for that text area field in the settings.
+8.  Taxonomy: Add Vocabulary and enable it for the new content type.
+9.  Taxonomy: Check Settings > Tags checkbox
+10.  Site Configurations > Community tags: Enable new vocabulary
+11.  New content type  > Workflow settings > Community tagging form:Select Block
 (Go to content User Management > Permissions for step 10-13)
-11. Community_tags: Enable "tag content" for authenticated and anonymous users.
+12. Community_tags: Enable "tag content" for authenticated and anonymous users.
 (Enables unauthenticated users to see the tags, but not to tag.)
-12. Community_tags: Enable "edit own tags" for authenticated.
-13. Comment: Enable "access comments" for authenticated and anonymous users. 
+13. Community_tags: Enable "edit own tags" for authenticated.
+14. Comment: Enable "access comments" for authenticated and anonymous users. 
 (Enables unauthenticated users to see the comments, but not to comment.)
-14. Comment_delete: Enable "delete own comments" for authenticated  users.
+15. Comment_delete: Enable "delete own comments" for authenticated  users.
 
 
-15. Site building > Pages > List:
+16. Site building > Pages > List:
 	-Enable node_view and click on edit. 
 	-Add variant, 
 	-Call it ecomma 
@@ -56,9 +69,9 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 	-Add content to Right: Node > Node Comments
 	-Add content to Right: Miscellaneous > eComma Comment Cloud
 
-16. Create a node of the new node typ. Just enter your text in new text field.
+17. Create a node of the new node typ. Just enter your text in new text field.
 
-17. Current restrictions:
+18. Current restrictions:
 		* Does currently not work on IE browser.
 		* Once a group/class has started to tag or comment on a text the text 
 		  cannot be changed in any way or the annotations will be off.

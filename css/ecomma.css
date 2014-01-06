@@ -108,9 +108,9 @@ div.ecomma_line {
   line-height: 25px;
 }
 
-.Partner1: hover,
-.Partner2: hover,
-.Partner3: hover {
+.Partner1:hover,
+.Partner2:hover,
+.Partner3:hover {
   color: #ccc;
 }
 
@@ -164,37 +164,38 @@ div.ecomma_line {
   padding-bottom: 30px;
 }
 
-.word_cloud h1,
-.word_cloud h2,
-.word_cloud h3,
-.word_cloud h4,
-.word_cloud h5,
-.word_cloud h6 {
+.word_cloud .word_cloud_tag {
   display: inline;
 }
 
-.word_cloud h1 {
+.front .word_cloud h1,
+.word_cloud h1{
   font-size: 12px;
 }
 
+.front .word_cloud h2,
 .word_cloud h2 {
-  font-size: 18px;
-}
-
-.word_cloud h3 {
   font-size: 20px;
 }
 
-.word_cloud h4 {
+.front .word_cloud h3,
+.word_cloud h3 {
   font-size: 24px;
 }
 
-.word_cloud h5 {
-  font-size: 28px;
+.front .word_cloud h4,
+.word_cloud h4 {
+  font-size: 30px;
 }
 
+.front .word_cloud h5,
+.word_cloud h5 {
+  font-size: 36px;
+}
+
+.front .word_cloud h6,
 .word_cloud h6 {
-  font-size: 30px;
+  font-size: 42px;
 }
 
 .ui-widget-content .word_cloud a {
@@ -204,7 +205,7 @@ div.ecomma_line {
   color: #92b22c;
 }
 
-.word_cloud a: hover {
+.word_cloud a:hover {
   text-decoration: none;
   color: #063;
 }
@@ -214,38 +215,53 @@ div.tag-widget ul.inline-tags li.not-ec {
   display: none;
 }
 
+.front .comment_cloud h1,
 .comment_cloud h1,
+.front .comment_cloud h2,
 .comment_cloud h2,
+.front .comment_cloud h3,
 .comment_cloud h3,
+.front .comment_cloud h4,
 .comment_cloud h4,
+.front .comment_cloud h5,
 .comment_cloud h5,
+.front .comment_cloud h6,
 .comment_cloud h6 {
   display: inline-block;
   margin: 4px;
+  color: #000;
+  font-family: Arial;
+  text-transform: none;
 }
 
+.front .comment_cloud h1,
 .comment_cloud h1 {
   font-size: 12px;
 }
 
+.front .comment_cloud h2,
 .comment_cloud h2 {
-  font-size: 18px;
-}
-
-.comment_cloud h3 {
   font-size: 20px;
 }
 
-.comment_cloud h4 {
+.front .comment_cloud h3,
+.comment_cloud h3 {
   font-size: 24px;
 }
 
-.comment_cloud h5 {
-  font-size: 28px;
+.front .comment_cloud h4,
+.comment_cloud h4 {
+  font-size: 30px;
 }
 
+.front .comment_cloud h5,
+.comment_cloud h5 {
+  font-size: 36px;
+}
+
+.front .comment_cloud h6,
 .comment_cloud h6 {
-  font-size: 30px;
+  font-size: 42px;
 }
 
 .comment_cloud span {
@@ -294,12 +310,12 @@ ul.ecomma_tabs li a {
   outline: none;
 }
 
-ul.ecomma_tabs li a: hover {
+ul.ecomma_tabs li a:hover {
   background: #ccc;
 }
 
-html ul.ecomma_tabs li.active,
-html ul.ecomma_tabs li.active a: hover {
+ul.ecomma_tabs li.active,
+ul.ecomma_tabs li.active a:hover {
   background: #fff;
   border-bottom: 1px solid #fff;
 }
@@ -485,11 +501,11 @@ a h4 {
   font-family: Georgia;
 }
 
-div.ec-preface a: hover h3,
-div.ec-preface-title a: hover h3,
-div.white-box div.inside a: hover h3,
-#ec-comment-selection-box a: hover h3,
-a: hover h4 {
+div.ec-preface a:hover h3,
+div.ec-preface-title a:hover h3,
+div.white-box div.inside a:hover h3,
+#ec-comment-selection-box a:hover h3,
+a:hover h4 {
   color: #91bbf9;
 }
 
@@ -555,7 +571,7 @@ div.ec-stanza-anno-links a {
   color: #a17500;
 }
 
-div.ec-stanza-anno-links a: hover {
+div.ec-stanza-anno-links a:hover {
   color: #ac1a2f;
 }
 
@@ -783,35 +799,35 @@ div.ec-stanza-other div.ec-stanza-anno-count a.ec-comment-w0 {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w0: hover {
+.ec-tag-w0:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w1: hover {
+.ec-tag-w1:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w2: hover {
+.ec-tag-w2:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w3: hover {
+.ec-tag-w3:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w4: hover {
+.ec-tag-w4:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w5: hover {
+.ec-tag-w5:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w6: hover {
+.ec-tag-w6:hover {
   background-color: #ac1a2f;
 }
 
-.ec-tag-w7: hover {
+.ec-tag-w7:hover {
   background-color: #ac1a2f;
 }
 
@@ -847,35 +863,35 @@ div.ec-stanza-other div.ec-stanza-anno-count a.ec-comment-w0 {
   background-color: #2786c2;
 }
 
-.ec-comment-w0: hover {
+.ec-comment-w0:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w1: hover {
+.ec-comment-w1:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w2: hover {
+.ec-comment-w2:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w3: hover {
+.ec-comment-w3:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w4: hover {
+.ec-comment-w4:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w5: hover {
+.ec-comment-w5:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w6: hover {
+.ec-comment-w6:hover {
   background-color: #2786c2;
 }
 
-.ec-comment-w7: hover {
+.ec-comment-w7:hover {
   background-color: #2786c2;
 }
 
@@ -1272,7 +1288,6 @@ div#ec-tag-result .ec-help {
 }
 
 li.ec-user-admin {
-  background-image: url('../img/admin-xsmall.png');
   background-repeat: no-repeat;
   background-position: center right;
   margin: 0px;
@@ -1309,7 +1324,7 @@ form#user-reset-request-form div.ec-input input {
   text-align: center;
 }
 
-input.submit_button: hover {
+input.submit_button:hover {
   background: #cd8229;
   color: #fff;
 }
@@ -1359,4 +1374,8 @@ span.punctuation {
   border-right: 1px #666 solid;
   float: left;
   width: 20px;
+}
+
+div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-draggable {
+  width: 309px !important;
 }
