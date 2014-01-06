@@ -105,6 +105,13 @@ function ecomma_views_data() {
   $data['ecomma_range']['cid'] = array(
     'title' => t('cid'),
     'help' => t("Comment id of the annotated comment"),
+    'relationship' => array(
+      'base' => 'comments',
+      'base field' => 'cid',
+      'relationship field' => 'cid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('responses'),
+    ),
     'field' => array(
       'handler' => 'views_handler_field_numeric',
     ),

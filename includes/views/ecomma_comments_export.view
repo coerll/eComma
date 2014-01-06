@@ -43,7 +43,7 @@ $handler->override_option('fields', array(
     'relationship' => 'none',
   ),
   'pid' => array(
-    'label' => 'Parent ID',
+    'label' => 'Parent',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -75,7 +75,7 @@ $handler->override_option('fields', array(
     'relationship' => 'none',
   ),
   'timestamp' => array(
-    'label' => 'Post date',
+    'label' => 'Date',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -233,9 +233,39 @@ $handler->override_option('items_per_page', 0);
 $handler = $view->new_display('feed', 'Feed', 'feed_1');
 $handler->override_option('fields', array(
   'pid' => array(
+    'label' => 'Parent',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'absolute' => 0,
+      'link_class' => '',
+      'alt' => '',
+      'rel' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'hide_alter_empty' => 1,
+    'exclude' => 0,
     'id' => 'pid',
     'table' => 'comments',
     'field' => 'pid',
+    'override' => array(
+      'button' => 'Use default',
+    ),
+    'relationship' => 'none',
   ),
   'cid' => array(
     'label' => 'ID',
@@ -271,7 +301,7 @@ $handler->override_option('fields', array(
     'relationship' => 'none',
   ),
   'timestamp' => array(
-    'label' => 'Post date',
+    'label' => 'Date',
     'alter' => array(
       'alter_text' => 0,
       'text' => '',
@@ -303,6 +333,9 @@ $handler->override_option('fields', array(
     'table' => 'comments',
     'field' => 'timestamp',
     'relationship' => 'none',
+    'override' => array(
+      'button' => 'Use default',
+    ),
   ),
   'name' => array(
     'label' => 'Author',
@@ -405,9 +438,6 @@ $handler->override_option('fields', array(
     'relationship' => 'none',
   ),
 ));
-$handler->override_option('header', '<?php 
-//header(\'Content-Type: text/xml, charset=UTF-8; encoding=UTF-8\');
-//drupal_set_header(\'Content-Type: text/x-comma-separated-values; charset=UTF-8\'); ?>');
 $handler->override_option('header_format', '4');
 $handler->override_option('header_empty', 0);
 $handler->override_option('style_plugin', 'views_xml');
