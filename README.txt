@@ -1,19 +1,19 @@
 MODULE DEPENDENCIES
 
+- comment
+- comment_delete
+- community_tags
 - content
-- content_copy
-- text
+- jquery_update
+- jquery_ui
+- libraries
+- page_manager
 - panels
 - tagadelic
 - taxonomy
-- community_tags
-- page_manager
-- jquery_update
-- jquery_ui (with latest jQuery UI 1.7 release)
+- text
 - views
 - views_bonus_export
-- comment_delete
-
 
 
 INSTALLATION OF ECOMMA MODULE
