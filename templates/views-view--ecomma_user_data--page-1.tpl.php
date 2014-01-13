@@ -34,7 +34,7 @@
       $tag_counter++;
     else:
       $content .= '<tr class="ec-note-active"><td class="ec-note-date">';
-      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . $rendered['comment'] . '</a></td><td>' . $date . '</td><td>(comment)</td>';
+      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . $rendered['subject'] . '</a></td><td>' . $date . '</td><td>(comment)</td>';
       $content .= '</tr>';
       $comment_counter++;
     endif;
@@ -54,7 +54,7 @@
   endif;
 
   print '<div class="white-box">';
-  print '<div class="breadcrumb"><a href="' . $base_url . '/node/' . arg(1) . '">Back to text</a></div>';
+  print '<div class="ecomma_breadcrumb"><a href="' . $base_url . '/node/' . arg(1) . '">Back to text</a></div>';
   print '<h3>' . $user->name . ' (' . $comment_counter . ' ' . $comment_label . ', ' . $tag_counter . ' ' . $tag_label . ')</h3>';
   print '<table class="ec-item-list">';
   print '<tr class="user_data_sorting">';
