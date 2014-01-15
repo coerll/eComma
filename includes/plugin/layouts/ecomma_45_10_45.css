@@ -38,7 +38,7 @@
 }
 
 div.panel-panel.unit.panel-footer.lastUnit{
-  position:relative;
+  position:absolute;
   width:80%;
   bottom: 0px;
 }
