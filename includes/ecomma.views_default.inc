@@ -8,12 +8,11 @@
  * Implements hook_views_default_views().
  */
 function ecomma_views_default_views() {
-  $files = file_scan_directory(drupal_get_path('module', 'ecomma') . '/includes/views', '.view');
+  $path = drupal_get_path('module', 'ecomma') . '/includes/views';
+  $files = drupal_system_listing('.view$', $path, 'name', 0);
   foreach ($files as $absolute => $file) {
-    require $absolute;
-    if (isset($view)) {
-      $views[$file->name] = $view;
-    }
+    include_once $absolute;
+    $views[$file->name] = $view;
   }
   return $views;
 }
