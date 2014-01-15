@@ -293,18 +293,12 @@ var comment_list = Array();
                 $('.pane-ecomma-1').hide();
               }
 
-              if($('.ec-hi').length > 0){
-                someObj.removeClass(someObj.text());
-              }else{
-                someObj.addClass(someObj.text());
-              }
-
               ec_th(data[k].tid);
             });
 
             for(var j in data){
               ec_tag_list[ec_tag_id] = {'beg' : data[j].beg, 'end' : data[j].end, 'form_id' : data[j].tid, 'form' : data[j].name};//someObj.text()
-
+              ec_tag_id++;
               $('.user-data-term' + data[j].tid).each(function(i){
                 var class_cul = $(this).attr('class').match(/user-data-term([\d]*)/i)[1];
                 var id_cul = $(this).attr('id');
@@ -316,7 +310,6 @@ var comment_list = Array();
                     $(this).attr('id',id_cul_array[0].replace(/###(.*)/i,current_id));
                   }
                 }
-                ec_tag_id++;
 
                 $(this).mouseenter(function() {
                   if(current_id != undefined){
@@ -847,6 +840,7 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
       }
 
      if ((i in ec_tag_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
+     //if ((i in token_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
 
        if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
           weight = Math.min(7, Math.ceil(token_list[i] * 30 / max_count));
@@ -860,7 +854,7 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'z-index'           : '100'
           };
 
-          token_bgr_css =
+          /*token_bgr_css =
           {
             'position'         : 'absolute',
             'display'          : 'block',
@@ -869,9 +863,27 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'top'              :  $('#ec-p' + i).position().top + 'px',
             'height'           : $('#ec-p' + i).height() + 'px',
             'padding'          : '1px 3px 1px 3px',
-            'opacity'          : weight / 8,
-            'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
-          };
+            'opacity'          : 1 + (weight / 16),
+            'filter'           :'alpha(opacity =' + (weight / 16) + ')'
+            //'opacity'          : weight / 8,
+            //'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
+          };*/
+            token_bgr_css =
+            {
+              'position'         : 'absolute',
+              'display'          : 'block',
+              'z-index'           : '0',
+              'left'             : $('#ec-p' + i).position().left + 'px',
+              'top'              :  $('#ec-p' + i).position().top + 'px',
+              'height'           : $('#ec-p' + i).height() + 'px',
+              'padding'          : '1px 3px 1px 3px',
+              'opacity'          : ((weight / 16) * token_list[i]/2),
+              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/2 + ')'
+              //'opacity'          : weight / 8,
+              //'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
+            };          
+          
+          
          }//end if
 
         if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){

@@ -37,6 +37,21 @@
   width: auto;
 }
 
+div.panel-panel.unit.panel-footer.lastUnit{
+  position:relative;
+  width:80%;
+  bottom: 0px;
+}
+
+.page-manager-ajax-pad div.panel-panel.unit.panel-footer.lastUnit{
+  width:100%;
+  float:left;
+}
+
+.page-manager-ajax-pad div.panel-panel.unit.panel-footer.lastUnit #footer{
+  display: none;
+}
+
 .lastUnit .inside {
   margin: 0 0 1em .5em;
 }
@@ -162,6 +177,10 @@ li.annotation_count a p {
   width: 320px;
 }
 
+.page-manager-ajax-pad #tabs-icons{
+  width: inherit;
+}
+
 #tabs-icons .ui-widget-header {
   border: none;
   background: none;
@@ -173,6 +192,10 @@ li.annotation_count a p {
 #tabs-icons .ui-widget-content {
   color: #000;
   background: #fff;
+}
+
+.page-manager-ajax-pad #tabs-icons ul{
+  display: none;
 }
 
 #tabs-icons {
@@ -218,9 +241,14 @@ li.annotation_count a p {
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
   border: 1px solid #ccc;
+  /*background: #e6e6e6 url(images/ui-bg_glass_100_f6f6f6_1x400.png) 50% 50% repeat-x;*/
   background: #e6e6e6;
   font-weight: bold;
   color: #1c94c4;
+}
+
+.page-manager-ajax-pad #footer{
+  diplay: none !important;
 }
 
 #footer a {

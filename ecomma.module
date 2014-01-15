@@ -639,15 +639,15 @@ function ecomma_block($op = 'list', $delta = 0, $edit = array()) {
             $view->set_arguments(array(arg(1), "all"));
             $view->execute_display('default');
 
-            if ($view->style_plugin->rendered_fields) {
+            if ($view->result) {
               $user_data_list = '<ol class="ec-tag-list" id="ec-tag-list">';
-              foreach ($view->style_plugin->rendered_fields as $user_data) {
-                $tid = $user_data['tid'];
-                $uid = $user_data['uid'];
-                $rid = $user_data['rid'];
-                $beg = $user_data['beg'];
-                $end = $user_data['end'];
-                $term_name = db_result(db_query("SELECT name FROM { term_data} WHERE  tid='%d'", $tid));
+              foreach ($view->result as $user_data) {
+                $tid = $user_data->ecomma_range_tid;
+                $uid = $user_data->ecomma_range_uid;
+                $rid = $user_data->ecomma_range_rid;
+                $beg = $user_data->ecomma_range_beg;
+                $end = $user_data->ecomma_range_end;
+                $term_name = db_result(db_query("SELECT name FROM {term_data} WHERE  tid='%d'", $tid));
                 $date = date('d M Y gA', db_result(db_query("SELECT created FROM {ecomma_range} WHERE  rid='%d'", $rid)));
 
                 $user_data_list .= '<li class="user-data user-data-term' . $tid . '" id="ec-tag-e### ' . $beg . ' ' . $end;
@@ -674,9 +674,9 @@ function ecomma_block($op = 'list', $delta = 0, $edit = array()) {
             $view = views_get_view($view_name);
             $view->set_arguments(array(arg(1), "all"));
             $view->execute_display('default');
-            if ($view->style_plugin->rendered_fields) {
-              foreach ($view->style_plugin->rendered_fields as $user_data) {
-                $uids[] = $user_data['uid'];
+            if ($view->result) {
+              foreach ($view->result as $user_data) {
+                $uids[] = $user_data->ecomma_range_uid;
               }
 
               $uids_totals = array_count_values($uids);
@@ -790,9 +790,15 @@ function ecomma_comment_cloud($node) {
       $steps = 6;
       $min = 1e9;
       $max = -1e9;
+      ksort($words_count_array);
       $output = '';
 
       foreach ($words_count_array as $key => $word_count) {
+        /*$min = min($min, $word_count);
+         
+        $max = max($max, $word_count);
+        $range = max(.01, $max - $min) * 1.0001;
+        $word_weight = 1 + floor($steps * ($word_count - $min) / $range);*/
         $output .= "<h$word_count>$key</h$word_count><h$word_weight></h$word_count>";
       }
     }
