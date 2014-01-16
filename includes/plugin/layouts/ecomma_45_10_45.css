@@ -251,6 +251,11 @@ li.annotation_count a p {
   diplay: none !important;
 }
 
+#footer{
+  float: left;
+  width:100%;
+}
+
 #footer a {
   width: 33%;
   margin: 0px auto;

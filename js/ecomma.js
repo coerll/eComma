@@ -877,8 +877,8 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
               'top'              :  $('#ec-p' + i).position().top + 'px',
               'height'           : $('#ec-p' + i).height() + 'px',
               'padding'          : '1px 3px 1px 3px',
-              'opacity'          : ((weight / 16) * token_list[i]/2),
-              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/2 + ')'
+              'opacity'          : ((weight / 16) * token_list[i]/1.5),
+              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/1.5 + ')'
               //'opacity'          : weight / 8,
               //'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
             };          
