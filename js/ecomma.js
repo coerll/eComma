@@ -854,20 +854,6 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'z-index'           : '100'
           };
 
-          /*token_bgr_css =
-          {
-            'position'         : 'absolute',
-            'display'          : 'block',
-            'z-index'           : '0',
-            'left'             : $('#ec-p' + i).position().left + 'px',
-            'top'              :  $('#ec-p' + i).position().top + 'px',
-            'height'           : $('#ec-p' + i).height() + 'px',
-            'padding'          : '1px 3px 1px 3px',
-            'opacity'          : 1 + (weight / 16),
-            'filter'           :'alpha(opacity =' + (weight / 16) + ')'
-            //'opacity'          : weight / 8,
-            //'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
-          };*/
             token_bgr_css =
             {
               'position'         : 'absolute',
@@ -877,13 +863,10 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
               'top'              :  $('#ec-p' + i).position().top + 'px',
               'height'           : $('#ec-p' + i).height() + 'px',
               'padding'          : '1px 3px 1px 3px',
-              'opacity'          : ((weight / 16) * token_list[i]/1.5),
-              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/1.5 + ')'
-              //'opacity'          : weight / 8,
-              //'filter'           :'alpha(opacity =' + weight * 10 + 5 + ')'
-            };          
-          
-          
+              'opacity'          : ((weight / 16) * token_list[i] / 1.5),
+              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i] / 1.5 + ')'
+            };
+
          }//end if
 
         if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){

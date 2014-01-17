@@ -787,25 +787,17 @@ function ecomma_comment_cloud($node) {
 
     if ($comment_texts_items) {
       $words_count_array = array_count_values($comment_texts_items);
-      $steps = 6;
-      $min = 1e9;
-      $max = -1e9;
       ksort($words_count_array);
       $output = '';
 
       foreach ($words_count_array as $key => $word_count) {
-        /*$min = min($min, $word_count);
-         
-        $max = max($max, $word_count);
-        $range = max(.01, $max - $min) * 1.0001;
-        $word_weight = 1 + floor($steps * ($word_count - $min) / $range);*/
-        $output .= "<h$word_count>$key</h$word_count><h$word_weight></h$word_count>";
+        $output .= "<h$word_count>$key</h$word_count>";
       }
     }
   }
   return $output;
-}
-
+ }
+ 
 
 /**
  * Implements hook_views_query_alter().
