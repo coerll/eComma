@@ -134,39 +134,39 @@ li.annotation_count a p {
 #tabs-icons .ui-state-active.tags a: link,
 #tabs-icons .ui-state-active.tags a: visited {
   color: #000;
-  background: #fff url('img/tag_cloud.png') 1px 0px no-repeat;
+  background: #fff url('img/tag_cloud.png') 1px 0px no-repeat !important;
 }
 
 .comments a {
-  background: transparent url('img/comment.png') 1px 0px no-repeat;
+  background: transparent url('img/comment.png') 1px 0px no-repeat !important;
 }
 
 #tabs-icons .ui-state-active.comments a,
 #tabs-icons .ui-state-active.comments a: link,
 #tabs-icons .ui-state-active.comments a: visited {
   color: #000;
-  background: #fff url('img/comment.png') 1px 0px no-repeat;
+  background: #fff url('img/comment.png') 1px 0px no-repeat !important;
 }
 
 .comments_all_cloud a {
-  background: transparent url('img/comment_cloud.png') 1px 0px no-repeat;
+  background: transparent url('img/comment_cloud.png') 1px 0px no-repeat !important;
 }
 
 #tabs-icons .ui-state-active.comments_all_cloud a,
 #tabs-icons .ui-state-active.comments_all_cloud a: link,
 #tabs-icons .ui-state-active.comments_all_cloud a: visited {
   color: #000;
-  background: #fff url('img/comment_cloud.png') 1px 0px no-repeat;
+  background: #fff url('img/comment_cloud.png') 1px 0px no-repeat !important;
 }
 
 .annotation_count a {
-  background: transparent url('img/annotation_count.png') 1px 0px no-repeat;
+  background: transparent url('img/annotation_count.png') 1px 0px no-repeat !important;
 }
 
 #tabs-icons .ui-state-active.annotation_count a,
 #tabs-icons .ui-state-active.annotation_count a: link,
 #tabs-icons .ui-state-active.annotation_count a: visited {
-  background: #fff  url('img/annotation_count.png') 1px 0px no-repeat;
+  background: #fff  url('img/annotation_count.png') 1px 0px no-repeat !important;
 }
 
 .pane-ecomma-0,

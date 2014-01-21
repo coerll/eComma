@@ -328,11 +328,13 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
   $content_type_name = $context['argument_nid_1']->data->type;
   $content_type_data = content_types($content_type_name);
 
-  foreach ($content_type_data['fields'] as $field_name => $field_data) {
-    if ($field_data['widget']['type'] == 'text_textarea' && preg_match("/field_/", $content->delta)) {
-      if (db_result(db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name='%s' AND content_type_name='%s'", $field_name, $content_type_name))) {
-        $node = node_load($context['argument_nid_1']->data->nid);
-        $content->content = theme('ecomma_formatter_myformatter', $node, $node->$field_name);
+  if($content_type_data['fields']) {
+    foreach ($content_type_data['fields'] as $field_name => $field_data) {
+      if ($field_data['widget']['type'] == 'text_textarea' && preg_match("/field_/", $content->delta)) {
+        if (db_result(db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name='%s' AND content_type_name='%s'", $field_name, $content_type_name))) {
+          $node = node_load($context['argument_nid_1']->data->nid);
+          $content->content = theme('ecomma_formatter_myformatter', $node, $node->$field_name);
+        }
       }
     }
   }
@@ -796,8 +798,8 @@ function ecomma_comment_cloud($node) {
     }
   }
   return $output;
- }
- 
+}
+
 
 /**
  * Implements hook_views_query_alter().
