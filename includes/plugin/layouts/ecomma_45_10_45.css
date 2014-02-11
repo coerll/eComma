@@ -198,8 +198,7 @@ li.annotation_count a p {
 .page-manager-ajax-pad #tabs-icons ul .tags,
 .page-manager-ajax-pad #tabs-icons ul .comments,
 .page-manager-ajax-pad #tabs-icons ul .comments_all_cloud,
-.page-manager-ajax-pad #tabs-icons ul .annotation_count
-{
+.page-manager-ajax-pad #tabs-icons ul .annotation_count {
   display: none;
 }
 
