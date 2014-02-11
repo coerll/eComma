@@ -371,7 +371,7 @@ function ecomma_filter_process_format($element) {
  * Implements hook_nodeapi().
  */
 function ecomma_nodeapi(&$node, $op, $teaser, $page) {
-
+  global $user;
   $content_type_name = $node->type;
   $content_type_data = content_types($content_type_name);
   $ecomma_enabled = 0;
@@ -404,17 +404,15 @@ function ecomma_nodeapi(&$node, $op, $teaser, $page) {
         db_query("DELETE FROM {ecomma} WHERE nid ='%d'", $node->nid);
         db_query("DELETE FROM {ecomma_range} WHERE nid ='%d'", $node->nid);
         break;
-        
+
       case 'prepare':
-        global $user;
         if (db_result(db_query("SELECT created FROM {ecomma_range} WHERE nid ='%d' AND uid ='%d'", $node->nid, $user->uid))) {
           $message = "An eComma text cannot be edited, once it was annotated or the annotations will not display correctly.<br />Please delete all annotations before you edit the text.";
           drupal_set_message($message, 'warning', TRUE);
         }
         break;
-        
+
       case 'presave':
-        global $user;
         if (!db_result(db_query("SELECT created FROM {ecomma_range} WHERE nid ='%d' AND uid ='%d'", $node->nid, $user->uid))) {
           $message = "An eComma text cannot be edited, once it was annotated or the annotations will not display correctly.<br />Please delete all annotations before you edit the text.";
           drupal_set_message($message, 'warning', TRUE);
