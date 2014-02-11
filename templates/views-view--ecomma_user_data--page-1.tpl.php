@@ -3,28 +3,28 @@
  * @file
  * Renders the output of the list for of annotations for a specific user.
  */
-
+  //print_r($view);exit();
   global $base_url;
+
   $uid = arg(2);
   $user = user_load($uid);
   $tag_counter = 0;
   $comment_counter = 0;
-
   $content = '';
-  foreach($view->style_plugin->rendered_fields as $key => $rendered):
-    if($rendered['created']):
-      $created = $rendered['created'];
+  foreach($view->result as $key => $user_data):
+    if($user_data->ecomma_range_created):
+      $created = $user_data->ecomma_range_created;
     else:
       $created = NULL;
     endif;
-    $nid = $rendered['nid'];
-    $cid = $rendered['cid'];
-    $tid = $rendered['tid'];
-    $comment_subject = $rendered['comment'];
+    $nid = $user_data->ecomma_range_nid;
+    $cid = $user_data->ecomma_range_cid;
+    $tid = $user_data->ecomma_range_tid;
+    //$comment_subject = $user_data['comment'];
     $date = date('d M Y gA', $created);
 
     if ($cid == 0):
-      $term = taxonomy_get_term($tid);
+      $term = taxonomy_term_load($tid);
       if(is_object($term)):
         $term_name = $term->name;
       endif;
@@ -34,7 +34,7 @@
       $tag_counter++;
     else:
       $content .= '<tr class="ec-note-active"><td class="ec-note-date">';
-      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . $rendered['subject'] . '</a></td><td>' . $date . '</td><td>(comment)</td>';
+      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . 'subject'. '</a></td><td>' . $date . '</td><td>(comment)</td>';
       $content .= '</tr>';
       $comment_counter++;
     endif;

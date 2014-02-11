@@ -36,30 +36,43 @@ function ecomma_tag_range_function($tag, $nid, $beg, $end) {
   global $user;
   $uid = $user->uid;
 
-  $tid_existing = taxonomy_get_term_by_name($tag);
-  $vid = db_result(db_query("SELECT vid FROM {node} WHERE nid='%d'", $nid));
+  $tid_existing = db_select('taxonomy_term_data', 't')
+  ->fields('t', array('tid'))
+  ->condition('t.name', $tag)
+  ->execute()
+  ->fetchField();
 
-  if ($vid == "") {
-    $result = db_query("SELECT vid FROM {node} WHERE nid='%d'", $nid);
-    while ($data = db_fetch_object($result)) {
-      $vid = $data->vid;
-    }
-  }
-
-  if ($tid_existing[0]->tid == "") {
-    $tid = db_result(db_query("SELECT MAX(tid) FROM { term_data}")) + 1;
+  if ($tid_existing == '') {
+    $query = 'SELECT MAX(t.tid) from {taxonomy_term_data} t';
+    $tid = db_query($query)->fetchField();
   }
   else {
-    $tid = $tid_existing[0]->tid;
+    $tid = $tid_existing;
   }
-
-  $cid = 0;
 
   $timestamp = strtotime('now');
-  if (isset($_POST['ecomma_token']) && drupal_valid_token($_POST['ecomma_token'])) {
-    db_query("INSERT INTO {ecomma_range} (rid, nid, vid, uid, tid, cid, beg, end, created) VALUES (NULL, %d, %d, %d, %d, %d, %d, %d, %d);", $nid, $vid, $uid, $tid, $cid, $beg, $end, $timestamp);
-  }
+  $cid = 0;
+
+  $vid = db_select('node', 'n')
+  ->fields('n', array('vid'))
+  ->condition('n.nid', $nid)
+  ->execute()
+  ->fetchField();
+
+  db_insert('ecomma_range')
+    ->fields(array(
+      'rid' => NULL,
+      'nid' => $nid,
+      'vid' => $vid,
+      'uid' => $uid,
+      'tid' => $tid,
+      'cid' => $cid,
+      'beg' => $beg,
+      'end' => $end,
+      'created' => $timestamp,
+    ))->execute();
 }
+
 
 /**
  * Callback for term deletion.
@@ -85,10 +98,14 @@ function ecomma_tag_range_delete_function($tag, $nid) {
   $uid = $user->uid;
 
   // Still to decide: maybe need to delete from Community tags tables?
-  $tid_existing = db_result(db_query("SELECT tid FROM { term_data} WHERE name='%s'", $tag));
-  $record_uid = db_result(db_query("SELECT uid FROM {ecomma_range} WHERE  tid ='%d' AND nid ='%d'", $tid_existing, $nid));
+  $tid_existing = db_query("SELECT tid FROM {taxonomy_term_data} WHERE name=:tag", array(":tag" => $tag))->fetchField();
+  $record_uid = db_query("SELECT uid FROM {ecomma_range} WHERE  tid = :tid_existing AND nid = :nid", array(":tid_existing" => $tid_existing, ":nid" => $nid))->fetchField();
   if ($uid == $record_uid && isset($_POST['ecomma_token']) && drupal_valid_token($_POST['ecomma_token'])) {
-    db_query("DELETE FROM {ecomma_range} WHERE uid ='%d' AND tid ='%d' AND nid ='%d'", $uid, $tid_existing, $nid);
+    $num_deleted = db_delete('ecomma_range')
+      ->condition('uid', $uid)
+      ->condition('tid', $tid_existing)
+      ->condition('nid', $nid)
+      ->execute();
     _community_tags_delete_tag($nid, $tid_existing, $uid);
   }
 }
@@ -113,13 +130,28 @@ function ecomma_tag_range_delete_function($tag, $nid) {
  *   expected to be returned from the ecomma_range table
  */
 function ecomma_tag_query_function($tag, $nid) {
-  $tid_existing = db_result(db_query("SELECT tid FROM {term_data} WHERE  name='%s'", $tag));
-  $result = db_query("SELECT e.beg, e.end, e.tid, t.name FROM {ecomma_range} e JOIN {term_data} t ON e.tid = t.tid AND e.tid='%d' AND e.nid ='%d' ORDER BY e.tid ASC", $tid_existing, $nid);
-  drupal_set_header('Content-Type: application/json');
-  while ($row = db_fetch_array($result)) {
-    $results[] = $row;
+
+  $tid_existing = db_select('taxonomy_term_data', 'x')
+  ->fields('x', array('tid'))
+  ->condition('x.name', $tag)
+  ->orderBy('tid', 'ASC')
+  ->execute()
+  ->fetchField();
+
+  $query = db_select('ecomma_range', 'e');
+  $query->join('taxonomy_term_data', 't', 'e.tid = t.tid');
+  $result = $query->fields('e', array('beg', 'end', 'tid'))
+  ->fields('t', array('name'))
+  ->condition('e.tid', $tid_existing)
+  ->condition('e.nid', $nid)
+  ->orderBy('tid', 'ASC')
+  ->execute();
+
+  while ($results_all[] = $result->fetchAssoc()) {
   }
-  drupal_json($results);
+
+  drupal_add_http_header('Content-Type', 'application/json');
+  drupal_json_output($results_all);
 }
 
 /**
@@ -135,10 +167,14 @@ function ecomma_tag_query_function($tag, $nid) {
  */
 function ecomma_comment_query_function($cid, $nid) {
   $range = "";
-  $result = db_query("SELECT beg, end FROM {ecomma_range} WHERE cid='%d'AND nid='%d'", $cid, $nid);
-  while ($data = db_fetch_object($result)) {
-    $range = $data->beg . " " . $data->end;
-  }
+  $query = db_select('ecomma_range', 'e');
+  $result = $query->fields('e', array('beg', 'end'))
+  ->condition('e.cid', $cid)
+  ->condition('e.nid', $nid)
+  ->execute()
+  ->fetchAssoc();
+
+  $range = $result['beg'] . " " . $result['end'];
 
   print $range;
 }
@@ -156,7 +192,21 @@ function ecomma_comment_query_function($cid, $nid) {
  *   is related to the comment content to be displayed.
  */
 function ecomma_comments_active_text_function($beg, $nid) {
-  $result = db_query("SELECT r.cid, r.end, r.uid, u.name, c.timestamp, c.comment FROM {ecomma_range} r LEFT JOIN {users} u ON r.uid = u.uid LEFT JOIN {comments} c ON c.cid = r.cid WHERE r.beg='%d' AND r.nid='%d' AND r.tid='0'", $beg, $nid);
+  $query = db_select('ecomma_range', 'e');
+  $query->leftJoin('users', 'u', 'e.uid = u.uid');
+  $query->leftJoin('comments', 'c', 'c.cid = e.cid');
+  $result = $query->fields('e', array(
+    'cid',
+    'end',
+    'uid',
+    'name',
+    'timestamp',
+    'comment',
+   ))
+  ->condition('e.beg', $beg)
+  ->condition('e.nid', $nid)
+  ->execute();
+
   drupal_json(db_fetch_object($result));
 }
 
@@ -170,11 +220,16 @@ function ecomma_comments_active_text_function($beg, $nid) {
  *   if the node contains an ecomma activated/enabled textfield.
  */
 function ecomma_enabled_query_function($nid) {
-  $content_type = db_result(db_query("SELECT type FROM {node} WHERE nid='%d'", $nid));
-  $ecomma_enabled = db_result(db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE content_type_name='%s'", $content_type));
+
+  $query = db_select('ecomma_field_enabled', 'f');
+  $query->join('node', 'n', 'f.content_type_name = n.type');
+  $ecomma_enabled = $query->fields('f', array('ecomma_enabled'))
+  ->condition('n.nid', $nid, '=')
+  ->execute()
+  ->fetchField();
+
   print $ecomma_enabled;
 }
-
 
 /**
  * @}

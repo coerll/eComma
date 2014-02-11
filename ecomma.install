@@ -4,23 +4,6 @@
  * Install file for ecomma module.
  */
 
-/**
- * Implements hook_install().
- */
-function ecomma_install() {
-  drupal_install_schema('ecomma');
-  module_load_include('module', 'taxonomy', 'taxonomy');
-  drupal_load('module', 'content');
-  content_notify('install', 'ecomma');
-}
-
-/**
- * Implements hook_uninstall().
- */
-function ecomma_uninstall() {
-  drupal_uninstall_schema('ecomma');
-}
-
 
 /**
  * Implements hook_enable().

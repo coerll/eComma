@@ -164,7 +164,7 @@ $handler->display->display_options['fields']['created']['empty_zero'] = 0;
 $handler->display->display_options['fields']['created']['hide_alter_empty'] = 1;
 /* Field: Comment: Title */
 $handler->display->display_options['fields']['subject']['id'] = 'subject';
-$handler->display->display_options['fields']['subject']['table'] = 'comments';
+$handler->display->display_options['fields']['subject']['table'] = 'comment';
 $handler->display->display_options['fields']['subject']['field'] = 'subject';
 $handler->display->display_options['fields']['subject']['relationship'] = 'cid';
 $handler->display->display_options['fields']['subject']['label'] = '';

@@ -106,7 +106,7 @@ function ecomma_views_data() {
     'title' => t('cid'),
     'help' => t("Comment id of the annotated comment"),
     'relationship' => array(
-      'base' => 'comments',
+      'base' => 'comment',
       'base field' => 'cid',
       'relationship field' => 'cid',
       'handler' => 'views_handler_relationship',

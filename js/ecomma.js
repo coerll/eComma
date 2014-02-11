@@ -1,11 +1,12 @@
 /**
  * @file
  * This file provides the ecomma JQuery and JavaScript functions.
- * This JQuery and JavaScript detect and capture user text selections and update the database tables through ajax calls.
- * The script also handles the formatting of the highlighted annotated text.
- * author COERLL with the help of Travis Brown <travis.brown@mail.utexas.edu>
  *
+ * This JQuery and JavaScript functions detect and capture user text selections and update the database tables through ajax calls.
+ * The script also handles the formatting of the highlighted annotated text.
+ * Written by COERLL and based on code from Travis Brown <travis.brown@mail.utexas.edu>.
  */
+(function ($){
 //Global variables
 var ec_tag_list = new Array();
 var ec_comment_list = new Array();
@@ -17,8 +18,9 @@ var ec_stanza_beg = 1;
 var ec_stanza_end = '';
 var comment_list = Array();
 
-(function($){
-  Drupal.behaviors.ecommaBehavior = function (context) {
+  Drupal.behaviors.ecommaBehavior = {
+  
+  attach: function(context, settings) {
 
     var ec_comment_id = 0;
     var ec_tag_cnt = 0;
@@ -34,41 +36,41 @@ var comment_list = Array();
     var beg_id = null;
     var end_id = null;
     var comment_data = '';
-    var comment_cnt = $('.comment').length;
+    var comment_cnt = $('.comment', context).length;
     var selected_text = '';
     var isTouchSupported = "ontouchend" in document;
     var myDown = isTouchSupported ? "touchstart" : "mousedown";
     var myUp = isTouchSupported ? "touchend" : "mouseup";
 
-    base_url = Drupal.settings.ecomma.base_url_var;
-    user_role = Drupal.settings.ecomma.user_role;
-    if($(".token:last").length > 0){
-      ec_stanza_end = $(".token:last").attr('class').match(/ec-p([\d]+)/i,"")[1];
+    base_url = settings.ecomma.base_url_var;
+    user_role = settings.ecomma.user_role;
+    if($(".token:last", context).length > 0){
+      ec_stanza_end = $(".token:last", context).attr('class').match(/ec-p([\d]+)/i,"")[1];
     }
     var node_count = 0;
-    for(node_key in Drupal.settings.communityTags){
+    for(node_key in settings.communityTags){
       if(node_count == 0){
         nid = node_key.replace(/n_/g,"");
         node_count++;
       }
     }
 
-    $('#tabs-icons li.tags a').append("<p class ='ec_tag_cnt'></p>");
-    $('#tabs-icons li.comments a').append("<p class ='comment_cnt'></p>");
+    $('#tabs-icons li.tags a', context).append("<p class ='ec_tag_cnt'></p>");
+    $('#tabs-icons li.comments a', context).append("<p class ='comment_cnt'></p>");
 
     //main text variable
-    $(".token").each(function(i){
-      if($(this).text() != "undefined" && $(this).text() != ""){
-        main_text += $(this).text() + " ";
+    $(".token", context).each(function(i){
+      if($(this, context).text() != "undefined" && $(this, context).text() != ""){
+        main_text += $(this, context).text() + " ";
       }
     });
 
-    $(".ecomma_line").each(function(t){
-      $(this).prepend('<span class ="line_number"><span class ="line_number_symbol" style ="display:none">#---ecomma_line_symbol</span>' + (t + 1) + '</span>');
+    $(".ecomma_line", context).each(function(t){
+      $(this, context).prepend('<span class ="line_number"><span class ="line_number_symbol" style ="display:none">#---ecomma_line_symbol</span>' + (t + 1) + '</span>');
     });
 
-    $(".line_number").each(function(t){
-      $(this).css('height', $(this).parent().height() + 'px');
+    $(".line_number", context).each(function(t){
+      $(this, context).css('height', $(this, context).parent().height() + 'px');
     });
 
     //intercept community tags delete listenener to delete tags from ecomma table
@@ -87,7 +89,8 @@ var comment_list = Array();
       if(deletedElement){
         if(deletedElement.tagName.toLowerCase() == "li" && deletedElement.getAttribute("key")){
           var tag = deletedElement.innerHTML;
-          $.post(base_url + "/tag_range_delete/" + tag + "/" + nid, {'from_js': true, 'ecomma_token': Drupal.settings.ecomma.ecommaToken},
+          Drupal.detachBehaviors($(this));
+          $.post(base_url + "/tag_range_delete/" + tag + "/" + nid, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
             function(data) {
               location.href = location.href.replace(/#(.*)/,'') + '#tags';
               location.reload();
@@ -98,7 +101,7 @@ var comment_list = Array();
     }
 
     //add selection to comments
-    $('.comment').each(function(i){
+    $('.comment', context).each(function(i){
       if(base_url){
         var bool_reply = false;
         var loc = location.toString().split("/");
@@ -108,10 +111,10 @@ var comment_list = Array();
           }
         }
 
-        if($(this).parent('.indented').length == 0 && !bool_reply){
+        if($(this, context).parent('.indented', context).length == 0 && !bool_reply){
           var someObj = new Object();
           someObj = $(this);
-          var cid = parseInt($(this).prev()[0].id.replace(/comment-/,""));
+          var cid = parseInt($(this, context).prev()[0].id.replace(/comment-/,""));
           $.post(base_url + "/comment_query/" + cid + "/" + nid, someObj, function(data) {
             var data_array = data.split(" ");
             var beg_range = parseInt(data_array[0]);
@@ -122,7 +125,10 @@ var comment_list = Array();
               comment_text += $('.ec-p' + t).text() + " ";
             }
             if(beg_range && end_range){
-              someObj.prepend('<div class ="ec-comment-content">' + comment_text + '<input id ="highlight_comment" class ="highlight_comment" type ="button" onclick ="javascript:ec_rh(' + beg_range + ',' + end_range + ',\'single\')" value ="highlight" ></div>');
+              someObj.prepend('<div class ="ec-comment-content">' + comment_text + '<input id ="highlight_comment" class ="highlight_comment form-submit" type ="button" value ="highlight" ></div>');
+              $('.highlight_comment').click(function(){
+                ec_rh(beg_range , end_range, 'single');
+              });
             }else{
               someObj.addClass("comment_hide");
               comment_cnt--;
@@ -131,106 +137,108 @@ var comment_list = Array();
 
             ec_comment_list[ec_comment_id] = {'beg' : beg_range, 'end' : end_range};
             ec_comment_id++;
-            $('.comment_cnt').text(comment_cnt);
+            $('.comment_cnt', context).text(comment_cnt);
 
-            if($('.highlight_all_comments').length == 0){
-              $('#pane-node-comments').prepend('<input id ="highlight_all_comments" class ="highlight_all_comments comment_off" type ="button" value ="" >');
-              $('#highlight_all_comments').click(function(){
+            if($('.highlight_all_comments', context).length == 0){
+              $('#pane-node-comments', context).prepend('<input id ="highlight_all_comments" class ="highlight_all_comments form-submit comment_off" type ="button" value ="" >');
+              $('#highlight_all_comments', context).click(function(){
                 var a = 0;
-                if($('.comment_off').length > 0){
+                if($('.comment_off', context).length > 0){
                   for(a in ec_comment_list){
                     ec_rh(ec_comment_list[a]['beg'],ec_comment_list[a]['end'], 'multiple');
                   }
-                  $('#highlight_all_comments').addClass('comment_off');
-                  $('#highlight_all_comments').removeClass('comment_on');
+                  $('#highlight_all_comments', context).addClass('comment_off');
+                  $('#highlight_all_comments', context).removeClass('comment_on');
                 }else{
-                  $('#highlight_all_comments').addClass('comment_on');
-                  $('#highlight_all_comments').removeClass('comment_off');
+                  $('#highlight_all_comments', context).addClass('comment_on');
+                  $('#highlight_all_comments', context).removeClass('comment_off');
                 }
               });
             }
 
-            $('.highlight_all_comments').val("Highlight all (" + comment_cnt + " comments)");
+            $('.highlight_all_comments', context).val("Highlight all (" + comment_cnt + " comments)");
           });
         }
       }
     });
 
     if(user_role != "anonymous"){
-      $('body').prepend('<div class ="floating-box"  title ="Tag / Comment input"  />');
-      $(".floating-box").dialog();
-      $(".floating-box").dialog('close');
-      $('.floating-box').append('<p />');
-      $('.floating-box p').append('<ul class ="ecomma_tabs" /><br />');
-      $('.floating-box p').append('<div id ="selection" />');
-      $('#community-tags-form').wrap('<div class ="original-community-tags-form" />');
-      $('.floating-box p').append($('#community-tags-form'));
+      $('body', context).prepend('<div class ="floating-box"  title ="Tag / Comment input"  />');
+      $(".floating-box", context).dialog();
+      $(".floating-box", context).dialog('close');
+      $('.floating-box', context).append('<p />');
+      $('.floating-box p', context).append('<ul class ="ecomma_tabs" /><br />');
+      $('.floating-box p', context).append('<div id ="selection" />');
+      $('#community-tags-form', context).wrap('<div class ="original-community-tags-form" />');
+      $('.floating-box p', context).append($('#community-tags-form'));
       $('.floating-box #community-tags-form').clone(false).attr('id', 'original-community-tags-form').appendTo('.original-community-tags-form');
       $('.floating-box #community-tags-form').addClass('tab_content');
       $('.original-community-tags-form #edit-tags-wrapper').attr('id','original-edit-tags-wrapper');
       $('.original-community-tags-form #edit-tags').remove();
-      $('.original-community-tags-form .form-button').remove();
-      $('.floating-box #community-tags-form .form-item:first').remove();
-      $('.floating-box #community-tags-form #edit-tags-wrapper label:first').text('Add tag');
-      $('.floating-box #community-tags-form #edit-tags-wrapper .tag-widget ul.inline-tags').hide();
+      $('.original-community-tags-form .form-submit').remove();
+      //$('.floating-box #community-tags-form .form-item-tags:first').remove();
+      $('.floating-box #community-tags-form #edit-cloud').remove();
+      $('.floating-box #community-tags-form .form-item-tags label:first').text('Add tag');
+      $('.floating-box #community-tags-form .form-item-tags .tag-widget ul.inline-tags').hide();
 
       //don't use dialog popup for comment editing and reply
       if(!location.href.match(/\/comment\//)){
-        $('.floating-box p').append($('#comment-form'));
+        $('.floating-box p', context).append($('#comment-form'));
       }
-      $('.floating-box #comment-form label span').remove();
-      $('#comment-form').addClass('tab_content');
-      $('#comment-form').append('<div id ="comment_thread" />');
-      $('.floating-box .ecomma_tabs').append('<li class ="active"><a href ="#community-tags-form">Add Tag</a></li><li><a href ="#comment-form">Add Comment</a></li>');
-      $('.floating-box #selection').append('<h3>Your selection</h3>');
-      $('.floating-box #selection').append('<div class ="ec-warning">eComma couldn\'t understand your selection.<br /><b>Please try again.</b></div>');
-      $('.floating-box #selection').append('<p id ="ec-selection-text" class ="ec-selection-text"></p>');
-      $('.floating-box #community-tags-form').append('<input name ="tag-range-beg" id ="tag-range-beg"  type ="hidden" value ="' + beg_id + '">');
-      $('.floating-box #community-tags-form').append('<input name ="tag-range-end" id ="tag-range-end"  type ="hidden" value ="' + end_id + '">');
-      $('.floating-box #community-tags-form').append('<input name ="tag-value" id ="tag-value"  type ="hidden" value ="">');
-      $('#comment-form .form-submit').before('<input name ="comment-range-beg" id ="comment-range-beg"  type ="hidden" value ="">');
-      $('#comment-form .form-submit').before('<input name ="comment-range-end" id ="comment-range-end"  type ="hidden" value ="">');
+      $('.floating-box #comment-form label span', context).remove();
+      $('#comment-form', context).addClass('tab_content');
+      $('#comment-form', context).append('<div id ="comment_thread" />');
+      $('.floating-box .ecomma_tabs', context).append('<li class ="active"><a href ="#community-tags-form">Add Tag</a></li><li><a href ="#comment-form">Add Comment</a></li>');
+      $('.floating-box #selection', context).append('<h3>Your selection</h3>');
+      $('.floating-box #selection', context).append('<div class ="ec-warning">eComma couldn\'t understand your selection.<br /><b>Please try again.</b></div>');
+      $('.floating-box #selection', context).append('<p id ="ec-selection-text" class ="ec-selection-text"></p>');
+      $('.floating-box #community-tags-form', context).append('<input name ="tag-range-beg" id ="tag-range-beg"  type ="hidden" value ="' + beg_id + '">');
+      $('.floating-box #community-tags-form', context).append('<input name ="tag-range-end" id ="tag-range-end"  type ="hidden" value ="' + end_id + '">');
+      $('.floating-box #community-tags-form', context).append('<input name ="tag-value" id ="tag-value"  type ="hidden" value ="">');
+      $('#comment-form .form-submit', context).before('<input name ="comment-range-beg" id ="comment-range-beg"  type ="hidden" value ="">');
+      $('#comment-form .form-submit', context).before('<input name ="comment-range-end" id ="comment-range-end"  type ="hidden" value ="">');
 
       //Activate first tab
-      $("ul.ecomma_tabs li:first").addClass("active").show();
+      $("ul.ecomma_tabs li:first", context).addClass("active").show();
       //Show first tab content
-      $(".tab_content:first").show();
+      $(".tab_content").hide();
+      $(".tab_content:first", context).show();
 
-      $("ul.ecomma_tabs li").click(function() {
+      $("ul.ecomma_tabs li", context).click(function() {
         //Remove any "active" class
-        $("ul.ecomma_tabs li").removeClass("active");
+        $("ul.ecomma_tabs li", context).removeClass("active");
         //Add "active" class to selected tab
-        $(this).addClass("active");
-        if(!$('.ec-warning').is(":visible")){
+        $(this, context).addClass("active");
+        if(!$('.ec-warning', context).is(":visible")){
           //Hide all tab content
-          $(".tab_content").hide();
+          $(".tab_content", context).hide();
           //Find the rel attribute value to identify the active tab + content
-          var activeTab = $(this).find("a").attr("href");
+          var activeTab = $(this, context).find("a").attr("href");
           //Fade in the active content
           $('.floating-box ' + activeTab).fadeIn();
         }
         return false;
       });
     }else{
-      $('#community-tags-form').wrap('<div class ="original-community-tags-form" />');
+      $('#community-tags-form', context).wrap('<div class ="original-community-tags-form" />');
     }
 
-    $('#comment-form .form-submit').click(function() {
-      $('.comment').css('display','block');
+    $('#comment-form .form-submit', context).click(function() {
+      $('.comment', context).css('display','block');
     });
 
-    $('input.form-tags').each(function () {
+    $('input.form-tags', context).each(function () {
       // Fetch settings.
       var nid = $('input[name = nid]', this.form).val();
-      var o = Drupal.settings.communityTags['n_' + nid];
+      var o = settings.communityTags['n_' + nid];
       var vid = $('input[name = vid]', this.form).val();
-      var o = Drupal.settings.communityTags['n_' + nid]['v_' + vid];
+      var o = settings.communityTags['n_' + nid]['v_' + vid];
       var sequence = 0;
 
       // Show the textfield and empty its value.
       var deleteHandler = function () {
         // Remove tag from local list.
-        var i = $(this).attr('key');
+        var i = $(this, context).attr('key');
         o.tags.splice(i, 1);
         updateList();
 
@@ -249,27 +257,28 @@ var comment_list = Array();
     });
 
     //tag cloud - add mouseevent and create ec_tag_list
-    $('.original-community-tags-form .cloud a').each(function(i){
+    $('.original-community-tags-form .cloud a', context).each(function(i){
       var someObj = new Object();
       someObj = $(this);
-      var tag = $(this).text();
+      var tag = $(this, context).text();
       someObj.addClass("not-ec");
-      $('ul.inline-tags li').each(function(k){
-        if($(this).text() == someObj.text()){
-          $(this).addClass("not-ec");
+      $('ul.inline-tags li', context).each(function(k){
+        if($(this, context).text() == someObj.text()){
+          $(this, context).addClass("not-ec");
         }
       });
-
-      $.post(base_url + "/tag_query/" + tag + "/" + nid, someObj, function(data) {
+      $.post(base_url + "/tag_query/" + escape(tag) + "/" + nid, someObj, function(data) {
         if(data){
           for(var k in data){
+            if(data[k].tid != undefined) {
             someObj.addClass("ec-tagged");
             someObj.attr('href', 'javascript:;');
             someObj.attr("id","ec-t" + data[k].tid);
-            someObj.removeClass("not-ec");
-            $('ul.inline-tags li').each(function(k){
-              if($(this).text() == someObj.text()){
-                $(this).removeClass("not-ec");
+            someObj.attr("rel","tag");
+            someObj.removeClass("not-ec").addClass("ec-tagged");
+            $('ul.inline-tags li', context).each(function(k){
+              if($(this, context).text() == someObj.text()){
+                $(this, context).removeClass("not-ec");
               }
             });
 
@@ -279,39 +288,48 @@ var comment_list = Array();
             }else{
               someObj.attr("class","tagadelic levelundefined");
             }
-
+            
             someObj.unbind(myDown).bind(myDown, function(e){
-              if($('.ec-hi').length > 0){
+              var tid = someObj.attr('id').replace(/ec-t/g,"");
+              
+              if($('.ec-hi', context).length > 0){
                 someObj.removeClass(someObj.text());
               }else{
                 someObj.addClass(someObj.text());
               }
 
               if($('.ec-hi').length <= 0){
-                $('.pane-ecomma-1').show();
+                $('#pane-ecomma-1').toggle('show');
               }else if($('.ec-hi').length == 1 && someObj.attr('class').match(/ec-hi/)){
-                $('.pane-ecomma-1').hide();
+                $('#pane-ecomma-1').toggle('hide');
               }
 
-              ec_th(data[k].tid);
+              if($('.ec-hi', context).length > 0){
+                someObj.removeClass(someObj.text());
+              }else{
+                someObj.addClass(someObj.text());
+              }
+
+              ec_th(tid);
             });
 
             for(var j in data){
               ec_tag_list[ec_tag_id] = {'beg' : data[j].beg, 'end' : data[j].end, 'form_id' : data[j].tid, 'form' : data[j].name};//someObj.text()
               ec_tag_id++;
+
               $('.user-data-term' + data[j].tid).each(function(i){
-                var class_cul = $(this).attr('class').match(/user-data-term([\d]*)/i)[1];
-                var id_cul = $(this).attr('id');
+                var class_cul = $(this, context).attr('class').match(/user-data-term([\d]*)/i)[1];
+                var id_cul = $(this, context).attr('id');
                 var id_cul_array = id_cul.split(" ");
                 var current_id;
                 for (var t in ec_tag_list){
                   if(ec_tag_list[t].form_id == parseInt(class_cul) && ec_tag_list[t].beg == id_cul_array[1] && ec_tag_list[t].end == id_cul_array[2]){
                     current_id = t;
-                    $(this).attr('id',id_cul_array[0].replace(/###(.*)/i,current_id));
+                    $(this, context).attr('id',id_cul_array[0].replace(/###(.*)/i,current_id));
                   }
                 }
 
-                $(this).mouseenter(function() {
+                $(this, context).mouseenter(function() {
                   if(current_id != undefined){
                     for (var t in ec_tag_list){
                       if(ec_tag_list[t].form_id == parseInt(class_cul) && ec_tag_list[t].beg == id_cul_array[1] && ec_tag_list[t].end == id_cul_array[2]){
@@ -321,7 +339,7 @@ var comment_list = Array();
                   }
                 });
 
-                $(this).mouseleave(function() {
+                $(this, context).mouseleave(function() {
                   for (var t in ec_tag_list){
                     if(ec_tag_list[t].form_id == parseInt(class_cul) && ec_tag_list[t].beg == id_cul_array[1] && ec_tag_list[t].end == id_cul_array[2]){
                       ec_tu(current_id,id_cul_array[1],id_cul_array[2]);
@@ -329,32 +347,33 @@ var comment_list = Array();
                   }
                 });
               });
+              }
             }//end for loop
         }//end if data
 
-        $('.ec_tag_cnt').text(ec_tag_cnt);
+        $('.ec_tag_cnt', context).text(ec_tag_cnt);
 
-        if($('.highlight_all_tags').length == 0){
-          $('#pane-community-tags-0').prepend('<input id ="highlight_all_tags" class ="highlight_all_tags tags_off" type ="button" value ="" >');
-          $('#highlight_all_tags').click(function(){
+        if($('.highlight_all_tags', context).length == 0){
+          $('#pane-community-tags-0', context).prepend('<input id ="highlight_all_tags" class ="highlight_all_tags form-submit tags_off" type ="button" value ="" >');
+          $('#highlight_all_tags', context).click(function(){
             var a = 0;
 
-            if($('.tags_off').length > 0){
+            if($('.tags_off', context).length > 0){
               for(a in ec_tag_list){
                 ec_th_all(ec_tag_list[a]['form_id']);
               }
-              $('#highlight_all_tags').addClass('tags_off');
-              $('#highlight_all_tags').removeClass('tags_on');
+              $('#highlight_all_tags', context).addClass('tags_off');
+              $('#highlight_all_tags', context).removeClass('tags_on');
             }else{
-              $('#highlight_all_tags').addClass('comment_on');
-              $('#highlight_all_tags').removeClass('tags_on');
+              $('#highlight_all_tags', context).addClass('comment_on');
+              $('#highlight_all_tags', context).removeClass('tags_on');
             }
 
-            $('#pane-ecomma-1').css('display','block');
+            $('#pane-ecomma-1', context).css('display','block');
           });
         }
 
-        $('.highlight_all_tags').val("Highlight all (" + ec_tag_cnt + " tags)");
+        $('.highlight_all_tags', context).val("Highlight all (" + ec_tag_cnt + " tags)");
       }
 
       }, 'json');
@@ -362,8 +381,8 @@ var comment_list = Array();
     });
 
     //text selection function
-    $(".ecomma_line").bind(myUp, function(e){
-      $(".line_number_symbol").css("display","block");
+    $(".ecomma_line", context).bind(myUp, function(e){
+      $(".line_number_symbol", context).css("display","block");
       var text = "";
       var sel   = null;
       var range = null;
@@ -440,21 +459,21 @@ var comment_list = Array();
         stanza = stanza.parentNode;
       }
 
-      $(".line_number_symbol").css("display","none");
+      $(".line_number_symbol", context).css("display","none");
       text = text.replace(/#---ecomma_line_symbol([^\d]*)\d(\d)?/g,'');
 
       var test_array = text.split(" ");
 
       if(range != "" && text != "" && beg_id != null || end_id != null){
         //Show first tab content
-        $(".tab_content:first").show();
-        $(".tab_content:second").hide();
-        $('.floating-box #comment-form #comment_thread .comment_wrapper').remove();
+        $(".tab_content:first", context).show();
+        //$(".tab_content:second").hide();
+        $('.floating-box #comment-form #comment_thread .comment_wrapper', context).remove();
 
         if($('#ec-bgr' + beg_id).attr('class') == "comment_token"){
           var someObj = new Object();
           var beg_id_hi;
-          for(var i = beg_id; $('#ec-bgr' + i).css('display') != "none"; i--){
+          for(var i = beg_id; $('#ec-bgr' + i, context).css('display') != "none"; i--){
             beg_id_hi = i;
           }
 
@@ -463,9 +482,9 @@ var comment_list = Array();
             for(var v = beg_id_hi; v < data.end; v++){
               selected_text += $('#ec-p' + v).text() + " ";
             }
-            $('#ec-selection-text').text(selected_text.substring(9));
-            $('#comment-range-beg').val(beg_id_hi);
-            $('#comment-range-end').val(data.end);
+            $('#ec-selection-text', context).text(selected_text.substring(9));
+            $('#comment-range-beg', context).val(beg_id_hi);
+            $('#comment-range-end', context).val(data.end);
 
             comment_data = "";
             for(var i = 0; i < data_meta.length; i++){
@@ -474,16 +493,16 @@ var comment_list = Array();
             }
           });
 
-          $('.comment_wrapper').remove();
-          $('.floating-box #comment-form #comment_thread').html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + comment_data + "</div>");
-          $("ul.ecomma_tabs li:last").addClass("active").show();
-          $("ul.ecomma_tabs li:first").removeClass("active");
+          $('.comment_wrapper', context).remove();
+          $('.floating-box #comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + comment_data + "</div>");
+          $("ul.ecomma_tabs li:last", context).addClass("active").show();
+          $("ul.ecomma_tabs li:first", context).removeClass("active");
           //Show first tab content
-          $(".tab_content:last").show();
-          $(".tab_content:first").hide();
-          $('.ec-warning').hide();
-          $('.floating-box').show();
-          $('.floating-box').css('left', $('.floating-box').css('left') - 200 + 'px');
+          $(".tab_content:last", context).show();
+          $(".tab_content:first", context).hide();
+          $('.ec-warning', context).hide();
+          $('.floating-box', context).show();
+          $('.floating-box', context).css('left', $('.floating-box', context).css('left') - 200 + 'px');
         }
 
         if($('#ec-bgr' + beg_id).attr('class') != "comment_token"){
@@ -493,52 +512,52 @@ var comment_list = Array();
           && test_array[test_array.length - 1] != "undefined" && test_array[0] != "undefined"){
             //add tag/comment box to body
             //Activate first tab
-            $("ul.ecomma_tabs li:first").addClass("active").show();
+            $("ul.ecomma_tabs li:first", context).addClass("active").show();
             //Activate first tab
-            $("ul.ecomma_tabs li:last").removeClass("active");
-            $('.floating-box').show();
-            $(".floating-box").dialog('open');
+            $("ul.ecomma_tabs li:last", context).removeClass("active");
+            $('.floating-box', context).show();
+            $(".floating-box", context).dialog('open');
 
             if (ie){
-              $('#ec-selection-text').text(sel.text);
+              $('#ec-selection-text', context).text(sel.text);
             }else{
-              $('#ec-selection-text').text(text);
+              $('#ec-selection-text', context).text(text);
             }
 
-            $('#ec-selection-text').text(text);
-            $('.floating-box #community-tags-form').show();
-            $(".floating-box").dialog('open');
-            $('.ec-warning').hide();
+            $('#ec-selection-text', context).text(text);
+            $('.floating-box #community-tags-form', context).show();
+            $(".floating-box", context).dialog('open');
+            $('.ec-warning', context).hide();
 
-            $('#tag-range-beg').val(beg_id);
-            $('#tag-range-end').val(end_id);
-            $('#comment-range-beg').val(beg_id);
-            $('#comment-range-end').val(end_id);
+            $('#tag-range-beg', context).val(beg_id);
+            $('#tag-range-end', context).val(end_id);
+            $('#comment-range-beg', context).val(beg_id);
+            $('#comment-range-end', context).val(end_id);
 
           }else{
             //Activate first tab
-            $("ul.ecomma_tabs li:first").addClass("active").show();
+            $("ul.ecomma_tabs li:first", context).addClass("active").show();
             //Activate first tab
-            $("ul.ecomma_tabs li:last").removeClass("active");
-            $('.floating-box').show();
-            $(".floating-box").dialog('open');
-            $('#ec-selection-text').text("");
-            $('.floating-box #community-tags-form').hide();
-            $('.ec-warning').show();
+            $("ul.ecomma_tabs li:last", context).removeClass("active");
+            $('.floating-box', context).show();
+            $(".floating-box", context).dialog('open');
+            $('#ec-selection-text', context).text("");
+            $('.floating-box #community-tags-form', context).hide();
+            $('.ec-warning', context).show();
           }
         }
       }
     });
 
     //submitting tag input
-    $(".floating-box .form-button").click(function() {
-      var selection = $("#ec-selection-text").html().replace(/\s\s+/g," ").replace(/(\n|\r)/g," ").replace(/<br \/>/g," ").replace(/<br>/g," ").replace(/<\/?[^>]+>/gi, '');
+    $(".floating-box #community-tags-form .form-submit", context).click(function() {
+      var selection = $("#ec-selection-text", context).html().replace(/\s\s+/g," ").replace(/(\n|\r)/g," ").replace(/<br \/>/g," ").replace(/<br>/g," ").replace(/<\/?[^>]+>/gi, '');
 
       if(main_text.indexOf(selection) != -1){
-        var tag = $('#tag-value').val();
-        var beg = $('#tag-range-beg').val();
-        var end = $('#tag-range-end').val();
-        $.post(base_url + "/tag_range/" + tag + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': Drupal.settings.ecomma.ecommaToken},
+        var tag = $('#tag-value', context).val();
+        var beg = $('#tag-range-beg', context).val();
+        var end = $('#tag-range-end', context).val();
+        $.post(base_url + "/tag_range/" + tag + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
         function(data) {
           location.href = location.href.replace(/#(.*)/,'') + '#tags';
           location.reload();
@@ -546,90 +565,95 @@ var comment_list = Array();
       }//endif found selection
     });
 
-    $(".floating-box .form-tags").blur(function() {
-      $('#tag-value').val($('.tag-widget #edit-tags').val());
+    $(".floating-box .form-tags", context).blur(function() {
+      $('#tag-value', context).val($('.tag-widget #edit-tags', context).val());
     });
 
     //submitting tag input by hitting return
-    $(".floating-box .form-tags").keypress(function(e) {
+    $(".floating-box #community-tags-form .form-tags", context).keypress(function(e) {
       if(e.keyCode == 13) {
-        $('#tag-value').val($('.tag-widget #edit-tags').val());
-        var selection = $("#ec-selection-text").html().replace(/\s\s+/g," ").replace(/(\n|\r)/g," ").replace(/<br \/>/g," ").replace(/<br>/g," ").replace(/<\/?[^>]+>/gi, '');
+        $('#tag-value', context).val($('.tag-widget #edit-tags', context).val());
+        var selection = $("#ec-selection-text", context).html().replace(/\s\s+/g," ").replace(/(\n|\r)/g," ").replace(/<br \/>/g," ").replace(/<br>/g," ").replace(/<\/?[^>]+>/gi, '');
 
         if(main_text.indexOf(selection) != -1){
-          var tag = $('#tag-value').val();
-          var beg = $('#tag-range-beg').val();
-          var end = $('#tag-range-end').val();
-          $.post(base_url + "/tag_range/" + tag + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': Drupal.settings.ecomma.ecommaToken},
+          var tag = $('#tag-value', context).val();
+          var beg = $('#tag-range-beg', context).val();
+          var end = $('#tag-range-end', context).val();
+          $.post(base_url + "/tag_range/" + escape(tag) + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
           function(data) {
             location.href = location.href.replace(/#(.*)/,'') + '#tags';
             location.reload();
           });
         }//endif found selection
       }//endif enter key pressed
-      $('#original-community-tags-form').css('display','block');
+      $('#original-community-tags-form', context).css('display','block');
     });
 
-    $(".word_cloud a").each(function(i){
+    $(".word_cloud a", context).each(function(i){
       var class_value = 'ec-f' + (i + 1);
-      $(this).attr('id', class_value);
-      $(this).attr('href', 'javascript:;');
-      $(this).bind(myDown, function(e){
+      $(this, context).attr('id', class_value);
+      $(this, context).attr('href', 'javascript:;');
+      $(this, context).bind(myDown, function(e){
         ec_fh((i + 1));
       });
       var someObj2 = new Object();
       someObj2 = $(this);
-      $(".ecomma_line span").each(function(t){
-        if($(this).text().toLowerCase() == someObj2.text()){
-          $(this).addClass(class_value);
+      $(".ecomma_line span", context).each(function(t){
+        if($(this, context).text().toLowerCase() == someObj2.text()){
+          $(this, context).addClass(class_value);
         }
       });
     });
 
-    $('.pane-ecomma-0').attr('id','pane-ecomma-0');
-    $('.pane-ecomma-1').attr('id','pane-ecomma-1');
-    $('.pane-ecomma-2').attr('id','pane-ecomma-2');
-    $('.pane-ecomma-3').attr('id','pane-ecomma-3');
-    $('.pane-node-comments').attr('id','pane-node-comments');
-    $('.pane-community-tags-0').attr('id','pane-community-tags-0');
-    $('.pane-node-comments').prepend('<input type ="button" onclick ="javascript:window.location =\'' + base_url + '/ecomma_comments_export/' + nid + '\'" value ="Download comments" />');
+    $('.pane-ecomma-ecomma-tag-details', context).attr('id','pane-ecomma-1');
+    $('.pane-ecomma-ecomma-word-cloud', context).attr('id','pane-ecomma-0');
+    $('.pane-ecomma-ecomma-comment-cloud', context).attr('id','pane-ecomma-2');
+    $('.pane-ecomma-ecomma-user-annotation-total', context).attr('id','pane-ecomma-3');
+    $('.pane-node-comments', context).attr('id','pane-node-comments');
+    $('.pane-community-tags-0', context).attr('id','pane-community-tags-0');
+    $('.pane-node-comments', context).prepend('<input type ="button" class="form-submit comment_export" value ="Download comments" />');
+    $('.comment_export').click(function(){
+      window.location = base_url + '/ecomma_comments_export/' + nid;
+    });
     $("#tabs-icons").tabs();
-
     //has to be called before var url_current
     $('.ui-tabs-nav a').click(function(){
-      if($('#pane-community-tags-0').attr('class').match(/ui-tabs-hide/)){
-        $('#pane-ecomma-1').css('display','none');
+      if($('.pane-community-tags-0').attr('class').match(/ui-tabs-hide/)){
+        $('.pane-ecomma-ecomma-tag-details').css('display','none');
       }else{
         if($('.ec-hi').length > 0){
-          $('#pane-ecomma-1').css('display','block');
+          $('.pane-ecomma-ecomma-tag-details').css('display','block');
         }
       }
     });
+    
+    /*if($('#pane-community-tags-0', context).attr('class')){
+      if($('#pane-community-tags-0', context).attr('class').match(/ui-tabs-hide/)){
+        $('.pane-ecomma-ecomma-tag-details', context).css('display','none');
+      }else{
+        if($('.ec-hi', context).length > 0){
+          $(.pane-ecomma-ecomma-tag-details', context).css('display','block');
+        }
+      }
+    }*/
+    
+    
 
-    var url_current = window.location.href;
+   var url_current = window.location.href;
     var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
     var url_comm_obj = url_current.match(/([^#]*)#([^-]*)(-\d\d)?/);
-    if(url_tags_obj){
+    if(typeof url_tags_obj != null ){
       if((url_tags_obj[2] != '' || url_comm_obj[2] != '') && (url_tags_obj[2] != null && url_comm_obj[2] != null)){
         if(url_tags_obj[2] == "tags"){
-          $("#tabs-icons").tabs("select", 1);
+          $("#tabs-icons", context).tabs("select", 1);
         }else if(url_comm_obj[2] == "comment"){
-          $("#tabs-icons").tabs("select", 2);
+          $("#tabs-icons", context).tabs("select", 2);
         }
       }
     }
 
-    if($('#pane-community-tags-0').attr('class')){
-      if($('#pane-community-tags-0').attr('class').match(/ui-tabs-hide/)){
-        $('#pane-ecomma-1').css('display','none');
-      }else{
-        if($('.ec-hi').length > 0){
-          $('#pane-ecomma-1').css('display','block');
-        }
-      }
-    }
-  };
-})(jQuery);
+  }
+};
 
 
 function ec_max(a){
@@ -803,7 +827,7 @@ function ec_comment_select(beg, end, type, color){
   $('.cloud a').each(function(i){
     $(this).removeClass('ec-hi')
   });
-  $('.pane-ecomma-1').hide();
+  $('#pane-ecomma-1').hide();
   ec_tag_token_list.length = 0;
   ec_tag_name_list.length = 0;
 }
@@ -815,32 +839,33 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
   {
       var weight = 0;
       var token_css;
+      
+      if($('.comment_token').length > 0){
+        if($('#ec-bgr' + i).attr('class').match(/comment_token/)){
+          remove_token_css =
+          {
+            'font-size'        : null,
+            'margin'           : null,
+            'padding'          : null
+          };
 
-      if($('#ec-bgr' + i).attr('class').match(/comment_token/)){
-        remove_token_css =
-        {
-          'font-size'        : null,
-          'margin'           : null,
-          'padding'          : null
-        };
+          remove_token_bgr_css =
+          {
+            'display'          : 'none',
+            'margin'           : null,
+            'padding'          : null,
+            'opacity'          : null,
+            'filter'           : null
+          };
 
-        remove_token_bgr_css =
-        {
-          'display'          : 'none',
-          'margin'           : null,
-          'padding'          : null,
-          'opacity'          : null,
-          'filter'           : null
-        };
-
-        $('#ec-p' + i).css(remove_token_css);
-        $('#ec-bgr' + i).css(remove_token_bgr_css);
-        $('#ec-bgr' + i).removeClass('comment_token');
-        $('#ec-bgr' + i).parent().children('.line_number').css('height', $('#ec-bgr' + i).parent().height() + 'px');
+          $('#ec-p' + i).css(remove_token_css);
+          $('#ec-bgr' + i).css(remove_token_bgr_css);
+          $('#ec-bgr' + i).removeClass('comment_token');
+          $('#ec-bgr' + i).parent().children('.line_number').css('height', $('#ec-bgr' + i).parent().height() + 'px');
+        }
       }
 
      if ((i in ec_tag_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
-     //if ((i in token_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
 
        if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
           weight = Math.min(7, Math.ceil(token_list[i] * 30 / max_count));
@@ -854,20 +879,19 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'z-index'           : '100'
           };
 
-            token_bgr_css =
-            {
-              'position'         : 'absolute',
-              'display'          : 'block',
-              'z-index'           : '0',
-              'left'             : $('#ec-p' + i).position().left + 'px',
-              'top'              :  $('#ec-p' + i).position().top + 'px',
-              'height'           : $('#ec-p' + i).height() + 'px',
-              'padding'          : '1px 3px 1px 3px',
-              'opacity'          : ((weight / 16) * token_list[i] / 1.5),
-              'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i] / 1.5 + ')'
-            };
-
-         }//end if
+          token_bgr_css =
+          {
+            'position'         : 'absolute',
+            'display'          : 'block',
+            'z-index'           : '0',
+            'left'             : $('#ec-p' + i).position().left + 'px',
+            'top'              :  $('#ec-p' + i).position().top + 'px',
+            'height'           : $('#ec-p' + i).height() + 'px',
+            'padding'          : '1px 3px 1px 3px',
+            'opacity'          : ((weight / 16) * token_list[i]/2.5),
+            'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/2.5 + ')'
+          };         
+        }//end if
 
         if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
           $('#ec-bgr' + i).removeClass("FE");
@@ -946,7 +970,7 @@ function ec_tag_select(form_id){
         }
       }
     ec_tag_token_list[ec_tag_token_list.length + 100] = tag_name;
-      $(".user-data-term" + (form_id)).show();
+	      $(".user-data-term" + (form_id)).show();
     }
   }
 
@@ -1043,3 +1067,4 @@ function ec_max_comment_token_count(){
   }
   return ec_max(comment_list);
 }
+})(jQuery);

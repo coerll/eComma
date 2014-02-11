@@ -9,17 +9,17 @@
 
 ?>
 
-<div class="panel-display panel-ecomma-45-10-45-stacked clear-block" <?php if (!empty($css_id)): print "id=\"$css_id\""; endif; ?>>
+<div class="panel-display panel-ecomma-45-10-45-stacked clear-block">
   <div class="panel-panel line">
     <div class="panel-panel unit panel-header lastUnit">
-      <?php print $content['header']; ?>
+      <?php print $content['header'];  ?>
     </div>
   </div>
 
   <div class="panel-panel line">
     <div class="panel-panel unit panel-col-fourtyfive firstUnit">
       <div class="inside">
-        <?php print $content['left']; ?>
+        <?php print $content['left'];?>
       </div>
     </div>
 

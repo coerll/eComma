@@ -1,11 +1,8 @@
 MODULE DEPENDENCIES
 
 - comment
-- comment_delete
 - community_tags
-- content
 - jquery_update
-- jquery_ui
 - libraries
 - page_manager
 - panels
@@ -13,7 +10,6 @@ MODULE DEPENDENCIES
 - taxonomy
 - text
 - views
-- views_bonus_export
 
 
 INSTALLATION OF ECOMMA MODULE

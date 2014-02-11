@@ -2,11 +2,8 @@ name = eComma
 description = This module enables annotation features for CCK textarea fields and provides views and node panel template.
 package = Other
 dependencies[] = comment
-dependencies[] = comment_delete
 dependencies[] = community_tags
-dependencies[] = content
 dependencies[] = jquery_update
-dependencies[] = jquery_ui
 dependencies[] = libraries
 dependencies[] = page_manager
 dependencies[] = panels
@@ -14,6 +11,16 @@ dependencies[] = tagadelic
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = views
-dependencies[] = views_bonus_export
 
-core = 6.x
+
+files[] = includes/ecomma.views_default.inc
+files[] = includes/ecomma.views.inc
+files[] = includes/plugin/layouts/ecomma-45-10-45.tpl.php
+files[] = includes/views/ecomma_comments_export.view
+files[] = includes/views/ecomma_user_data.view
+files[] = includes/views/ecomma.view
+files[] = templates/comment.tpl.php
+files[] = templates/node-ecomma.tpl.php
+files[] = templates/views-view--ecomma_user_data--page-1.tpl.php
+
+core = 7.x

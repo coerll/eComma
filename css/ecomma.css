@@ -32,6 +32,10 @@ div.ecomma_line {
   display: inline;
 }
 
+.ecomma_line:nth-last-child(4){
+  display: none !important;
+}
+
 .ec-comment-info {
   background: #fff;
   padding: 0px 15px 10px;
@@ -135,7 +139,7 @@ div.ecomma_line {
   margin-bottom: 6px;
 }
 
-.pane-ecomma-1 {
+#pane-ecomma-1 {
   display: none;
   padding: 1em 1.4em;
 }
@@ -169,7 +173,7 @@ div.ecomma_line {
 }
 
 .front .word_cloud h1,
-.word_cloud h1 {
+.word_cloud h1{
   font-size: 12px;
 }
 
@@ -195,54 +199,54 @@ div.ecomma_line {
 
 .front .word_cloud h6,
 .word_cloud h6,
-.front .comment_cloud h7,
-.comment_cloud h7,
-.front .comment_cloud h8,
-.comment_cloud h8,
-.front .comment_cloud h9,
-.comment_cloud h9,
-.front .comment_cloud h10,
-.comment_cloud h10,
-.front .comment_cloud h11,
-.comment_cloud h11,
-.front .comment_cloud h12,
-.comment_cloud h12,
-.front .comment_cloud h13,
-.comment_cloud h13,
-.front .comment_cloud h14,
-.comment_cloud h14,
-.front .comment_cloud h15,
-.comment_cloud h15,
-.front .comment_cloud h16,
-.comment_cloud h16,
-.front .comment_cloud h17,
-.comment_cloud h17,
-.front .comment_cloud h18,
-.comment_cloud h18,
-.front .comment_cloud h19,
-.comment_cloud h19,
-.front .comment_cloud h20,
-.comment_cloud h20,
-.front .comment_cloud h21,
-.comment_cloud h21,
-.front .comment_cloud h22,
-.comment_cloud h22,
-.front .comment_cloud h23,
-.comment_cloud h23,
-.front .comment_cloud h24,
-.comment_cloud h24,
-.front .comment_cloud h25,
-.comment_cloud h25,
-.front .comment_cloud h26,
-.comment_cloud h26,
-.front .comment_cloud h27,
-.comment_cloud h27,
-.front .comment_cloud h28,
-.comment_cloud h28,
-.front .comment_cloud h29,
-.comment_cloud h29,
-.front .comment_cloud h30,
-.comment_cloud h30 {
+.front .word_cloud h7,
+.word_cloud h7,
+.front .word_cloud h8,
+.word_cloud h8,
+.front .word_cloud h9,
+.word_cloud h9,
+.front .word_cloud h10,
+.word_cloud h10,
+.front .word_cloud h11,
+.word_cloud h11,
+.front .word_cloud h12,
+.word_cloud h12,
+.front .word_cloud h13,
+.word_cloud h13,
+.front .word_cloud h14,
+.word_cloud h14,
+.front .word_cloud h15,
+.word_cloud h15,
+.front .word_cloud h16,
+.word_cloud h16,
+.front .word_cloud h17,
+.word_cloud h17,
+.front .word_cloud h18,
+.word_cloud h18,
+.front .word_cloud h19,
+.word_cloud h19,
+.front .word_cloud h20,
+.word_cloud h20,
+.front .word_cloud h21,
+.word_cloud h21,
+.front .word_cloud h22,
+.word_cloud h22,
+.front .word_cloud h23,
+.word_cloud h23,
+.front .word_cloud h24,
+.word_cloud h24,
+.front .word_cloud h25,
+.word_cloud h25,
+.front .word_cloud h26,
+.word_cloud h26,
+.front .word_cloud h27,
+.word_cloud h27,
+.front .word_cloud h28,
+.word_cloud h28,
+.front .word_cloud h29,
+.word_cloud h29,
+.front .word_cloud h30,
+.word_cloud h30 {
   font-size: 42px;
 }
 
@@ -1354,6 +1358,11 @@ div.comment .submitted a {
   font-size: 13px;
 }
 
+div.comment .permalink,
+div.comment .submitted .permalink{
+  display: none;
+}
+
 div.ec-comment-range {
   background-color: #e0edf6;
   padding: 4px 8px;
@@ -1513,7 +1522,7 @@ span.punctuation {
 }
 
 .line_number {
-  padding: 0px 3px 0px 5px;
+  padding: 0px 0px 8px;
   margin-right: 12px;
   border-right: 1px #666 solid;
   float: left;
