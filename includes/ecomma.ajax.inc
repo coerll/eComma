@@ -44,7 +44,7 @@ function ecomma_tag_range_function($tag, $nid, $beg, $end) {
 
   if ($tid_existing == '') {
     $query = 'SELECT MAX(t.tid) from {taxonomy_term_data} t';
-    $tid = db_query($query)->fetchField();
+    $tid = db_query($query)->fetchField() + 1;
   }
   else {
     $tid = $tid_existing;
