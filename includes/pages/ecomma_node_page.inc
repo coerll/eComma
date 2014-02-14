@@ -3,6 +3,7 @@
  * @file
  * This file provides the panel page for the ecomma node_view
  */
+ 
 $handler = new stdClass();
 $handler->disabled = FALSE;
 $handler->api_version = 1;
