@@ -19,7 +19,7 @@ var ec_stanza_end = '';
 var comment_list = Array();
 
   Drupal.behaviors.ecommaBehavior = {
-  
+
   attach: function(context, settings) {
 
     var ec_comment_id = 0;
@@ -288,10 +288,10 @@ var comment_list = Array();
             }else{
               someObj.attr("class","tagadelic levelundefined");
             }
-            
+
             someObj.unbind(myDown).bind(myDown, function(e){
               var tid = someObj.attr('id').replace(/ec-t/g,"");
-              
+
               if($('.ec-hi', context).length > 0){
                 someObj.removeClass(someObj.text());
               }else{
@@ -626,18 +626,7 @@ var comment_list = Array();
         }
       }
     });
-    
-    /*if($('#pane-community-tags-0', context).attr('class')){
-      if($('#pane-community-tags-0', context).attr('class').match(/ui-tabs-hide/)){
-        $('.pane-ecomma-ecomma-tag-details', context).css('display','none');
-      }else{
-        if($('.ec-hi', context).length > 0){
-          $(.pane-ecomma-ecomma-tag-details', context).css('display','block');
-        }
-      }
-    }*/
-    
-    
+
 
    var url_current = window.location.href;
     var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
@@ -651,12 +640,11 @@ var comment_list = Array();
         }
       }
     }
-
   }
 };
 
 
-function ec_max(a){
+function ec_max(a) {
   var b = 0;
   var c = 0;
   while(c < a.length)
@@ -866,7 +854,6 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
       }
 
      if ((i in ec_tag_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
-
        if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
           weight = Math.min(7, Math.ceil(token_list[i] * 30 / max_count));
 
@@ -906,7 +893,7 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
 
         $('#ec-bgr' + i).parent().children('.line_number').css('height',$('#ec-bgr' + i).parent().height() + 'px');
 
-      }    //end if
+      } //end if
 
       else if ((i in ec_tag_list) && tag_name == "hover_green"){
 
@@ -915,11 +902,10 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
         $('#ec-p' + i).css('font-size',$('#ec-p' + i).css('font-size'));
         $('#ec-p' + i).css('margin',$('#ec-p' + i).css('margin'));
         $('#ec-p' + i).css('padding',$('#ec-p' + i).css('padding'));
-      }//end else if
+      } //end else if
 
       else if(ec_tag_list[i] == "empty_"  || token_list[i] == "0"  || tag_name == "wipe" && tag_name != "hover_green")
       {
-
           token_css =
           {
             'font-size'        : null,

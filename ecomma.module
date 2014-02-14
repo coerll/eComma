@@ -354,7 +354,7 @@ function ecomma_node_delete($node) {
   }
 
   if ($ecomma_enabled) {
-    $num_deleted = db_delete('ecomma_range')
+    db_delete('ecomma_range')
       ->condition('nid', $node->nid)
       ->execute();
   }
@@ -400,7 +400,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['author']['_author']['#access'] = FALSE;
       $form['actions']['preview'] = NULL;
       $form['actions']['submit']['#value'] = "Add";
-      $form['comment_body']['und'][0]['#rows'] = 3;
+      $form['comment_body'][LANGUAGE_NONE][0]['#rows'] = 3;
       $form['comment_body']['#after_build'][] = 'ecomma_customize_comment_form';
       $form['#submit'][] = 'ecomma_comment_submit';
       break;
@@ -566,11 +566,11 @@ function ecomma_comment_delete($form, &$form_state) {
 
   if ($form_state['#values']['children'][0] && $form['#parameters'][1]['post']['replies'] == 0) {
     foreach ($form['#parameters'][1]['post']['children'] as $child) {
-      $num_deleted = db_delete('ecomma_range')
+      db_delete('ecomma_range')
         ->condition('cid', $child)
         ->condition('nid', $nid)
         ->execute();
-      $num_deleted2 = db_delete('ecomma_range')
+      db_delete('ecomma_range')
         ->condition('cid', $cid)
         ->condition('nid', $nid)
         ->condition('uid', $uid)

@@ -3,7 +3,6 @@
  * @file
  * Renders the output of the list for of annotations for a specific user.
  */
-  //print_r($view);exit();
   global $base_url;
 
   $uid = arg(2);
@@ -20,7 +19,7 @@
     $nid = $user_data->ecomma_range_nid;
     $cid = $user_data->ecomma_range_cid;
     $tid = $user_data->ecomma_range_tid;
-    //$comment_subject = $user_data['comment'];
+    $comment_subject = $user_data->comment_ecomma_range_subject;
     $date = date('d M Y gA', $created);
 
     if ($cid == 0):
@@ -34,7 +33,7 @@
       $tag_counter++;
     else:
       $content .= '<tr class="ec-note-active"><td class="ec-note-date">';
-      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . 'subject'. '</a></td><td>' . $date . '</td><td>(comment)</td>';
+      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . $comment_subject . '</a></td><td>' . $date . '</td><td>(comment)</td>';
       $content .= '</tr>';
       $comment_counter++;
     endif;

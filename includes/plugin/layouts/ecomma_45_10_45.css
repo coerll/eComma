@@ -177,7 +177,7 @@ li.annotation_count a p {
   width: 320px;
 }
 
-.page-manager-ajax-pad #tabs-icons{
+.page-manager-ajax-pad #tabs-icons {
   width: inherit;
 }
 
@@ -257,8 +257,8 @@ li.annotation_count a p {
 
 #footer {
   float: left !important;
-  width:100%;
-  text-align:inherit !important;
+  width: 100%;
+  text-align: inherit !important;
 }
 
 #footer a {
