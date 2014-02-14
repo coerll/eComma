@@ -203,8 +203,7 @@ function ecomma_preprocess_node(&$vars) {
  * Implements hook_ecomma_formatter_myformatter().
  */
 function theme_ecomma_formatter_myformatter($node_vars) {
-  $node = $node_vars['node'];
-  $field = $node_vars['node_field']['und'];
+  $field = $node_vars['node_field'][LANGUAGE_NONE];
   $whole_text = "";
 
   // Merging cck field values to whole text.
@@ -356,7 +355,7 @@ function ecomma_node_delete($node) {
 
   if ($ecomma_enabled) {
     $num_deleted = db_delete('ecomma_range')
-      ->condition('nid', $nid)
+      ->condition('nid', $node->nid)
       ->execute();
   }
 }
@@ -630,7 +629,7 @@ function ecomma_settings_field_submit($form, &$form_state) {
   $type_name = $form_state['values']['instance']['bundle'];
   $checkbox_value = $form_state['values']['ecomma'] ? 1 : 0;
   if (db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount()) {
-    $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
+    $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $type_name))->fetchField();
   }
   else {
     $ecomma_enabled = 0;
@@ -871,7 +870,7 @@ function ecomma_comment_cloud($node) {
       $output = '';
 
       foreach ($words_count_array as $key => $word_count) {
-        $output .= "<h$word_count>$key</h$word_count><h$word_weight></h$word_count>";
+        $output .= "<h$word_count>$key</h$word_count>";
       }
     }
   }

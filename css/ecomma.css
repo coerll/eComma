@@ -32,7 +32,7 @@ div.ecomma_line {
   display: inline;
 }
 
-.ecomma_line:nth-last-child(4){
+.ecomma_line:nth-last-child(4) {
   display: none !important;
 }
 
@@ -173,7 +173,7 @@ div.ecomma_line {
 }
 
 .front .word_cloud h1,
-.word_cloud h1{
+.word_cloud h1 {
   font-size: 12px;
 }
 
@@ -1359,7 +1359,7 @@ div.comment .submitted a {
 }
 
 div.comment .permalink,
-div.comment .submitted .permalink{
+div.comment .submitted .permalink {
   display: none;
 }
 

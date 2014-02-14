@@ -101,7 +101,7 @@ function ecomma_tag_range_delete_function($tag, $nid) {
   $tid_existing = db_query("SELECT tid FROM {taxonomy_term_data} WHERE name=:tag", array(":tag" => $tag))->fetchField();
   $record_uid = db_query("SELECT uid FROM {ecomma_range} WHERE  tid = :tid_existing AND nid = :nid", array(":tid_existing" => $tid_existing, ":nid" => $nid))->fetchField();
   if ($uid == $record_uid && isset($_POST['ecomma_token']) && drupal_valid_token($_POST['ecomma_token'])) {
-    $num_deleted = db_delete('ecomma_range')
+    db_delete('ecomma_range')
       ->condition('uid', $uid)
       ->condition('tid', $tid_existing)
       ->condition('nid', $nid)

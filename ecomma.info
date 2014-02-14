@@ -12,15 +12,4 @@ dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = views
 
-
-files[] = includes/ecomma.views_default.inc
-files[] = includes/ecomma.views.inc
-files[] = includes/plugin/layouts/ecomma-45-10-45.tpl.php
-files[] = includes/views/ecomma_comments_export.view
-files[] = includes/views/ecomma_user_data.view
-files[] = includes/views/ecomma.view
-files[] = templates/comment.tpl.php
-files[] = templates/node-ecomma.tpl.php
-files[] = templates/views-view--ecomma_user_data--page-1.tpl.php
-
 core = 7.x
