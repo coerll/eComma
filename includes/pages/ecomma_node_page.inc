@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * This file provides the panel page for the ecomma node_view
+ * This file provides the panel page for the ecomma node_view page
  */
- 
+
 $handler = new stdClass();
 $handler->disabled = FALSE;
 $handler->api_version = 1;
