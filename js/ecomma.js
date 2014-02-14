@@ -627,11 +627,10 @@ var comment_list = Array();
       }
     });
 
-
    var url_current = window.location.href;
     var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
     var url_comm_obj = url_current.match(/([^#]*)#([^-]*)(-\d\d)?/);
-    if(typeof url_tags_obj != null ){
+    if(typeof url_tags_obj != null){
       if((url_tags_obj[2] != '' || url_comm_obj[2] != '') && (url_tags_obj[2] != null && url_comm_obj[2] != null)){
         if(url_tags_obj[2] == "tags"){
           $("#tabs-icons", context).tabs("select", 1);
@@ -642,7 +641,6 @@ var comment_list = Array();
     }
   }
 };
-
 
 function ec_max(a) {
   var b = 0;
@@ -827,7 +825,7 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
   {
       var weight = 0;
       var token_css;
-      
+
       if($('.comment_token').length > 0){
         if($('#ec-bgr' + i).attr('class').match(/comment_token/)){
           remove_token_css =
@@ -875,9 +873,9 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'top'              :  $('#ec-p' + i).position().top + 'px',
             'height'           : $('#ec-p' + i).height() + 'px',
             'padding'          : '1px 3px 1px 3px',
-            'opacity'          : ((weight / 16) * token_list[i]/2.5),
-            'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i]/2.5 + ')'
-          };         
+            'opacity'          : ((weight / 16) * token_list[i] / 2.5),
+            'filter'           :'alpha(opacity =' + (weight / 16) * token_list[i] / 2.5 + ')'
+          };
         }//end if
 
         if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
@@ -956,7 +954,7 @@ function ec_tag_select(form_id){
         }
       }
     ec_tag_token_list[ec_tag_token_list.length + 100] = tag_name;
-	      $(".user-data-term" + (form_id)).show();
+      $(".user-data-term" + (form_id)).show();
     }
   }
 

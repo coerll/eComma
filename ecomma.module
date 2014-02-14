@@ -588,7 +588,7 @@ function ecomma_comment_delete($form, &$form_state) {
     ':nid' => $nid,
     ':uid' => $uid))
     ->fetchField();
-    $num_deleted = db_delete('ecomma_range')
+    db_delete('ecomma_range')
       ->condition('cid', $cid)
       ->condition('nid', $nid)
       ->condition('uid', $uid)

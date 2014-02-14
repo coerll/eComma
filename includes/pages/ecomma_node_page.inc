@@ -1,6 +1,6 @@
 <?php
 $handler = new stdClass();
-$handler->disabled = FALSE; /* Edit this to true to make a default handler disabled initially */
+$handler->disabled = FALSE;
 $handler->api_version = 1;
 $handler->name = 'node_view_panel_context';
 $handler->task = 'node_view';
