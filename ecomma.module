@@ -612,7 +612,7 @@ function ecomma_comment_delete($form, &$form_state) {
     }
   }
   elseif (!$form_state['#values']['children'][0]) {
-    $num_deleted = db_delete('ecomma_range')
+    db_delete('ecomma_range')
       ->condition('cid', $cid)
       ->condition('nid', $nid)
       ->condition('uid', $uid)

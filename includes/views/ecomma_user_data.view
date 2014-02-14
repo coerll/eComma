@@ -1,5 +1,5 @@
 <?php 
-$view = new view;
+$view = new view();
 $view->name = 'ecomma_user_data';
 $view->description = 'ecomma_user_data';
 $view->tag = 'ecomma_user_data';
@@ -11,6 +11,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Defaults */
 $handler = $view->new_display('default', 'Defaults', 'default');
+$handler->display->display_options['use_more_always'] = FALSE;
 $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -24,185 +25,73 @@ $handler->display->display_options['relationships']['cid']['table'] = 'ecomma_ra
 $handler->display->display_options['relationships']['cid']['field'] = 'cid';
 $handler->display->display_options['relationships']['cid']['ui_name'] = 'comment data';
 $handler->display->display_options['relationships']['cid']['label'] = 'comment data';
-$handler->display->display_options['relationships']['cid']['required'] = 0;
 /* Field: Global: View result counter */
 $handler->display->display_options['fields']['counter']['id'] = 'counter';
 $handler->display->display_options['fields']['counter']['table'] = 'views';
 $handler->display->display_options['fields']['counter']['field'] = 'counter';
 $handler->display->display_options['fields']['counter']['label'] = '';
-$handler->display->display_options['fields']['counter']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['counter']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['counter']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['counter']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['counter']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['counter']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['counter']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['counter']['alter']['html'] = 0;
-$handler->display->display_options['fields']['counter']['hide_empty'] = 0;
-$handler->display->display_options['fields']['counter']['empty_zero'] = 0;
-$handler->display->display_options['fields']['counter']['hide_alter_empty'] = 1;
 $handler->display->display_options['fields']['counter']['counter_start'] = '1';
 /* Field: eComma: rid */
 $handler->display->display_options['fields']['rid']['id'] = 'rid';
 $handler->display->display_options['fields']['rid']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['rid']['field'] = 'rid';
 $handler->display->display_options['fields']['rid']['label'] = '';
-$handler->display->display_options['fields']['rid']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['rid']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['rid']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['rid']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['rid']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['rid']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['rid']['alter']['html'] = 0;
-$handler->display->display_options['fields']['rid']['hide_empty'] = 0;
-$handler->display->display_options['fields']['rid']['empty_zero'] = 0;
 /* Field: eComma: nid */
 $handler->display->display_options['fields']['nid']['id'] = 'nid';
 $handler->display->display_options['fields']['nid']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['nid']['field'] = 'nid';
 $handler->display->display_options['fields']['nid']['label'] = '';
-$handler->display->display_options['fields']['nid']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['nid']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['nid']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['nid']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['nid']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['nid']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['nid']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['nid']['alter']['html'] = 0;
-$handler->display->display_options['fields']['nid']['hide_empty'] = 0;
-$handler->display->display_options['fields']['nid']['empty_zero'] = 0;
-$handler->display->display_options['fields']['nid']['hide_alter_empty'] = 1;
-$handler->display->display_options['fields']['nid']['format_plural'] = 0;
 /* Field: eComma: uid */
 $handler->display->display_options['fields']['uid']['id'] = 'uid';
 $handler->display->display_options['fields']['uid']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['uid']['field'] = 'uid';
 $handler->display->display_options['fields']['uid']['label'] = '';
-$handler->display->display_options['fields']['uid']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['uid']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['uid']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['uid']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['uid']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['uid']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['uid']['alter']['html'] = 0;
-$handler->display->display_options['fields']['uid']['hide_empty'] = 0;
-$handler->display->display_options['fields']['uid']['empty_zero'] = 0;
 /* Field: eComma: tid */
 $handler->display->display_options['fields']['tid']['id'] = 'tid';
 $handler->display->display_options['fields']['tid']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['tid']['field'] = 'tid';
 $handler->display->display_options['fields']['tid']['label'] = '';
-$handler->display->display_options['fields']['tid']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['tid']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['tid']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['tid']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['tid']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['tid']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['tid']['alter']['html'] = 0;
-$handler->display->display_options['fields']['tid']['hide_empty'] = 0;
-$handler->display->display_options['fields']['tid']['empty_zero'] = 0;
 /* Field: eComma: cid */
 $handler->display->display_options['fields']['cid']['id'] = 'cid';
 $handler->display->display_options['fields']['cid']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['cid']['field'] = 'cid';
 $handler->display->display_options['fields']['cid']['label'] = '';
-$handler->display->display_options['fields']['cid']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['cid']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['cid']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['cid']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['cid']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['cid']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['cid']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['cid']['alter']['html'] = 0;
-$handler->display->display_options['fields']['cid']['hide_empty'] = 0;
-$handler->display->display_options['fields']['cid']['empty_zero'] = 0;
-$handler->display->display_options['fields']['cid']['hide_alter_empty'] = 1;
-$handler->display->display_options['fields']['cid']['format_plural'] = 0;
 /* Field: eComma: beg */
 $handler->display->display_options['fields']['beg']['id'] = 'beg';
 $handler->display->display_options['fields']['beg']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['beg']['field'] = 'beg';
 $handler->display->display_options['fields']['beg']['label'] = '';
-$handler->display->display_options['fields']['beg']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['beg']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['beg']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['beg']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['beg']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['beg']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['beg']['alter']['html'] = 0;
-$handler->display->display_options['fields']['beg']['hide_empty'] = 0;
-$handler->display->display_options['fields']['beg']['empty_zero'] = 0;
 /* Field: eComma: end */
 $handler->display->display_options['fields']['end']['id'] = 'end';
 $handler->display->display_options['fields']['end']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['end']['field'] = 'end';
 $handler->display->display_options['fields']['end']['label'] = '';
-$handler->display->display_options['fields']['end']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['end']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['end']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['end']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['end']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['end']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['end']['alter']['html'] = 0;
-$handler->display->display_options['fields']['end']['hide_empty'] = 0;
-$handler->display->display_options['fields']['end']['empty_zero'] = 0;
 /* Field: eComma: created */
 $handler->display->display_options['fields']['created']['id'] = 'created';
 $handler->display->display_options['fields']['created']['table'] = 'ecomma_range';
 $handler->display->display_options['fields']['created']['field'] = 'created';
 $handler->display->display_options['fields']['created']['label'] = '';
-$handler->display->display_options['fields']['created']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['created']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['created']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['created']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['created']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['created']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['created']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['created']['alter']['html'] = 0;
-$handler->display->display_options['fields']['created']['hide_empty'] = 0;
-$handler->display->display_options['fields']['created']['empty_zero'] = 0;
-$handler->display->display_options['fields']['created']['hide_alter_empty'] = 1;
 /* Field: Comment: Title */
 $handler->display->display_options['fields']['subject']['id'] = 'subject';
 $handler->display->display_options['fields']['subject']['table'] = 'comment';
 $handler->display->display_options['fields']['subject']['field'] = 'subject';
 $handler->display->display_options['fields']['subject']['relationship'] = 'cid';
 $handler->display->display_options['fields']['subject']['label'] = '';
-$handler->display->display_options['fields']['subject']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['external'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['replace_spaces'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['trim_whitespace'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['nl2br'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['word_boundary'] = 1;
-$handler->display->display_options['fields']['subject']['alter']['ellipsis'] = 1;
-$handler->display->display_options['fields']['subject']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['subject']['alter']['html'] = 0;
-$handler->display->display_options['fields']['subject']['element_label_colon'] = 1;
-$handler->display->display_options['fields']['subject']['element_default_classes'] = 1;
-$handler->display->display_options['fields']['subject']['hide_empty'] = 0;
-$handler->display->display_options['fields']['subject']['empty_zero'] = 0;
-$handler->display->display_options['fields']['subject']['hide_alter_empty'] = 1;
-$handler->display->display_options['fields']['subject']['link_to_comment'] = 0;
-/* Argument: eComma: nid */
+$handler->display->display_options['fields']['subject']['element_label_colon'] = FALSE;
+/* Contextual filter: eComma: nid */
 $handler->display->display_options['arguments']['nid']['id'] = 'nid';
 $handler->display->display_options['arguments']['nid']['table'] = 'ecomma_range';
 $handler->display->display_options['arguments']['nid']['field'] = 'nid';
-$handler->display->display_options['arguments']['nid']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['nid']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['nid']['break_phrase'] = 0;
-$handler->display->display_options['arguments']['nid']['not'] = 0;
-/* Argument: eComma: uid */
+$handler->display->display_options['arguments']['nid']['summary']['format'] = 'default_summary';
+/* Contextual filter: eComma: uid */
 $handler->display->display_options['arguments']['uid']['id'] = 'uid';
 $handler->display->display_options['arguments']['uid']['table'] = 'ecomma_range';
 $handler->display->display_options['arguments']['uid']['field'] = 'uid';
 $handler->display->display_options['arguments']['uid']['default_action'] = 'empty';
-$handler->display->display_options['arguments']['uid']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['uid']['break_phrase'] = 1;
-$handler->display->display_options['arguments']['uid']['not'] = 0;
+$handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['uid']['break_phrase'] = TRUE;
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page_1');
