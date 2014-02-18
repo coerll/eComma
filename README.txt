@@ -34,7 +34,7 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 	-Rename the sub-directory into "jquery.ui":
      /sites/all/libraries/jquery.ui/
 
-(Go to content management > Content types for step 2-4)
+(Go to content management > Content types for step 3-5)
 3.  Add content type: Add custom content type.
 4.  Edit new content type > Comment settings > Preview comment:Optional
 5.  Edit new content type > Comment settings > Display below post or comments
