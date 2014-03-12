@@ -71,7 +71,7 @@ function ecomma_tag_range_function($tag, $nid, $beg, $end) {
         'end' => $end,
         'created' => REQUEST_TIME,
         ))->execute();
-  }  
+  }
 }
 
 

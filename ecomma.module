@@ -347,12 +347,12 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
   if ($user->uid == 0) {
     $user_role = "anonymous";
   }
-    
-  $form['#attached']['js'][] =  array(
-    'data' =>  drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
+
+  $form['#attached']['js'][] = array(
+    'data' => drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
     'type' => 'file',
   );
-        
+
   $form['#attached']['js'][] = array(
     'data' => array(
       'ecomma' => array(
@@ -360,9 +360,9 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
         'user_role' => $user_role,
         'ecommaToken' => drupal_get_token(),
       )),
-    'type' => 'setting'
+    'type' => 'setting',
   );
-      
+
   $form['#attached']['css'] = array(
     drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
       'type' => 'file',
@@ -437,7 +437,6 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       break;
 
     case 'community_tags_form':
-      global $user;
       $form['tags']['#title'] = 'Delete your tags';
       if ($user->uid == 0) {
         $form['new']['#type'] = 'markup';
@@ -489,7 +488,6 @@ function ecomma_comment_submit($form, &$form_state) {
   $beg = $_POST['comment-range-beg'];
   $end = $_POST['comment-range-end'];
   $timestamp = strtotime('now');
-
 
   if (isset($cid) && arg(0) != "comment") {
     if (drupal_valid_token($form['#attached']['js'][1]['data']['ecomma']['ecommaToken'])) {
