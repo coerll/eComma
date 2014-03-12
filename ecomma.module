@@ -6,58 +6,6 @@
  */
 
 /**
- * Implements hook_preprocess_page().
- */
-function ecomma_preprocess_page(&$vars) {
-  if (isset($vars['node'])) {
-    global $base_url;
-    $content_type_name = $vars['node']->type;
-    $content_type_data = field_info_instances("node", $content_type_name);
-    $ecomma_enabled = 0;
-
-    $user_role = "user";
-    if ($vars['node']->uid == 0) {
-      $user_role = "anonymous";
-    }
-
-    module_load_include('inc', 'ecomma', 'ecomma');
-
-    if (isset($content_type_data)) {
-      foreach ($content_type_data as $field_name => $field_data) {
-        if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-          if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
-            $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
-          }
-        }
-      }
-    }
-
-    if (isset($vars['node']->type) && $ecomma_enabled) {
-      drupal_add_css(drupal_get_path('module', 'ecomma') . '/css/ecomma.css');
-      if (libraries_get_path('jquery.ui')) {
-        drupal_add_css(libraries_get_path('jquery.ui') . '/themes/base/jquery-ui.css');
-      }
-      $vars['styles'] = drupal_get_css();
-      drupal_add_js(drupal_get_path('module', 'ecomma') . '/js/ecomma.js');
-      drupal_add_library('system', 'ui.dialog');
-      drupal_add_library('system', 'ui.dialog');
-      drupal_add_library('system', 'ui.tabs');
-      drupal_add_library('system', 'ui.draggable');
-      drupal_add_library('system', 'ui.droppable');
-      drupal_add_library('system', 'ui.sortable');
-      drupal_add_js(array(
-        'ecomma' => array(
-          'base_url_var' => $base_url,
-          'user_role' => $user_role,
-          'ecommaToken' => drupal_get_token(),
-        )),
-        'setting'
-      );
-    }
-  }
-}
-
-/**
  * Implements hook_ctools_plugin_directory().
  */
 function ecomma_ctools_plugin_directory($module, $plugin) {
@@ -392,6 +340,39 @@ function ecomma_node_prepare($node) {
  * Implements hook_form_alter().
  */
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
+  global $base_url;
+  global $user;
+
+  $user_role = "user";
+  if ($user->uid == 0) {
+    $user_role = "anonymous";
+  }
+    
+  $form['#attached']['js'][] =  array(
+    'data' =>  drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
+    'type' => 'file',
+  );
+        
+  $form['#attached']['js'][] = array(
+    'data' => array(
+      'ecomma' => array(
+        'base_url_var' => $base_url,
+        'user_role' => $user_role,
+        'ecommaToken' => drupal_get_token(),
+      )),
+    'type' => 'setting'
+  );
+      
+  $form['#attached']['css'] = array(
+    drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
+      'type' => 'file',
+    ),
+  );
+  $form['#attached']['library'][] = array('system', 'ui.dialog');
+  $form['#attached']['library'][] = array('system', 'ui.tabs');
+  $form['#attached']['library'][] = array('system', 'ui.draggable');
+  $form['#attached']['library'][] = array('system', 'ui.droppable');
+  $form['#attached']['library'][] = array('system', 'ui.sortable');
 
   switch ($form_id) {
     case 'comment_node_ecomma_form':
@@ -509,19 +490,22 @@ function ecomma_comment_submit($form, &$form_state) {
   $end = $_POST['comment-range-end'];
   $timestamp = strtotime('now');
 
+
   if (isset($cid) && arg(0) != "comment") {
-    db_insert('ecomma_range')
-      ->fields(array(
-        'rid' => NULL,
-        'nid' => $nid,
-        'vid' => $vid,
-        'uid' => $uid,
-        'tid' => $tid,
-        'cid' => $cid,
-        'beg' => $beg,
-        'end' => $end,
-        'created' => $timestamp,
-      ))->execute();
+    if (drupal_valid_token($form['#attached']['js'][1]['data']['ecomma']['ecommaToken'])) {
+      db_insert('ecomma_range')
+        ->fields(array(
+          'rid' => NULL,
+          'nid' => $nid,
+          'vid' => $vid,
+          'uid' => $uid,
+          'tid' => $tid,
+          'cid' => $cid,
+          'beg' => $beg,
+          'end' => $end,
+          'created' => $timestamp,
+        ))->execute();
+    }
   }
   else {
     $pid = db_select('comment', 'c')

@@ -128,6 +128,7 @@ li.annotation_count a p {
 
 #pane-community-tags-0 a {
   color: #ac1a2f;
+  padding: 0px 3px;
 }
 
 #tabs-icons .ui-state-active.tags a,

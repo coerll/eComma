@@ -1237,6 +1237,7 @@ ol.ec-item-list li a,
 .ec-tag a {
   font-weight: bold;
   color: #ac1a2f;
+  text-decoration: none;
 }
 
 ol.ec-tag-list li a.ec-user-name,

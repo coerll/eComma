@@ -4,23 +4,6 @@
  * Install file for ecomma module.
  */
 
-
-/**
- * Implements hook_enable().
- */
-function ecomma_enable() {
-  drupal_load('module', 'content');
-  content_notify('enable', 'ecomma');
-}
-
-/**
- * Implements hook_disable().
- */
-function ecomma_disable() {
-  drupal_load('module', 'content');
-  content_notify('disable', 'ecomma');
-}
-
 /**
  * Implements hook_schema().
  */

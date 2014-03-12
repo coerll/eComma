@@ -50,7 +50,6 @@ function ecomma_tag_range_function($tag, $nid, $beg, $end) {
     $tid = $tid_existing;
   }
 
-  $timestamp = strtotime('now');
   $cid = 0;
 
   $vid = db_select('node', 'n')
@@ -59,18 +58,20 @@ function ecomma_tag_range_function($tag, $nid, $beg, $end) {
   ->execute()
   ->fetchField();
 
-  db_insert('ecomma_range')
-    ->fields(array(
-      'rid' => NULL,
-      'nid' => $nid,
-      'vid' => $vid,
-      'uid' => $uid,
-      'tid' => $tid,
-      'cid' => $cid,
-      'beg' => $beg,
-      'end' => $end,
-      'created' => $timestamp,
-    ))->execute();
+  if (isset($_POST['ecomma_token']) && drupal_valid_token($_POST['ecomma_token'])) {
+    db_insert('ecomma_range')
+      ->fields(array(
+        'rid' => NULL,
+        'nid' => $nid,
+        'vid' => $vid,
+        'uid' => $uid,
+        'tid' => $tid,
+        'cid' => $cid,
+        'beg' => $beg,
+        'end' => $end,
+        'created' => REQUEST_TIME,
+        ))->execute();
+  }  
 }
 
 
