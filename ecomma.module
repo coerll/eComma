@@ -864,7 +864,7 @@ function ecomma_comment_cloud($node) {
  * Implements hook_views_query_alter().
  */
 function ecomma_query_alter(&$query) {
-  if(arg(3) == 'nd' || arg(3) == 'dt')
+  if(arg(3) == 'nd' || arg(3) == 'dt'){
     if(isset($query->alterMetaData)){
       if ($query->alterMetaData['view']->name == 'ecomma_user_data') {
         if (arg(3) == 'nd') {
