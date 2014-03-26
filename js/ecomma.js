@@ -630,7 +630,7 @@ var comment_list = Array();
    var url_current = window.location.href;
     var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
     var url_comm_obj = url_current.match(/([^#]*)#([^-]*)(-\d\d)?/);
-    if(typeof url_tags_obj != null){
+    if(typeof url_tags_obj != null && url_tags_obj != null){
       if((url_tags_obj[2] != '' || url_comm_obj[2] != '') && (url_tags_obj[2] != null && url_comm_obj[2] != null)){
         if(url_tags_obj[2] == "tags"){
           $("#tabs-icons", context).tabs("select", 1);

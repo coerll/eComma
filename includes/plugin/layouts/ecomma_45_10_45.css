@@ -179,7 +179,7 @@ li.annotation_count a p {
 }
 
 .page-manager-ajax-pad #tabs-icons {
-  width: inherit;
+  width: 45% !important;
 }
 
 #tabs-icons .ui-widget-header {
