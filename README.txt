@@ -19,44 +19,32 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 1.  Site building > Modules: enable ecomma module and dependencies
 
 (Go to content management > Content types for step 2-4)
-2.  Add content type: Add custom content type.
-3.  Edit new content type > Comment settings > Preview comment:Optional
-4.  Edit new content type > Comment settings > Display below post or comments
-5.  Manage fields > Add a new text area field with unlimited values
-6.  Enable ecomma commentary features for that text area field in the settings.
-7.  Taxonomy: Add Vocabulary and enable it for the new content type.
-8.  Taxonomy: Check Settings > Tags checkbox
-9.  Site Configurations > Community tags: Enable new vocabulary
-10.  New content type  > Workflow settings > Community tagging form:Select Block
-(Go to content User Management > Permissions for step 10-13)
-11. Community_tags: Enable "tag content" for authenticated and anonymous users.
-(Enables unauthenticated users to see the tags, but not to tag.)
-12. Community_tags: Enable "edit own tags" for authenticated.
-13. Comment: Enable "access comments" for authenticated and anonymous users. 
-(Enables unauthenticated users to see the comments, but not to comment.)
-14. Comment_delete: Enable "delete own comments" for authenticated  users.
+2.  Structure > Taxonomy: Add Vocabulary.
+3.  Add content type: Add custom content type.
+4.  Edit new content type > Comment settings > Preview comment:Optional
+5.  Edit new content type > Comment settings > Display below post or comments
+6.  Manage fields > Add a new text area field with unlimited values
+7.  Enable ecomma commentary features for that text area field in the settings.
+8.  Manage fields > Add existing field > Term reference > Autocomplete term widget.
+9.  Select your Vocabulary from tag field settings.
+10. Configuration > Community tags: Enable community tagging for new vocabulary.
+11. Edit new content type  > Community tags settings > Select Block radio button.
 
-
+(Go to People > Permissions for step 12-14)
+12. Community_tags: Enable "tag content" for authenticated and anonymous users.
+    (Enables unauthenticated users to see the tags, but not to tag.)
+13. Community_tags: Enable "edit own tags" for authenticated.
+14. Comment: Enable “view comments" for anonymous and authenticated users. 
+    (Enables unauthenticated users to see the comments, but not to comment.)
 15. Site building > Pages > List:
 	-Enable node_view and click on edit. 
-	-Add variant, 
-	-Call it ecomma 
-	-Create variant and enalbe selection rules
 	-Selection rules > select "Node:type" and then check new content type
-	-Select miscellaneous layout and choose "eComma column 45/10/45" layout.
+	-Left column: Add content > Node > Field: your-text-field
+16. Create a node of the new node type. 
+17. Enter your text in the text field (not in the body).
+18. View the node and select text with mouse cursor to start annotating.
 
-	-Left column: Node > Field: your-text-field - Text > Node being viewed
-	-Right column:  Miscellaneous > Community tagging form
-	-Add content to Right:  Miscellaneous > eComma Tag details
-	-Add content to Right: Miscellaneous > eComma Word Cloud
-	-Add content to Right: Miscellaneous > eComma User Annotation Total
-	-Add content to Right: Node > Comment form > Node being viewed
-	-Add content to Right: Node > Node Comments
-	-Add content to Right: Miscellaneous > eComma Comment Cloud
-
-16. Create a node of the new node typ. Just enter your text in new text field.
-
-17. Current restrictions:
+Current restrictions:
 		* Does currently not work on IE browser.
 		* Once a group/class has started to tag or comment on a text the text 
 		  cannot be changed in any way or the annotations will be off.

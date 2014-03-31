@@ -15,18 +15,6 @@ function ecomma_ctools_plugin_directory($module, $plugin) {
 }
 
 /**
- * Implements hook_permission().
- */
-function ecomma_permission() {
-  return array(
-    'ecomma perm admin' => array(
-      'title' => t('eComma permission'),
-      'description' => t('Administer permissions for eComma permission'),
-    ),
-  );
-}
-
-/**
  * Implements hook_help().
  */
 function ecomma_help($path, $arg) {
@@ -342,38 +330,60 @@ function ecomma_node_prepare($node) {
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
+  
+  if (ctype_digit(arg(1))) {
+    $node = node_load(arg(1));
+    $content_type_name = $node->type;
+    $content_type_data = field_info_instances("node", $content_type_name);
 
-  $user_role = "user";
-  if ($user->uid == 0) {
-    $user_role = "anonymous";
+    $ecomma_enabled = 0;
+
+    foreach ($content_type_data as $field_name => $field_data) {
+      if($field_data['widget']['type']) {
+        if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
+          if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
+            $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
+          }
+        }
+      }
+    }
+ 
+
+    $user_role = "user";
+    if ($user->uid == 0) {
+      $user_role = "anonymous";
+    }
+
+    if ($ecomma_enabled) {
+
+      $form['#attached']['js'][] = array(
+        'data' => drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
+        'type' => 'file',
+      );
+
+      $form['#attached']['js'][] = array(
+        'data' => array(
+          'ecomma' => array(
+            'base_url_var' => $base_url,
+            'user_role' => $user_role,
+            'ecommaToken' => drupal_get_token(),
+          )),
+        'type' => 'setting',
+      );
+
+      $form['#attached']['css'] = array(
+        drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
+          'type' => 'file',
+       ),
+      );
+      $form['#attached']['library'][] = array('system', 'ui.dialog');
+      $form['#attached']['library'][] = array('system', 'ui.tabs');
+      $form['#attached']['library'][] = array('system', 'ui.draggable');
+      $form['#attached']['library'][] = array('system', 'ui.droppable');
+      $form['#attached']['library'][] = array('system', 'ui.sortable');
+    }
   }
-
-  $form['#attached']['js'][] = array(
-    'data' => drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
-    'type' => 'file',
-  );
-
-  $form['#attached']['js'][] = array(
-    'data' => array(
-      'ecomma' => array(
-        'base_url_var' => $base_url,
-        'user_role' => $user_role,
-        'ecommaToken' => drupal_get_token(),
-      )),
-    'type' => 'setting',
-  );
-
-  $form['#attached']['css'] = array(
-    drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
-      'type' => 'file',
-    ),
-  );
-  $form['#attached']['library'][] = array('system', 'ui.dialog');
-  $form['#attached']['library'][] = array('system', 'ui.tabs');
-  $form['#attached']['library'][] = array('system', 'ui.draggable');
-  $form['#attached']['library'][] = array('system', 'ui.droppable');
-  $form['#attached']['library'][] = array('system', 'ui.sortable');
-
+  
   switch ($form_id) {
     case 'comment_node_ecomma_form':
       // Call submit function to update ecomma_range with node comment info.
@@ -432,8 +442,8 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
           );
           // Update status of ecomma features for this text field.
         }
+        $form['#submit'][] = 'ecomma_settings_field_submit';
       }
-      $form['#submit'][] = 'ecomma_settings_field_submit';
       break;
 
     case 'community_tags_form':
@@ -685,6 +695,7 @@ function ecomma_block_view($delta = '') {
         $view = views_get_view($view_name);
         $view->set_arguments(array(arg(1), "all"));
         $view->execute_display('default');
+        $user_data_list = "";
 
         if ($view->result) {
           $user_data_list = '<ol class="ec-tag-list" id="ec-tag-list">';
@@ -727,6 +738,7 @@ function ecomma_block_view($delta = '') {
 
       case 'ecomma_user_annotation_total':
         global $base_url;
+        $user_data_table = "";
         $view_name = 'ecomma_user_data';
         $view = views_get_view($view_name);
         $view->set_arguments(array(arg(1), "all"));
@@ -773,6 +785,7 @@ function ecomma_word_cloud($node) {
   $content_type_name = $node->type;
   $content_type_data = field_info_instances("node", $content_type_name);
   $ecomma_enabled = 0;
+  $ecomma_field_name = "";
 
   if (arg(0) == "node") {
     foreach ($content_type_data as $field_name => $field_data) {
@@ -784,28 +797,31 @@ function ecomma_word_cloud($node) {
   }
 
   $whole_text = "";
+  $output = '';
 
   // Merging cck field values to whole text.
-  foreach ($node->$ecomma_field_name as $field_item) {
-    foreach ($field_item as $field_item_paragraph) {
-      $whole_text .= $field_item_paragraph['value'];
+  if($ecomma_field_name != "") {
+    foreach ($node->$ecomma_field_name as $field_item) {
+      foreach ($field_item as $field_item_paragraph) {
+        $whole_text .= $field_item_paragraph['value'];
+      }
     }
-  }
 
-  // Insert extra space between letter and punctuation (not dashes).
-  // (-, exp. est-ce) and appostrophies (', exp. Century's).
-  $whole_text = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $whole_text);
-  // Splitting into a word array.
-  $whole_text = strtolower($whole_text);
-  $word_cloud_items = preg_split("/(\s)/", $whole_text);
-  if ($word_cloud_items) {
-    $words_count_array = array_count_values($word_cloud_items);
-    ksort($words_count_array);
-    $output = '';
 
-    foreach ($words_count_array as $key => $word_count) {
-      $output .= "<h$word_count class='word_cloud_tag'><a href='#'>$key</a></h$word_count>";
+    // Insert extra space between letter and punctuation (not dashes).
+    // (-, exp. est-ce) and appostrophies (', exp. Century's).
+    $whole_text = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $whole_text);
+    // Splitting into a word array.
+    $whole_text = strtolower($whole_text);
+    $word_cloud_items = preg_split("/(\s)/", $whole_text);
+    if ($word_cloud_items) {
+      $words_count_array = array_count_values($word_cloud_items);
+      ksort($words_count_array);
 
+      foreach ($words_count_array as $key => $word_count) {
+        $output .= "<h$word_count class='word_cloud_tag'><a href='#'>$key</a></h$word_count>";
+
+      }
     }
   }
 
@@ -823,6 +839,7 @@ function ecomma_word_cloud($node) {
  */
 function ecomma_comment_cloud($node) {
   $comment_texts = "";
+  $output = "";
   $cids = db_select('comment', 'c')
     ->fields('c', array('cid'))
     ->condition('c.nid', $node->nid)
@@ -831,28 +848,30 @@ function ecomma_comment_cloud($node) {
     ->fetchAssoc();
 
   if (count($cids) > 0) {
-    foreach ($cids as $key => $cid) {
-      $texts = db_select('field_data_comment_body', 'f')
-        ->fields('f', array('comment_body_value'))
-        ->condition('f.entity_id', $cid)
-        ->execute()
-        ->fetchAssoc();
-    }
+    if($cids) {
+      foreach ($cids as $key => $cid) {
+        $texts = db_select('field_data_comment_body', 'f')
+          ->fields('f', array('comment_body_value'))
+          ->condition('f.entity_id', $cid)
+          ->execute()
+          ->fetchAssoc();
+      }
 
-    $comment_texts = implode(" ", $texts);
-    $comment_texts = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $comment_texts);
+      $comment_texts = implode(" ", $texts);
+      $comment_texts = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $comment_texts);
 
-    // Splitting into a word array.
-    $comment_texts_items = preg_replace("/<([^>]*)>/", "", $comment_texts);
-    $comment_texts_items = preg_split("/(\s)/", strtolower($comment_texts_items));
+      // Splitting into a word array.
+      $comment_texts_items = preg_replace("/<([^>]*)>/", "", $comment_texts);
+      $comment_texts_items = preg_split("/(\s)/", strtolower($comment_texts_items));
 
-    if ($comment_texts_items) {
-      $words_count_array = array_count_values($comment_texts_items);
-      ksort($words_count_array);
-      $output = '';
+      if ($comment_texts_items) {
+        $words_count_array = array_count_values($comment_texts_items);
+        ksort($words_count_array);
+        $output = '';
 
-      foreach ($words_count_array as $key => $word_count) {
-        $output .= "<h$word_count>$key</h$word_count>";
+        foreach ($words_count_array as $key => $word_count) {
+          $output .= "<h$word_count>$key</h$word_count>";
+        }
       }
     }
   }
