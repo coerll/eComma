@@ -330,7 +330,7 @@ function ecomma_node_prepare($node) {
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
-  
+
   if (ctype_digit(arg(1))) {
     $node = node_load(arg(1));
     $content_type_name = $node->type;
@@ -339,7 +339,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
     $ecomma_enabled = 0;
 
     foreach ($content_type_data as $field_name => $field_data) {
-      if($field_data['widget']['type']) {
+      if ($field_data['widget']['type']) {
         if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
           if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
             $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
@@ -347,7 +347,6 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
- 
 
     $user_role = "user";
     if ($user->uid == 0) {
@@ -374,7 +373,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['css'] = array(
         drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
           'type' => 'file',
-       ),
+        ),
       );
       $form['#attached']['library'][] = array('system', 'ui.dialog');
       $form['#attached']['library'][] = array('system', 'ui.tabs');
@@ -383,7 +382,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['library'][] = array('system', 'ui.sortable');
     }
   }
-  
+
   switch ($form_id) {
     case 'comment_node_ecomma_form':
       // Call submit function to update ecomma_range with node comment info.
@@ -800,13 +799,12 @@ function ecomma_word_cloud($node) {
   $output = '';
 
   // Merging cck field values to whole text.
-  if($ecomma_field_name != "") {
+  if ($ecomma_field_name != "") {
     foreach ($node->$ecomma_field_name as $field_item) {
       foreach ($field_item as $field_item_paragraph) {
         $whole_text .= $field_item_paragraph['value'];
       }
     }
-
 
     // Insert extra space between letter and punctuation (not dashes).
     // (-, exp. est-ce) and appostrophies (', exp. Century's).
@@ -848,7 +846,7 @@ function ecomma_comment_cloud($node) {
     ->fetchAssoc();
 
   if (count($cids) > 0) {
-    if($cids) {
+    if ($cids) {
       foreach ($cids as $key => $cid) {
         $texts = db_select('field_data_comment_body', 'f')
           ->fields('f', array('comment_body_value'))
@@ -883,8 +881,8 @@ function ecomma_comment_cloud($node) {
  * Implements hook_views_query_alter().
  */
 function ecomma_query_alter(&$query) {
-  if(arg(3) == 'nd' || arg(3) == 'dt'){
-    if(isset($query->alterMetaData)){
+  if (arg(3) == 'nd' || arg(3) == 'dt') {
+    if (isset($query->alterMetaData)) {
       if ($query->alterMetaData['view']->name == 'ecomma_user_data') {
         if (arg(3) == 'nd') {
           $query->orderby[0] = 'nid ASC';
@@ -909,6 +907,7 @@ function ecomma_ctools_plugin_api($module, $api) {
     );
   }
 }
+
 
 /**
  * Implements hook_views_api().

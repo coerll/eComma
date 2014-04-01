@@ -25,10 +25,10 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 5.  Edit new content type > Comment settings > Display below post or comments
 6.  Manage fields > Add a new text area field with unlimited values
 7.  Enable ecomma commentary features for that text area field in the settings.
-8.  Manage fields > Add existing field > Term reference > Autocomplete term widget.
+8.  Manage fields > Add existing field > Term reference > Autocomplete term w.
 9.  Select your Vocabulary from tag field settings.
 10. Configuration > Community tags: Enable community tagging for new vocabulary.
-11. Edit new content type  > Community tags settings > Select Block radio button.
+11. Edit new content type  > Community tags settings > Block.
 
 (Go to People > Permissions for step 12-14)
 12. Community_tags: Enable "tag content" for authenticated and anonymous users.
