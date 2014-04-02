@@ -5,8 +5,8 @@
  */
 
 /**
-* Implementation of hook_default_page_manager_handlers().
-*/
+ * Implements hook_default_page_manager_handlers().
+ */
 function ecomma_default_page_manager_handlers() {
   $handlers = array();
   $files = file_scan_directory(drupal_get_path('module', 'ecomma') . '/includes/pages', '.inc');
@@ -19,4 +19,3 @@ function ecomma_default_page_manager_handlers() {
 
   return $handlers;
 }
-
