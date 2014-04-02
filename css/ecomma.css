@@ -45,7 +45,7 @@ div.ecomma_line {
   display: inline;
 }
 
-.ecomma_line:nth-last-child(4){
+.ecomma_line:nth-last-child(4) {
   display: none !important;
 }
 
@@ -1517,7 +1517,7 @@ span.punctuation {
 }
 
 .line_number {
-  padding: 0px 3px 0px 5px;
+  padding: 0px 0px 8px;
   margin-right: 12px;
   border-right: 1px #666 solid;
   float: left;

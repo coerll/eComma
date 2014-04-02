@@ -46,16 +46,17 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 11.  New content type  > Workflow settings > Community tagging form:Select Block
 (Go to content User Management > Permissions for step 10-13)
 12. Community_tags: Enable "tag content" for authenticated and anonymous users.
-(Enables unauthenticated users to see the tags, but not to tag.)
+    (Enables unauthenticated users to see the tags, but not to tag.)
 13. Community_tags: Enable "edit own tags" for authenticated.
 14. Comment: Enable "access comments" for authenticated and anonymous users. 
-(Enables unauthenticated users to see the comments, but not to comment.)
+    (Enables unauthenticated users to see the comments, but not to comment.)
 15. Comment_delete: Enable "delete own comments" for authenticated  users.
 16. Site building > Pages > List:
 	-Enable node_view and click on edit. 
 	-Selection rules > select "Node:type" and then check new content type
 	-Left column: Add content > Node > Field: your-text-field
-17. Create a node of the new content type. Just enter your text in new text field.
+17. Create a node with new content type. 
+18. Enter your text in the eComma enabled text field.
 
 Current restrictions:
 	* Does currently not work on IE browser.
