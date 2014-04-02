@@ -45,6 +45,10 @@ div.ecomma_line {
   display: inline;
 }
 
+.ecomma_line:nth-last-child(4){
+  display: none !important;
+}
+
 .ec-warning {
   color: #ac1a2f;
   font-size: 14px;

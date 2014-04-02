@@ -34,7 +34,7 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 	-Rename the sub-directory into "jquery.ui":
      /sites/all/libraries/jquery.ui/
 
-(Go to content management > Content types for step 3-5)
+(Go to content management > Content types for step 2-4)
 3.  Add content type: Add custom content type.
 4.  Edit new content type > Comment settings > Preview comment:Optional
 5.  Edit new content type > Comment settings > Display below post or comments
@@ -51,31 +51,16 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 14. Comment: Enable "access comments" for authenticated and anonymous users. 
 (Enables unauthenticated users to see the comments, but not to comment.)
 15. Comment_delete: Enable "delete own comments" for authenticated  users.
-
-
 16. Site building > Pages > List:
 	-Enable node_view and click on edit. 
-	-Add variant, 
-	-Call it ecomma 
-	-Create variant and enalbe selection rules
 	-Selection rules > select "Node:type" and then check new content type
-	-Select miscellaneous layout and choose "eComma column 45/10/45" layout.
+	-Left column: Add content > Node > Field: your-text-field
+17. Create a node of the new content type. Just enter your text in new text field.
 
-	-Left column: Node > Field: your-text-field - Text > Node being viewed
-	-Right column:  Miscellaneous > Community tagging form
-	-Add content to Right:  Miscellaneous > eComma Tag details
-	-Add content to Right: Miscellaneous > eComma Word Cloud
-	-Add content to Right: Miscellaneous > eComma User Annotation Total
-	-Add content to Right: Node > Comment form > Node being viewed
-	-Add content to Right: Node > Node Comments
-	-Add content to Right: Miscellaneous > eComma Comment Cloud
-
-17. Create a node of the new node typ. Just enter your text in new text field.
-
-18. Current restrictions:
-		* Does currently not work on IE browser.
-		* Once a group/class has started to tag or comment on a text the text 
-		  cannot be changed in any way or the annotations will be off.
+Current restrictions:
+	* Does currently not work on IE browser.
+	* Once a group/class has started to tag or comment on a text the text 
+	  cannot be changed in any way or the annotations will be off.
 
 
 *****************************************************************************

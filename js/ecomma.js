@@ -122,7 +122,10 @@ var comment_list = Array();
               comment_text += $('.ec-p' + t).text() + " ";
             }
             if(beg_range && end_range){
-              someObj.prepend('<div class ="ec-comment-content">' + comment_text + '<input id ="highlight_comment" class ="highlight_comment" type ="button" onclick ="javascript:ec_rh(' + beg_range + ',' + end_range + ',\'single\')" value ="highlight" ></div>');
+              someObj.prepend('<div class ="ec-comment-content">' + comment_text + '<input id ="highlight_comment" class ="highlight_comment" type ="button" value ="highlight" ></div>');
+              $('.highlight_comment').click(function(){
+                ec_rh(beg_range , end_range, 'single');
+              });
             }else{
               someObj.addClass("comment_hide");
               comment_cnt--;
