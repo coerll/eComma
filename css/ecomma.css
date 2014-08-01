@@ -174,27 +174,27 @@ div.ecomma_line {
 
 .front .word_cloud h1,
 .word_cloud h1 {
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 .front .word_cloud h2,
 .word_cloud h2 {
-  font-size: 20px;
+  font-size: 20px !important;
 }
 
 .front .word_cloud h3,
 .word_cloud h3 {
-  font-size: 24px;
+  font-size: 24px !important;
 }
 
 .front .word_cloud h4,
 .word_cloud h4 {
-  font-size: 30px;
+  font-size: 30px !important;
 }
 
 .front .word_cloud h5,
 .word_cloud h5 {
-  font-size: 36px;
+  font-size: 36px !important;
 }
 
 .front .word_cloud h6,
@@ -247,7 +247,7 @@ div.ecomma_line {
 .word_cloud h29,
 .front .word_cloud h30,
 .word_cloud h30 {
-  font-size: 42px;
+  font-size: 42px !important;
 }
 
 .ui-widget-content .word_cloud a {
@@ -336,27 +336,27 @@ div.tag-widget ul.inline-tags li.not-ec {
 
 .front .comment_cloud h1,
 .comment_cloud h1 {
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 .front .comment_cloud h2,
 .comment_cloud h2 {
-  font-size: 20px;
+  font-size: 20px !important;
 }
 
 .front .comment_cloud h3,
 .comment_cloud h3 {
-  font-size: 24px;
+  font-size: 24px !important;
 }
 
 .front .comment_cloud h4,
 .comment_cloud h4 {
-  font-size: 30px;
+  font-size: 30px !important;
 }
 
 .front .comment_cloud h5,
 .comment_cloud h5 {
-  font-size: 36px;
+  font-size: 36px !important;
 }
 
 .front .comment_cloud h6,
@@ -409,7 +409,7 @@ div.tag-widget ul.inline-tags li.not-ec {
 .comment_cloud h29,
 .front .comment_cloud h30,
 .comment_cloud h30 {
-  font-size: 42px;
+  font-size: 42px !important;
 }
 
 .comment_cloud span {
@@ -1439,6 +1439,7 @@ div#ec-tag-result .ec-help {
   background-image: url('../img/note-xsmall.png');
   background-repeat: no-repeat;
   background-position: center right;
+  border-bottom: 1px solid #666;
 }
 
 li.ec-user-admin {

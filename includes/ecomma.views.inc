@@ -1,8 +1,7 @@
 <?php
 /**
  * @file
- * Make ecomma database table data visible to views module.
- * This will make it possible to run any type of query on the ecomma data. 
+ * Make ecomma database table and ecomma data visible to views module.
  */
 
 /**

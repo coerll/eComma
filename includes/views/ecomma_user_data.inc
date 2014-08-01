@@ -1,4 +1,9 @@
-<?php 
+<?php
+/**
+ * @file
+ * This file provides the view to query and display user annotation data.
+ */
+
 $view = new view();
 $view->name = 'ecomma_user_data';
 $view->description = 'ecomma_user_data';

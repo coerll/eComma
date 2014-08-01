@@ -1,8 +1,7 @@
 <?php
 /**
  * @file
- * eComma text annotation module main file.
- * Provides annotation for CCK textarea widget.
+ * The main file for the eComma text annotation module.
  */
 
 /**
@@ -78,16 +77,6 @@ function ecomma_menu() {
     'description' => 'Comment table query to return data to interface.',
     'page callback' => 'ecomma_comments_active_text_function',
     'page arguments' => array(1, 2),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-    'file' => 'includes/ecomma.ajax.inc',
-  );
-
-  $items['enabled_callback/%'] = array(
-    'title' => 'Textfield ecomma enabled status',
-    'description' => 'Check if ecomma textfield was enabled.',
-    'page callback' => 'ecomma_enabled_query_function',
-    'page arguments' => array(1),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
     'file' => 'includes/ecomma.ajax.inc',
@@ -212,25 +201,6 @@ function theme_ecomma_formatter_myformatter($node_vars) {
   $output = implode("<span class=text_space> </span>", $new_word);
   $output = preg_replace("/(\s\s+)/", "\n", $output);
 
-  // Setting lines marker for future use.
-  $lines = preg_split('/\n/', $output);
-
-  $count = 0;
-  // Wrapping line in line spans.
-  foreach ($lines as $line) {
-    if (!preg_match("/paragraphparagraph/", $line)) {
-      $line_array[$count] = "<div class='ecomma_line'>" . $line . "</div>";
-    }
-    if (preg_match("/paragraphparagraph/", $line)) {
-      $line_array[$count] = "<div class='ecomma_line'>" . preg_replace("/paragraphparagraph/", '', $line) . "</div>";
-      $count++;
-      $line_array[$count] = "paragraphparagraph";
-    }
-    $count++;
-  }
-
-  variable_set("ecomma_lines", $line_array);
-
   // Substituting div element with line class for \n unix line break.
   $display_text = "<div class='ecomma_line'>" . preg_replace('/\n/', "</div><br /><div class='ecomma_line'>", $output);
   $display_text = preg_replace("/<div class\=\'ecomma_line\'>(?!.*<div class\=\'ecomma_line\'>)/", "", $display_text);
@@ -256,10 +226,11 @@ function theme_ecomma_formatter_myformatter($node_vars) {
 function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
   $content_type_name = $context['argument_entity_id:node_1']->data->type;
   $content_type_data = field_info_instances("node", $content_type_name);
+  $ecomma_enabled = &drupal_static('enabled_variable');
 
   foreach ($content_type_data as $field_name => $field_data) {
-    if ($field_data['widget']['type'] == 'text_textarea' && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount()) {
-      if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
+    if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == TRUE) {
+      if ($ecomma_enabled) {
         $node = node_load($context['argument_entity_id:node_1']->data->nid);
 
         $field_name = $field_data['field_name'];
@@ -277,17 +248,7 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
  * Implements hook_node_delete().
  */
 function ecomma_node_delete($node) {
-  $content_type_name = $node->type;
-  $content_type_data = field_info_instances("node", $content_type_name);
-  $ecomma_enabled = 0;
-
-  foreach ($content_type_data as $field_name => $field_data) {
-    if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-      if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
-        $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
-      }
-    }
-  }
+  $ecomma_enabled = &drupal_static('enabled_variable');
 
   if ($ecomma_enabled) {
     db_delete('ecomma_range')
@@ -301,18 +262,7 @@ function ecomma_node_delete($node) {
  * Implements hook_node_prepare().
  */
 function ecomma_node_prepare($node) {
-
-  $content_type_name = $node->type;
-  $content_type_data = field_info_instances("node", $content_type_name);
-  $ecomma_enabled = 0;
-
-  foreach ($content_type_data as $field_name => $field_data) {
-    if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-      if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
-        $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
-      }
-    }
-  }
+  $ecomma_enabled = &drupal_static('enabled_variable');
 
   if ($ecomma_enabled) {
     global $user;
@@ -330,31 +280,15 @@ function ecomma_node_prepare($node) {
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
+  $ecomma_enabled = &drupal_static('enabled_variable');
 
-  if (ctype_digit(arg(1))) {
-    $node = node_load(arg(1));
-    $content_type_name = $node->type;
-    $content_type_data = field_info_instances("node", $content_type_name);
-
-    $ecomma_enabled = 0;
-
-    foreach ($content_type_data as $field_name => $field_data) {
-      if ($field_data['widget']['type']) {
-        if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-          if (db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField()) {
-            $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
-          }
-        }
-      }
-    }
-
+  if (ctype_digit(arg(1)) || arg(0) == 'ecomma_user_data') {
     $user_role = "user";
     if ($user->uid == 0) {
       $user_role = "anonymous";
     }
 
-    if ($ecomma_enabled) {
-
+    if ($ecomma_enabled  || arg(0) == 'ecomma_user_data') {
       $form['#attached']['js'][] = array(
         'data' => drupal_get_path('module', 'ecomma') . '/js/ecomma.js',
         'type' => 'file',
@@ -413,34 +347,30 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
           $form_state['#values']['children'][] = $child->cid;
         }
       }
-
+      $form_state['rebuild'] = TRUE;
       $form['#submit'][] = 'ecomma_comment_delete';
       break;
 
     case 'field_ui_field_edit_form':
       // Ecomma enable checkbox will appear on settings for textarea CCK field.
       if ($form['#instance']['widget']['type'] == "text_textarea") {
-        $field_name = $form['#instance']['field_name'];
-        $type_name = $form['#field']['bundles']['node'][0];
 
         // Query db table, returns ecomma status (enabled/disabled).
-        if (db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-          $ecomma_enabled_current = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:field_name AND content_type_name=:type_name", array(':field_name' => $field_name, ':type_name' => $type_name))->fetchField();
+        if ($ecomma_enabled) {
+          $ecomma_enabled_display = $ecomma_enabled;
         }
         else {
-          $ecomma_enabled_current = 0;
+          $ecomma_enabled_display = 0;
         }
 
-        if (user_access('enable ecomma textfield')) {
-          // Add checkbox for ecomma features the settings for.
-          $form['widget']['ecomma'] = array(
-            '#type' => 'checkbox',
-            '#title' => t('Enable ecomma commentary features'),
-            '#default_value' => $ecomma_enabled_current,
-            '#weight' => 0,
-          );
-          // Update status of ecomma features for this text field.
-        }
+        // Add checkbox for ecomma features the settings for.
+        $form['widget']['ecomma'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Enable ecomma commentary features'),
+          '#default_value' => $ecomma_enabled_display,
+          '#weight' => 0,
+        );
+        // Update status of ecomma features for this text field.
         $form['#submit'][] = 'ecomma_settings_field_submit';
       }
       break;
@@ -449,9 +379,9 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['tags']['#title'] = 'Delete your tags';
       if ($user->uid == 0) {
         $form['new']['#type'] = 'markup';
-        $redirect = 'destination=' . drupal_get_path_alias(substr(urldecode(drupal_get_destination()), 12));
-        $login_link = l(t('Login'), 'user', array('query' => $redirect, 'alias' => TRUE));
-        $register_link = l(t('Register'), 'user/register', array('query' => $redirect, 'alias' => TRUE));
+        $redirect = drupal_get_destination();
+        $login_link = l(t('Login'), 'user', array('query' => $redirect));
+        $register_link = l(t('Register'), 'user/register', array('query' => $redirect));
         $user_utilities = $login_link . ' ' . t('or') . ' ' . $register_link;
         $form['new']['#value'] = '<div class="login-prompt">' . $user_utilities . ' to add tags</div>';
 
@@ -494,8 +424,10 @@ function ecomma_comment_submit($form, &$form_state) {
   ->execute()
   ->fetchField();
 
-  $beg = $_POST['comment-range-beg'];
-  $end = $_POST['comment-range-end'];
+  if (array_key_exists('comment-range-beg', $_POST)) {
+    $beg = $_POST['comment-range-beg'];
+    $end = $_POST['comment-range-end'];
+  }
   $timestamp = strtotime('now');
 
   if (isset($cid) && arg(0) != "comment") {
@@ -619,12 +551,8 @@ function ecomma_settings_field_submit($form, &$form_state) {
   $field_name = $form_state['values']['instance']['field_name'];
   $type_name = $form_state['values']['instance']['bundle'];
   $checkbox_value = $form_state['values']['ecomma'] ? 1 : 0;
-  if (db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount()) {
-    $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $type_name))->fetchField();
-  }
-  else {
-    $ecomma_enabled = 0;
-  }
+  $ecomma_enabled = &drupal_static('enabled_variable');
+
   if ($ecomma_enabled == 1) {
     db_update('ecomma_field_enabled')
     ->fields(array(
@@ -641,7 +569,7 @@ function ecomma_settings_field_submit($form, &$form_state) {
       'content_type_name' => $type_name,
       'ecomma_enabled' => $checkbox_value,
     ))->execute();
-    drupal_set_message(check_plain(t('The ecomma commentary features were @ecomma_enabled_status for @fieldname', array('@ecomma_enabled_status' => ($form_state['values']['ecomma'] ? "enabled" : 'disabled'), '@fieldname' => $field_name))));
+    drupal_set_message(t('The ecomma commentary features were @ecomma_enabled_status for @fieldname', array('@ecomma_enabled_status' => ($form_state['values']['ecomma'] ? "enabled" : 'disabled'), '@fieldname' => $field_name)));
   }
 }
 
@@ -700,7 +628,6 @@ function ecomma_block_view($delta = '') {
           $user_data_list = '<ol class="ec-tag-list" id="ec-tag-list">';
           foreach ($view->result as $user_data) {
             $tid = $user_data->ecomma_range_tid;
-            $uid = $user_data->ecomma_range_uid;
             $rid = $user_data->ecomma_range_rid;
             $beg = $user_data->ecomma_range_beg;
             $end = $user_data->ecomma_range_end;
@@ -718,10 +645,15 @@ function ecomma_block_view($delta = '') {
             ->fetchField();
 
             $date = date('d M Y gA', $timestamp);
-
+            $user_name = theme('username', array('account' => $user));
             $user_data_list .= '<li class="user-data user-data-term' . $tid . '" id="ec-tag-e### ' . $beg . ' ' . $end;
-            $user_data_list .= '" style="display: none;" ><div class="ec-tag-item"><a href="" class="term_name">';
-            $user_data_list .= check_plain($term_name) . '</a> by ' . user_load($uid)->name . '</div><div class="ec-tag-date">';
+            $user_data_list .= '" style="display: none;" ><div class="ec-tag-item">';
+            $user_data_list .= l($term_name, '', array(
+              'fragment' => '',
+              'external' => TRUE,
+              'attributes' => array('class' => "term_name"),
+            ));
+            $user_data_list .= ' by ' . l(strip_tags($user_name), '', array('fragment' => '', 'external' => TRUE)) . '</div><div class="ec-tag-date">';
             $user_data_list .= $date . '</div></li>';
           }
           $user_data_list .= '</ol>';
@@ -731,8 +663,10 @@ function ecomma_block_view($delta = '') {
         break;
 
       case 'ecomma_comment_cloud':
-        $block['subject'] = t('eComma Comment Cloud');
-        $block['content'] = t('<div class="comment_cloud">!comment_texts_final</div>', array('!comment_texts_final' => ecomma_comment_cloud($node)));
+        $block['subject']  = t('eComma Comment Cloud');
+        $block['content']  = '<div class="comment_cloud">';
+        $block['content'] .= t('!comment_texts_final', array('!comment_texts_final' => ecomma_comment_cloud($node)));
+        $block['content'] .= '</div>';
         break;
 
       case 'ecomma_user_annotation_total':
@@ -750,9 +684,10 @@ function ecomma_block_view($delta = '') {
           $uids_totals = array_count_values($uids);
           $user_data_table = '<ol class="ec-user-list">';
           foreach ($uids_totals as $uid_key => $uid_total) {
-            $user = user_load($uid_key);
-            $user_data_table .= '<li class="ec-user-admin"><a href="' . $base_url . '/ecomma_user_data/' . arg(1) . '/';
-            $user_data_table .= $uid_key . '">' . $user->name . '</a><span>' . $uid_total . ' annotations</span></li>';
+            $user_data_table .= '<li class="ec-user-admin">';
+            $user_name = theme('username', array('account' => $user));
+            $user_data_table .= l(strip_tags($user_name), $base_url . '/ecomma_user_data/' . arg(1) . '/' . $uid_key);
+            $user_data_table .= '<span>' . $uid_total . ' annotations</span></li>';
           }
           $user_data_table .= '</ol>';
         }
@@ -768,10 +703,7 @@ function ecomma_block_view($delta = '') {
 
 
 /**
- * Implements ecomma_word_cloud().
- *
- * This function formats the content of the eComma enabled text field word
- * cloud block.
+ * This formats the content of the eComma enabled text field word cloud block.
  *
  * @param object $node
  *   Current node that contains the eComma enabled text field.
@@ -783,28 +715,31 @@ function ecomma_word_cloud($node) {
   // Get name of ecomma enabled text_fields
   $content_type_name = $node->type;
   $content_type_data = field_info_instances("node", $content_type_name);
-  $ecomma_enabled = 0;
+  $ecomma_enabled_check = 0;
   $ecomma_field_name = "";
+  $ecomma_enabled = &drupal_static('enabled_variable');
 
   if (arg(0) == "node") {
     foreach ($content_type_data as $field_name => $field_data) {
-      if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == 0 && db_query("SELECT * FROM {ecomma_field_enabled}")->rowCount() > 0) {
-        $ecomma_enabled = db_query("SELECT ecomma_enabled FROM {ecomma_field_enabled} WHERE field_name=:fname AND content_type_name=:cname", array(':fname' => $field_name, ':cname' => $content_type_name))->fetchField();
+      if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled_check == 0) {
+        $ecomma_enabled_check = $ecomma_enabled;
         $ecomma_field_name = $field_name;
       }
     }
   }
 
-  $whole_text = "";
+  $paragraph_text = array();
   $output = '';
 
   // Merging cck field values to whole text.
   if ($ecomma_field_name != "") {
     foreach ($node->$ecomma_field_name as $field_item) {
       foreach ($field_item as $field_item_paragraph) {
-        $whole_text .= $field_item_paragraph['value'];
+        $paragraph_text[] = $field_item_paragraph['value'];
       }
     }
+
+    $whole_text = implode(" ", $paragraph_text);
 
     // Insert extra space between letter and punctuation (not dashes).
     // (-, exp. est-ce) and appostrophies (', exp. Century's).
@@ -815,11 +750,24 @@ function ecomma_word_cloud($node) {
     if ($word_cloud_items) {
       $words_count_array = array_count_values($word_cloud_items);
       ksort($words_count_array);
+      unset($words_count_array['']);
 
+      $increase_all = '';
       foreach ($words_count_array as $key => $word_count) {
-        $output .= "<h$word_count class='word_cloud_tag'><a href='#'>$key</a></h$word_count>";
-
+        $percent = floor(($word_count / max($words_count_array)) * 100);
+        $title_size = (1 * $percent) / 100;
+        if ($title_size < 1 || $increase_all == TRUE) {
+          if ($title_size < 1) {
+            $title_size = 1;
+          }
+          else {
+            $title_size++;
+          }
+          $increase_all = TRUE;
+        }
+        $output .= "<h$title_size class='word_cloud_tag'>" . l($key, '#') . "</h$title_size>";
       }
+
     }
   }
 
@@ -828,8 +776,6 @@ function ecomma_word_cloud($node) {
 
 
 /**
- * Implements ecomma_comment_cloud().
- *
  * This function formats the comment text of all comments as a word cloud.
  *
  * @return string
@@ -842,43 +788,61 @@ function ecomma_comment_cloud($node) {
     ->fields('c', array('cid'))
     ->condition('c.nid', $node->nid)
     ->orderBy("c.created", "DESC")
-    ->execute()
-    ->fetchAssoc();
+    ->execute();
 
-  if (count($cids) > 0) {
-    if ($cids) {
-      foreach ($cids as $key => $cid) {
-        $texts = db_select('field_data_comment_body', 'f')
-          ->fields('f', array('comment_body_value'))
-          ->condition('f.entity_id', $cid)
-          ->execute()
-          ->fetchAssoc();
+  foreach ($cids as $cid_item) {
+    $all_cids[] = $cid_item->cid;
+  }
+
+  if (count($all_cids) > 0) {
+    foreach ($all_cids as $key => $cid) {
+      $texts = db_select('field_data_comment_body', 'f')
+        ->fields('f', array('comment_body_value'))
+        ->condition('f.entity_id', $cid)
+        ->execute();
+
+      foreach ($texts as $texts_item) {
+        $all_texts[] = $texts_item->comment_body_value;
       }
+    }
 
-      $comment_texts = implode(" ", $texts);
-      $comment_texts = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $comment_texts);
+    $comment_texts = implode(" ", $all_texts);
+    $comment_texts = preg_replace("/([^\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)([\\x21-\\x26\\x28-\\x2C\\x2E-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E]+)/u", "$1 $2 ", $comment_texts);
 
-      // Splitting into a word array.
-      $comment_texts_items = preg_replace("/<([^>]*)>/", "", $comment_texts);
-      $comment_texts_items = preg_split("/(\s)/", strtolower($comment_texts_items));
+    // Splitting into a word array.
+    $comment_texts_items = preg_replace("/<([^>]*)>/", "", $comment_texts);
+    $comment_texts_items = preg_split("/(\s)/", strtolower($comment_texts_items));
 
-      if ($comment_texts_items) {
-        $words_count_array = array_count_values($comment_texts_items);
-        ksort($words_count_array);
-        $output = '';
+    if ($comment_texts_items) {
+      $words_count_array = array_count_values($comment_texts_items);
+      ksort($words_count_array);
+      unset($words_count_array['']);
 
-        foreach ($words_count_array as $key => $word_count) {
-          $output .= "<h$word_count>$key</h$word_count>";
+      $output = '';
+      $increase_all = '';
+      foreach ($words_count_array as $key => $word_count) {
+        $percent = floor(($word_count / max($words_count_array)) * 100);
+        $title_size = (1 * $percent) / 100;
+        if ($title_size < 1 || $increase_all == TRUE) {
+          if ($title_size < 1) {
+            $title_size = 1;
+          }
+          else {
+            $title_size++;
+          }
+          $increase_all = TRUE;
         }
+        $output .= "<h$title_size>$key</h$title_size>";
       }
     }
   }
+
   return $output;
 }
 
 
 /**
- * Implements hook_views_query_alter().
+ * Implements hook_query_alter().
  */
 function ecomma_query_alter(&$query) {
   if (arg(3) == 'nd' || arg(3) == 'dt') {
@@ -917,4 +881,30 @@ function ecomma_views_api() {
     'api' => 2,
     'path' => drupal_get_path('module', 'ecomma') . '/includes',
   );
+}
+
+
+/**
+ * Set and get the shared static $ecomma_enabled variable.
+ *
+ * @return int
+ *   The value of the $ecomma_enabled variable.
+ */
+function enabled_variable() {
+  if (arg(0) == 'node') {
+    $nid = arg(1);
+    $query = db_select('ecomma_field_enabled', 'f');
+    $query->join('node', 'n', 'f.content_type_name = n.type');
+    $ecomma_enabled_result = $query
+      ->fields('f', array('ecomma_enabled'))
+      ->condition('n.nid', $nid, '=')
+      ->execute()
+      ->fetchField();
+
+    $ecomma_enabled = &drupal_static(__FUNCTION__);
+    if (!isset($ecomma_enabled)) {
+      $ecomma_enabled = $ecomma_enabled_result;
+    }
+    return $ecomma_enabled_result;
+  }
 }

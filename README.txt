@@ -16,38 +16,38 @@ INSTALLATION OF ECOMMA MODULE
  
 Instructions below are based on navigation in admin menu (admin_menu module).
 
-1.  Site building > Modules: enable ecomma module and dependencies
+1.  Modules: enable ecomma module and dependencies
 
 (Go to content management > Content types for step 2-4)
 2.  Structure > Taxonomy: Add Vocabulary.
 3.  Add content type: Add custom content type.
 4.  Edit new content type > Comment settings > Preview comment:Optional
-5.  Edit new content type > Comment settings > Display below post or comments
 6.  Manage fields > Add a new text area field with unlimited values
 7.  Enable ecomma commentary features for that text area field in the settings.
 8.  Manage fields > Add existing field > Term reference > Autocomplete term w.
 9.  Select your Vocabulary from tag field settings.
 10. Configuration > Community tags: Enable community tagging for new vocabulary.
-11. Edit new content type  > Community tags settings > Block.
+11. Configuration > jQuery update > jQuery and jQuery UI CDN > Select None.
+12. Edit new content type  > Community tags settings > Block.
 
 (Go to People > Permissions for step 12-14)
-12. Community_tags: Enable "tag content" for authenticated and anonymous users.
+13. Community_tags: Enable "tag content" for authenticated and anonymous users.
     (Enables unauthenticated users to see the tags, but not to tag.)
-13. Community_tags: Enable "edit own tags" for authenticated.
-14. Comment: Enable “view comments" for anonymous and authenticated users. 
+14. Community_tags: Enable "edit own tags" for authenticated.
+15. Comment: Enable “view comments" for anonymous and authenticated users. 
     (Enables unauthenticated users to see the comments, but not to comment.)
-15. Site building > Pages > List:
+16. Structure > Pages:
 	-Enable node_view and click on edit. 
 	-Selection rules > select "Node:type" and then check new content type
 	-Left column: Add content > Node > Field: your-text-field
-16. Create a node of the new node type. 
-17. Enter your text in the text field (not in the body).
-18. View the node and select text with mouse cursor to start annotating.
+17. Create a node of the new node type. 
+18. Enter your text in the text field (not in the body).
+19. View the node and select text with mouse cursor to start annotating.
 
 Current restrictions:
-		* Does currently not work on IE browser.
-		* Once a group/class has started to tag or comment on a text the text 
-		  cannot be changed in any way or the annotations will be off.
+	* Does currently not work on IE browser.
+	* Once a group/class has started to tag or comment on a text the text 
+	  cannot be changed in any way or the annotations will be off.
 
 
 *****************************************************************************
@@ -92,20 +92,20 @@ USE OF ECOMMA MODULE (see also screenshots at admin/help/ecomma)
 	
 4. Download eComma comments
 			
-		-Download  eComma comments data as XML or import to Google docs
-		 spreadsheet. To download an XML file of the comment data, simply
-		 click download comments button at the top of the comment view panel.
-		-If you need to export the data to a spreadsheet format you can import
-		 (stream) the xml directly and without downloading to a google spreadsheet. 
-				*You will need a google account to work with this method.
-				*You also need the text identification number of your ecomma text.
-				 You can obtain the text id from the URL. It is the number that
-				 follows /ecomma/node/.
-				*Open a google spreadsheet and paste the following code into
-				 the first cell:
+	-Download  eComma comments data as XML or import to Google docs
+	spreadsheet. To download an XML file of the comment data, simply
+	click download comments button at the top of the comment view panel.
+	-If you need to export the data to a spreadsheet format you can import
+	(stream) the xml directly and without downloading to a google spreadsheet. 
+	  *You will need a google account to work with this method.
+	  *You also need the text identification number of your ecomma text.
+	   You can obtain the text id from the URL. It is the number that 
+	   follows /ecomma/node/.
+	  *Open a google spreadsheet and paste the following code into
+	   the first cell:
 		
-        =importXML("http://www.coerll.utexas.edu/ecomma/ecomma_comments_export/
-        [replace this (including brackets) with text-id]","//node")
+	    =importXML("http://www.coerll.utexas.edu/ecomma/ecomma_comments_export/
+	    [replace this (including brackets) with text-id]","//node")
 	
 	
 5. Other drupal modules to consider

@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * This file provides the panel page for the ecomma node_view page
+ * This file provides the panel page for the ecomma node_view page.
  */
 
 $handler = new stdClass();

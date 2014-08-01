@@ -1,4 +1,9 @@
-<?php 
+<?php
+/**
+ * @file
+ * This file provides the view to export ecomma comments to xml.
+ */
+
 $view = new view();
 $view->name = 'ecomma_comments_export';
 $view->description = 'ecomma_comments_export';

@@ -66,7 +66,7 @@ var comment_list = Array();
     });
 
     $(".ecomma_line", context).each(function(t){
-      $(this, context).prepend('<span class ="line_number"><span class ="line_number_symbol" style ="display:none">#---ecomma_line_symbol</span>' + (t + 1) + '</span>');
+      $(this, context).prepend('<span class ="line_number"><span class ="line_number_symbol" style ="display:none">#---ecomma_line_symbol</span>' + Drupal.t('@line_number', {'@line_number': (t + 1)}) + '</span>');
     });
 
     $(".line_number", context).each(function(t){
@@ -125,8 +125,9 @@ var comment_list = Array();
               comment_text += $('.ec-p' + t).text() + " ";
             }
             if(beg_range && end_range){
-              someObj.prepend('<div class ="ec-comment-content">' + comment_text + '<input id ="highlight_comment" class ="highlight_comment form-submit" type ="button" value ="highlight" ></div>');
-              $('.highlight_comment').click(function(){
+              var id_num = someObj.attr('about').replace(/([^\#]*)\#comment\-([\d]*?)/,"$2");
+              someObj.prepend('<div class ="ec-comment-content">' + Drupal.t('@comment_text', {'@comment_text': comment_text}) + '<input id ="highlight_comment_'+id_num+'" class ="highlight_comment_'+id_num+' form-submit" type ="button" value ="highlight" ></div>');
+              $('.highlight_comment_'+id_num).click(function(){
                 ec_rh(beg_range , end_range, 'single');
               });
             }else{
@@ -137,7 +138,7 @@ var comment_list = Array();
 
             ec_comment_list[ec_comment_id] = {'beg' : beg_range, 'end' : end_range};
             ec_comment_id++;
-            $('.comment_cnt', context).text(comment_cnt);
+            $('.comment_cnt', context).text(Drupal.t('@comment_cnt', {'@comment_cnt': comment_cnt}));
 
             if($('.highlight_all_comments', context).length == 0){
               $('#pane-node-comments', context).prepend('<input id ="highlight_all_comments" class ="highlight_all_comments form-submit comment_off" type ="button" value ="" >');
@@ -156,7 +157,7 @@ var comment_list = Array();
               });
             }
 
-            $('.highlight_all_comments', context).val("Highlight all (" + comment_cnt + " comments)");
+            $('.highlight_all_comments', context).val( Drupal.t("Highlight all (@comment_cnt comments)", {"@comment_cnt": comment_cnt}));
           });
         }
       }
@@ -176,9 +177,8 @@ var comment_list = Array();
       $('.original-community-tags-form #edit-tags-wrapper').attr('id','original-edit-tags-wrapper');
       $('.original-community-tags-form #edit-tags').remove();
       $('.original-community-tags-form .form-submit').remove();
-      //$('.floating-box #community-tags-form .form-item-tags:first').remove();
       $('.floating-box #community-tags-form #edit-cloud').remove();
-      $('.floating-box #community-tags-form .form-item-tags label:first').text('Add tag');
+      $('.floating-box #community-tags-form .form-item-tags label:first').text(Drupal.t('Add tag'));
       $('.floating-box #community-tags-form .form-item-tags .tag-widget ul.inline-tags').hide();
 
       //don't use dialog popup for comment editing and reply
@@ -188,9 +188,9 @@ var comment_list = Array();
       $('.floating-box #comment-form label span', context).remove();
       $('#comment-form', context).addClass('tab_content');
       $('#comment-form', context).append('<div id ="comment_thread" />');
-      $('.floating-box .ecomma_tabs', context).append('<li class ="active"><a href ="#community-tags-form">Add Tag</a></li><li><a href ="#comment-form">Add Comment</a></li>');
-      $('.floating-box #selection', context).append('<h3>Your selection</h3>');
-      $('.floating-box #selection', context).append('<div class ="ec-warning">eComma couldn\'t understand your selection.<br /><b>Please try again.</b></div>');
+      $('.floating-box .ecomma_tabs', context).append('<li class ="active"><a href ="#community-tags-form">' + Drupal.t('Add Tag') + '</a></li><li><a href ="#comment-form">' + Drupal.t('Add Comment') + '</a></li>');
+      $('.floating-box #selection', context).append('<h3>' + Drupal.t('Your selection') +'</h3>');
+      $('.floating-box #selection', context).append('<div class ="ec-warning">' + Drupal.t('eComma couldn\'t understand your selection.<br /><b>Please try again.</b>') + '</div>');
       $('.floating-box #selection', context).append('<p id ="ec-selection-text" class ="ec-selection-text"></p>');
       $('.floating-box #community-tags-form', context).append('<input name ="tag-range-beg" id ="tag-range-beg"  type ="hidden" value ="' + beg_id + '">');
       $('.floating-box #community-tags-form', context).append('<input name ="tag-range-end" id ="tag-range-end"  type ="hidden" value ="' + end_id + '">');
@@ -314,7 +314,7 @@ var comment_list = Array();
             });
 
             for(var j in data){
-              ec_tag_list[ec_tag_id] = {'beg' : data[j].beg, 'end' : data[j].end, 'form_id' : data[j].tid, 'form' : data[j].name};//someObj.text()
+              ec_tag_list[ec_tag_id] = {'beg' : data[j].beg, 'end' : data[j].end, 'form_id' : data[j].tid, 'form' : data[j].name};
               ec_tag_id++;
 
               $('.user-data-term' + data[j].tid).each(function(i){
@@ -351,7 +351,7 @@ var comment_list = Array();
             }//end for loop
         }//end if data
 
-        $('.ec_tag_cnt', context).text(ec_tag_cnt);
+        $('.ec_tag_cnt', context).text(Drupal.t('@ec_tag_cnt', {'@ec_tag_cnt': ec_tag_cnt}));
 
         if($('.highlight_all_tags', context).length == 0){
           $('#pane-community-tags-0', context).prepend('<input id ="highlight_all_tags" class ="highlight_all_tags form-submit tags_off" type ="button" value ="" >');
@@ -373,7 +373,7 @@ var comment_list = Array();
           });
         }
 
-        $('.highlight_all_tags', context).val("Highlight all (" + ec_tag_cnt + " tags)");
+        $('.highlight_all_tags', context).val(Drupal.t("Highlight all (@ec_tag_cnt tags)", {"@ec_tag_cnt": ec_tag_cnt}));
       }
 
       }, 'json');
@@ -482,19 +482,19 @@ var comment_list = Array();
             for(var v = beg_id_hi; v < data.end; v++){
               selected_text += $('#ec-p' + v).text() + " ";
             }
-            $('#ec-selection-text', context).text(selected_text.substring(9));
+            $('#ec-selection-text', context).text(Drupal.t('@selected_text', {'@selected_text': selected_text.substring(9)}));
             $('#comment-range-beg', context).val(beg_id_hi);
             $('#comment-range-end', context).val(data.end);
 
             comment_data = "";
             for(var i = 0; i < data_meta.length; i++){
-              comment_data += "<div class ='ec-comment-item'>" + data.name + "   <span class ='ec-comment-date'>" + data.timestamp + "</span></div>";
-              comment_data += "<div class ='comment_text'>" + data.comment + "</div>";
+              comment_data += "<div class ='ec-comment-item'>" + Drupal.t('@data_name', {'@data_name': data.name}) + "   <span class ='ec-comment-date'>" + Drupal.t('@data_timestamp', {'@data_timestamp': data.timestamp}) + "</span></div>";
+              comment_data += "<div class ='comment_text'>" + Drupal.t('@data_comment', {'@data_comment': data.comment}) + "</div>";
             }
           });
 
           $('.comment_wrapper', context).remove();
-          $('.floating-box #comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + comment_data + "</div>");
+          $('.floating-box #comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + Drupal.t('@comment_data', {'@comment_data': comment_data}) + "</div>");
           $("ul.ecomma_tabs li:last", context).addClass("active").show();
           $("ul.ecomma_tabs li:first", context).removeClass("active");
           //Show first tab content
@@ -519,12 +519,12 @@ var comment_list = Array();
             $(".floating-box", context).dialog('open');
 
             if (ie){
-              $('#ec-selection-text', context).text(sel.text);
+              $('#ec-selection-text', context).text(Drupal.t('@sel_text', {'@sel_text': sel.text}));
             }else{
-              $('#ec-selection-text', context).text(text);
+              $('#ec-selection-text', context).text(Drupal.t('@text', {'@text': text}));
             }
 
-            $('#ec-selection-text', context).text(text);
+            $('#ec-selection-text', context).text(Drupal.t('@text', {'@text': text}));
             $('.floating-box #community-tags-form', context).show();
             $(".floating-box", context).dialog('open');
             $('.ec-warning', context).hide();
@@ -618,12 +618,13 @@ var comment_list = Array();
     $("#tabs-icons").tabs();
     //has to be called before var url_current
     $('.ui-tabs-nav a').click(function(){
-      if($('.pane-community-tags-0').attr('class').match(/ui-tabs-hide/)){
-        $('.pane-ecomma-ecomma-tag-details').css('display','none');
-      }else{
+      var bool_tag_pane_visibility = $('.pane-community-tags-0').attr('aria-hidden');
+      if(bool_tag_pane_visibility == 'false'){
         if($('.ec-hi').length > 0){
           $('.pane-ecomma-ecomma-tag-details').css('display','block');
         }
+      }else{
+        $('.pane-ecomma-ecomma-tag-details').css('display','none');
       }
     });
 
@@ -633,9 +634,10 @@ var comment_list = Array();
     if(typeof url_tags_obj != null && url_tags_obj != null){
       if((url_tags_obj[2] != '' || url_comm_obj[2] != '') && (url_tags_obj[2] != null && url_comm_obj[2] != null)){
         if(url_tags_obj[2] == "tags"){
-          $("#tabs-icons", context).tabs("select", 1);
+          $("#tabs-icons", context).tabs("option", "active", 1);
         }else if(url_comm_obj[2] == "comment"){
-          $("#tabs-icons", context).tabs("select", 2);
+          var index = $('#tabs ul').index($('#pane-node-comments'));
+          $("#tabs-icons").tabs("option", "active", 2);
         }
       }
     }

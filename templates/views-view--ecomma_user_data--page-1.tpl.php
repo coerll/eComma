@@ -28,12 +28,12 @@
         $term_name = $term->name;
       endif;
       $content .= '<tr class="ec-note-active"><td class="ec-note-date">';
-      $content .= '<a href="' . $base_url . '/node/' . $nid . '#tags">' . check_plain($term_name) . '</a></td><td>' . $date . '</td><td>(tag)</td>';
+      $content .= '<a href="' . $base_url . '/node/' . $nid . '#tags">' . check_plain($term_name) . '</a></td><td>' . check_plain($date) . '</td><td>(tag)</td>';
       $content .= '</tr>';
       $tag_counter++;
     else:
       $content .= '<tr class="ec-note-active"><td class="ec-note-date">';
-      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . $comment_subject . '</a></td><td>' . $date . '</td><td>(comment)</td>';
+      $content .= '<a href="' . $base_url . '/node/' . $nid . '#comment-' . $cid . '" class="ec-comment-title">' . check_plain($comment_subject) . '</a></td><td>' . check_plain($date) . '</td><td>(comment)</td>';
       $content .= '</tr>';
       $comment_counter++;
     endif;
@@ -54,7 +54,7 @@
 
   print '<div class="white-box">';
   print '<div class="ecomma_breadcrumb"><a href="' . $base_url . '/node/' . arg(1) . '">Back to text</a></div>';
-  print '<h3>' . $user->name . ' (' . $comment_counter . ' ' . $comment_label . ', ' . $tag_counter . ' ' . $tag_label . ')</h3>';
+  print '<h3>' . check_plain($user->name) . ' (' . check_plain($comment_counter) . ' ' . check_plain($comment_label) . ', ' . check_plain($tag_counter) . ' ' . check_plain($tag_label) . ')</h3>';
   print '<table class="ec-item-list">';
   print '<tr class="user_data_sorting">';
   print '<td></td>';

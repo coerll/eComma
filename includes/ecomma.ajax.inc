@@ -2,8 +2,6 @@
 
 /**
  * @file
- * ecomma.ajax.inc
- *
  * Handles the server side Ajax interactions of ecomma.
  *
  * @defgroup ecomma_ajax ecomma server side Ajax interactions.
@@ -123,12 +121,12 @@ function ecomma_tag_range_delete_function($tag, $nid) {
  *   The node id of the ecomma_range database table record that needs
  *   to be deleted.
  *
- * drupal_json()
+ *   drupal_json_output()
  *   a json array with element 'beg' giving the id number of the first
  *   word of the text range, 'end' giving the id number of the last word
  *   of the text range, 'tid' giving the term id number of the ecomma_range
  *   table record, and 'totals' counting the number of records which are
- *   expected to be returned from the ecomma_range table
+ *   expected to be returned from the ecomma_range table.
  */
 function ecomma_tag_query_function($tag, $nid) {
 
@@ -208,30 +206,9 @@ function ecomma_comments_active_text_function($beg, $nid) {
   ->condition('e.nid', $nid)
   ->execute();
 
-  drupal_json(db_fetch_object($result));
+  foreach ($result as $row) {
+    $comments[] = $row;
+  }
+
+  drupal_json_output($comments);
 }
-
-/**
- * Callback for textfield ecomma status verification.
- *
- * This function is called to check if ecomma textfield was enabled.
- *
- * @param int $nid
- *   The node id of the ecomma_enabled database table record that checks
- *   if the node contains an ecomma activated/enabled textfield.
- */
-function ecomma_enabled_query_function($nid) {
-
-  $query = db_select('ecomma_field_enabled', 'f');
-  $query->join('node', 'n', 'f.content_type_name = n.type');
-  $ecomma_enabled = $query->fields('f', array('ecomma_enabled'))
-  ->condition('n.nid', $nid, '=')
-  ->execute()
-  ->fetchField();
-
-  print $ecomma_enabled;
-}
-
-/**
- * @}
- */

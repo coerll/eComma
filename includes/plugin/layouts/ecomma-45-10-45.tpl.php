@@ -1,7 +1,8 @@
-<?php 
+<?php
 /**
  * @file
  * Panel template layout for the ecomma module. This layout has three columns.
+ *
  * The left column is intended for text in a text field that will be annotated.
  * The tabs to hide/view the different ecomma blocks are in the middle column,
  * and the right column should hold the ecomma blocks.
@@ -32,14 +33,14 @@
     <div class="panel-panel panel-col-fourtyfive lastUnit">
       <div class="inside">
         <div id="tabs-icons">
-      		<ul>
+            <ul>
           <li class="words"><a href="#pane-ecomma-0" title="word cloud"></a></li>
           <li class="tags"><a href="#pane-community-tags-0" title="tag cloud"></a></li>
           <li class="comments"><a href="#pane-node-comments" title="comment thread"></a></li>
             <li class="comments_all_cloud"><a href="#pane-ecomma-2" title="comment cloud"></a></li>
             <li class="annotation_count"><a href="#pane-ecomma-3" title="list of users with annotation count"></a></li>
           </ul>
-					<?php print $content['right']; ?>
+           <?php print $content['right']; ?>
         </div>
       </div>
     </div>
