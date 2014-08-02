@@ -280,7 +280,7 @@ function ecomma_node_prepare($node) {
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
-  $ecomma_enabled = &drupal_static('enabled_variable');
+  $ecomma_enabled = enabled_variable();
 
   if (ctype_digit(arg(1)) || arg(0) == 'ecomma_user_data') {
     $user_role = "user";
