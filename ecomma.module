@@ -288,9 +288,8 @@ function ecomma_node_prepare($node) {
 
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_comment_form_alter().
  */
- 
 function ecomma_form_comment_form_alter(&$form, &$form_state, $form_id) {
   // Call submit function to update ecomma_range with node comment info.
   $form['subject'] = NULL;
@@ -303,6 +302,9 @@ function ecomma_form_comment_form_alter(&$form, &$form_state, $form_id) {
 }
 
 
+/**
+ * Implements hook_form_alter().
+ */
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
