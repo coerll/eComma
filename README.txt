@@ -10,6 +10,7 @@ MODULE DEPENDENCIES
 - taxonomy
 - text
 - views
+- views_data_export
 
 
 INSTALLATION OF ECOMMA MODULE

@@ -11,5 +11,6 @@ dependencies[] = tagadelic
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = views
+dependencies[] = views_data_export
 
 core = 7.x

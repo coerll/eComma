@@ -144,13 +144,10 @@ function ecomma_tag_query_function($tag, $nid) {
   ->condition('e.tid', $tid_existing)
   ->condition('e.nid', $nid)
   ->orderBy('tid', 'ASC')
-  ->execute();
+  ->execute()
+  ->fetchAll();
 
-  while ($results_all[] = $result->fetchAssoc()) {
-  }
-
-  drupal_add_http_header('Content-Type', 'application/json');
-  drupal_json_output($results_all);
+  drupal_json_output($result);
 }
 
 /**
@@ -204,11 +201,8 @@ function ecomma_comments_active_text_function($beg, $nid) {
    ))
   ->condition('e.beg', $beg)
   ->condition('e.nid', $nid)
-  ->execute();
+  ->execute()
+  ->fetchAll();
 
-  foreach ($result as $row) {
-    $comments[] = $row;
-  }
-
-  drupal_json_output($comments);
+  drupal_json_output($result);
 }

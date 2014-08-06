@@ -176,7 +176,7 @@ var comment_list = Array();
       $('.floating-box #community-tags-form').addClass('tab_content');
       $('.original-community-tags-form #edit-tags-wrapper').attr('id','original-edit-tags-wrapper');
       $('.original-community-tags-form #edit-tags').remove();
-      $('.original-community-tags-form .form-submit').remove();
+      $('.original-community-tags-form .form-button').remove();
       $('.floating-box #community-tags-form #edit-cloud').remove();
       $('.floating-box #community-tags-form .form-item-tags label:first').text(Drupal.t('Add tag'));
       $('.floating-box #community-tags-form .form-item-tags .tag-widget ul.inline-tags').hide();
@@ -550,7 +550,7 @@ var comment_list = Array();
     });
 
     //submitting tag input
-    $(".floating-box #community-tags-form .form-submit", context).click(function() {
+    $(".floating-box #community-tags-form .form-button", context).click(function() {
       var selection = $("#ec-selection-text", context).html().replace(/\s\s+/g," ").replace(/(\n|\r)/g," ").replace(/<br \/>/g," ").replace(/<br>/g," ").replace(/<\/?[^>]+>/gi, '');
 
       if(main_text.indexOf(selection) != -1){

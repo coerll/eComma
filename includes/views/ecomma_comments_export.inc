@@ -7,7 +7,7 @@
 $view = new view();
 $view->name = 'ecomma_comments_export';
 $view->description = 'ecomma_comments_export';
-$view->tag = '';
+$view->tag = 'ecomma_comments_export';
 $view->base_table = 'node';
 $view->human_name = '';
 $view->core = 6;
@@ -39,6 +39,7 @@ $handler->display->display_options['relationships']['cid']['field'] = 'cid';
 $handler->display->display_options['fields']['cid']['id'] = 'cid';
 $handler->display->display_options['fields']['cid']['table'] = 'comment';
 $handler->display->display_options['fields']['cid']['field'] = 'cid';
+$handler->display->display_options['fields']['cid']['relationship'] = 'cid';
 $handler->display->display_options['fields']['cid']['alter']['word_boundary'] = FALSE;
 $handler->display->display_options['fields']['cid']['alter']['ellipsis'] = FALSE;
 $handler->display->display_options['fields']['cid']['link_to_comment'] = FALSE;
@@ -46,35 +47,33 @@ $handler->display->display_options['fields']['cid']['link_to_comment'] = FALSE;
 $handler->display->display_options['fields']['pid']['id'] = 'pid';
 $handler->display->display_options['fields']['pid']['table'] = 'comment';
 $handler->display->display_options['fields']['pid']['field'] = 'pid';
+$handler->display->display_options['fields']['pid']['relationship'] = 'cid';
 $handler->display->display_options['fields']['pid']['label'] = 'Parent';
 /* Field: Comment: Updated date */
-$handler->display->display_options['fields']['timestamp']['id'] = 'timestamp';
-$handler->display->display_options['fields']['timestamp']['table'] = 'comment';
-$handler->display->display_options['fields']['timestamp']['field'] = 'changed';
-$handler->display->display_options['fields']['timestamp']['label'] = 'Date';
-$handler->display->display_options['fields']['timestamp']['alter']['word_boundary'] = FALSE;
-$handler->display->display_options['fields']['timestamp']['alter']['ellipsis'] = FALSE;
+$handler->display->display_options['fields']['changed']['id'] = 'changed';
+$handler->display->display_options['fields']['changed']['table'] = 'comment';
+$handler->display->display_options['fields']['changed']['field'] = 'changed';
+$handler->display->display_options['fields']['changed']['relationship'] = 'cid';
+$handler->display->display_options['fields']['changed']['date_format'] = 'short';
+$handler->display->display_options['fields']['changed']['second_date_format'] = 'long';
 /* Field: Comment: Author */
 $handler->display->display_options['fields']['name']['id'] = 'name';
 $handler->display->display_options['fields']['name']['table'] = 'comment';
 $handler->display->display_options['fields']['name']['field'] = 'name';
+$handler->display->display_options['fields']['name']['relationship'] = 'cid';
 $handler->display->display_options['fields']['name']['link_to_user'] = FALSE;
 /* Field: Comment: Comment */
-$handler->display->display_options['fields']['comment']['id'] = 'comment';
-$handler->display->display_options['fields']['comment']['table'] = 'field_data_comment_body';
-$handler->display->display_options['fields']['comment']['field'] = 'comment_body';
-$handler->display->display_options['fields']['comment']['label'] = 'Body';
+$handler->display->display_options['fields']['comment_body']['id'] = 'comment_body';
+$handler->display->display_options['fields']['comment_body']['table'] = 'field_data_comment_body';
+$handler->display->display_options['fields']['comment_body']['field'] = 'comment_body';
+$handler->display->display_options['fields']['comment_body']['relationship'] = 'cid';
 /* Field: Comment: Depth */
 $handler->display->display_options['fields']['thread']['id'] = 'thread';
 $handler->display->display_options['fields']['thread']['table'] = 'comment';
 $handler->display->display_options['fields']['thread']['field'] = 'thread';
+$handler->display->display_options['fields']['thread']['relationship'] = 'cid';
 $handler->display->display_options['fields']['thread']['alter']['word_boundary'] = FALSE;
 $handler->display->display_options['fields']['thread']['alter']['ellipsis'] = FALSE;
-/* Sort criterion: Comment: Updated date */
-$handler->display->display_options['sorts']['timestamp']['id'] = 'timestamp';
-$handler->display->display_options['sorts']['timestamp']['table'] = 'comment';
-$handler->display->display_options['sorts']['timestamp']['field'] = 'changed';
-$handler->display->display_options['sorts']['timestamp']['relationship'] = 'cid';
 /* Contextual filter: Content: Nid */
 $handler->display->display_options['arguments']['nid']['id'] = 'nid';
 $handler->display->display_options['arguments']['nid']['table'] = 'node';
@@ -86,7 +85,7 @@ $handler->display->display_options['arguments']['nid']['summary']['format'] = 'd
 $handler = $view->new_display('views_data_export', 'Data export', 'views_data_export_1');
 $handler->display->display_options['pager']['type'] = 'none';
 $handler->display->display_options['style_plugin'] = 'views_data_export_xml';
-$handler->display->display_options['style_options']['provide_file'] = 0;
+$handler->display->display_options['style_options']['provide_file'] = 1;
 $handler->display->display_options['style_options']['parent_sort'] = 0;
 $handler->display->display_options['style_options']['transform'] = 1;
 $handler->display->display_options['style_options']['root_node'] = 'nodes';
