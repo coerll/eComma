@@ -290,11 +290,24 @@ function ecomma_node_prepare($node) {
 /**
  * Implements hook_form_alter().
  */
+ 
+function ecomma_form_comment_form_alter(&$form, &$form_state, $form_id) {
+  // Call submit function to update ecomma_range with node comment info.
+  $form['subject'] = NULL;
+  $form['author']['_author']['#access'] = FALSE;
+  $form['actions']['preview'] = NULL;
+  $form['actions']['submit']['#value'] = "Add";
+  $form['comment_body'][LANGUAGE_NONE][0]['#rows'] = 3;
+  $form['comment_body']['#after_build'][] = 'ecomma_customize_comment_form';
+  $form['#submit'][] = 'ecomma_comment_submit';
+}
+
+
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
 
-  if (arg(0) == 'node' && ctype_digit(arg(1)) || arg(0) == 'ecomma_user_data') {
+  if (arg(0) == 'node' && ctype_digit(arg(1)) && !array_key_exists(2, arg()) || arg(0) == 'ecomma_user_data') {
     $user_role = "user";
     $node = node_load(arg(1));
     $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
@@ -333,21 +346,6 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
   }
 
   switch ($form_id) {
-    case 'comment_node_ecomma_form':
-      // Call submit function to update ecomma_range with node comment info.
-      $form['subject'] = NULL;
-      $form['author']['_author']['#access'] = FALSE;
-      $form['actions']['preview'] = NULL;
-      $form['actions']['submit']['#value'] = "Add";
-      $form['comment_body'][LANGUAGE_NONE][0]['#rows'] = 3;
-      $form['comment_body']['#after_build'][] = 'ecomma_customize_comment_form';
-      $form['#submit'][] = 'ecomma_comment_submit';
-      break;
-
-    case 'comment-form':
-      $form['#after_build'][] = 'ecomma_node_form_after_build';
-      break;
-
     case 'comment_confirm_delete':
       // Call submit function to update ecomma_range with node comment info.
       // If comment_delete module isn't enabled.
