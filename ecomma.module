@@ -134,7 +134,7 @@ function ecomma_preprocess_node(&$vars) {
  *
  * @ingroup themeable
  */
-function theme_ecomma_formatter_myformatter($node_vars) {
+function theme_ecomma_formatter_myformatter(array $node_vars) {
   $field = $node_vars['node_field'][LANGUAGE_NONE];
   $whole_text = "";
 
@@ -234,7 +234,7 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
   $content_type_name = $context['argument_entity_id:node_1']->data->type;
   $content_type_data = field_info_instances("node", $content_type_name);
 
-  if (array_key_exists('argument_entity_id:node_1',$context)) {
+  if (array_key_exists('argument_entity_id:node_1', $context)) {
     $node = node_load($context['argument_entity_id:node_1']->data->nid);
     $ecomma_enabled = ecomma_enabled_variable(node_load($context['argument_entity_id:node_1']->data->nid), $context['argument_entity_id:node_1']->data->nid);
   }
@@ -273,14 +273,14 @@ function ecomma_node_delete($node) {
  */
 function ecomma_node_prepare($node) {
 
-  if (array_key_exists ('nid', $node)) {
+  if (array_key_exists('nid', $node)) {
     $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
 
     if ($ecomma_enabled) {
       global $user;
       if (!db_query("SELECT created FROM {ecomma_range} WHERE nid =:nid AND uid =:uid", array(':nid' => $node->nid, ':uid' => $user->uid))->fetchField()) {
-        $message = "An eComma text cannot be edited once it was annotated or the annotations will not display correctly.<br />Please delete all annotations before you edit the text.";
-        drupal_set_message(t($message), 'warning', TRUE);
+        $message = t("An eComma text cannot be edited once it was annotated or the annotations will not display correctly.") . "<br />" . t("Please delete all annotations before you edit the text.");
+        drupal_set_message($message, 'warning', TRUE);
       }
     }
   }
@@ -294,7 +294,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
 
-  if (arg(0) =='node' && ctype_digit(arg(1)) || arg(0) == 'ecomma_user_data') {
+  if (arg(0) == 'node' && ctype_digit(arg(1)) || arg(0) == 'ecomma_user_data') {
     $user_role = "user";
     $node = node_load(arg(1));
     $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
@@ -351,7 +351,6 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
     case 'comment_confirm_delete':
       // Call submit function to update ecomma_range with node comment info.
       // If comment_delete module isn't enabled.
-
       $form['#submit'][] = 'ecomma_comment_delete';
       break;
 
@@ -486,7 +485,7 @@ function ecomma_comment_submit($form, &$form_state) {
  * Only used if comment_delete module isn't enabled.
  */
 function ecomma_comment_delete($comment) {
-  if(array_key_exists('nid',$comment)){
+  if (array_key_exists('nid', $comment)) {
     global $user;
     $uid = $user->uid;
     $nid = $comment->nid;
@@ -666,7 +665,6 @@ function ecomma_block_view($delta = '') {
         break;
 
       case 'ecomma_user_annotation_total':
-        global $base_url;
         $user_data_table = "";
         $view_name = 'ecomma_user_data';
         $view = views_get_view($view_name);
