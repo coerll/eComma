@@ -428,9 +428,11 @@ function ecomma_comment_submit($form, &$form_state) {
   ->execute()
   ->fetchField();
 
-  if (array_key_exists('comment-range-beg', $_POST)) {
-    $beg = $_POST['comment-range-beg'];
-    $end = $_POST['comment-range-end'];
+  if (array_key_exists('input', $form_state)) {
+    if (array_key_exists('comment-range-beg', $form_state['input'])) {
+      $beg = $form_state['input']['comment-range-beg'];
+      $end = $form_state['input']['comment-range-end'];
+    }
   }
   $timestamp = strtotime('now');
 
