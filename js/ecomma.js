@@ -124,9 +124,8 @@ var comment_list = Array();
               comment_text += $('.ec-p' + t).text() + " ";
             }
             if(beg_range && end_range){
-              var id_num = someObj.attr('about').replace(/([^\#]*)\#comment\-([\d]*?)/,"$2");
-              someObj.prepend('<div class ="ec-comment-content">' + Drupal.t('@comment_text', {'@comment_text': comment_text}) + '<input id ="highlight_comment_'+id_num+'" class ="highlight_comment_'+id_num+' form-submit" type ="button" value ="highlight" ></div>');
-              $('.highlight_comment_' + id_num).click(function(){
+              someObj.prepend('<div class ="ec-comment-content">' + Drupal.t('@comment_text', {'@comment_text': comment_text}) + '<input id ="highlight_comment_'+cid+'" class ="highlight_comment_'+cid+' form-submit" type ="button" value ="highlight" ></div>');
+              $('.highlight_comment_' + cid).click(function(){
                 ec_rh(beg_range , end_range, 'single');
               });
             }else{
