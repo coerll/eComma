@@ -244,11 +244,11 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
       if ($ecomma_enabled) {
 
         $field_name = $field_data['field_name'];
-				if (property_exists('content', 'module')) {
+        if (isset($content)) {
           if ($content->module == 'entity_field') {
             $content->content = theme('ecomma_formatter_myformatter', array('node' => $node, 'node_field' => $node->$field_name));
           }
-				}
+        }
       }
     }
   }
@@ -745,10 +745,17 @@ function ecomma_word_cloud($node) {
       ksort($words_count_array);
       unset($words_count_array['']);
 
+      $output = '';
       $increase_all = '';
+
+      $max = max($words_count_array);
+      $min = min($words_count_array);
+      $minPercent = 1;
+      $maxPercent = 6;
+      $multiplier = ($maxPercent-$minPercent)/($max-$min);
+
       foreach ($words_count_array as $key => $word_count) {
-        $percent = floor(($word_count / max($words_count_array)) * 100);
-        $title_size = (1 * $percent) / 100;
+        $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
         if ($title_size < 1 || $increase_all == TRUE) {
           if ($title_size < 1) {
             $title_size = 1;
@@ -816,9 +823,15 @@ function ecomma_comment_cloud($node) {
 
         $output = '';
         $increase_all = '';
+
+        $max = max($words_count_array);
+        $min = min($words_count_array);
+        $minPercent = 1;
+        $maxPercent = 6;
+        $multiplier = ($maxPercent-$minPercent)/($max-$min);
+
         foreach ($words_count_array as $key => $word_count) {
-          $percent = floor(($word_count / max($words_count_array)) * 100);
-          $title_size = (1 * $percent) / 100;
+          $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
           if ($title_size < 1 || $increase_all == TRUE) {
             if ($title_size < 1) {
               $title_size = 1;
