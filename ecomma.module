@@ -545,7 +545,7 @@ function ecomma_settings_field_submit($form, &$form_state) {
   $checkbox_value = $form_state['values']['ecomma'] ? 1 : 0;
   $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
 
-  if (isset($ecomma_enabled)) {
+  if (!empty($ecomma_enabled)) {
     db_update('ecomma_field_enabled')
     ->fields(array(
       'content_type_name' => $type_name,
