@@ -1318,30 +1318,30 @@ div.ec-comment h4 {
   margin-bottom: 2px;
 }
 
-div.comment {
+.comment {
   width: inherit;
 }
 
-div.comment h3,
-div.comment .submitted {
+.comment h3,
+.comment .submitted {
   display: inline;
 }
 
 div.ec-comment h4.ec-comment-title,
-div.comment h3 a {
+.comment h3 a {
   margin-bottom: 6px;
 }
 
 h4.ec-comment-title,
 a.ec-comment-title,
 ol.ec-item-list li a.ec-comment-title,
-div.comment h3 a {
+.comment h3 a {
   font-weight: bold;
   color: #2786c2;
 }
 
 div.ec-comment-date,
-div.comment .submitted {
+.comment .submitted {
   margin-bottom: 8px;
   font: bold 10px Arial, sans-serif;
   padding: 0px 2px;
@@ -1350,7 +1350,7 @@ div.comment .submitted {
   color: #a17500;
 }
 
-div.comment .submitted a {
+.comment .submitted a {
   font-family: Arial;
   text-decoration: underline;
   /*color: #453b26;*/
@@ -1359,8 +1359,9 @@ div.comment .submitted a {
   font-size: 13px;
 }
 
-div.comment .permalink,
-div.comment .submitted .permalink {
+.comment .permalink,
+.comment .submitted .permalink,
+.comment h3{
   display: none;
 }
 
