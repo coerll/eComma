@@ -752,7 +752,13 @@ function ecomma_word_cloud($node) {
       $min = min($words_count_array);
       $minPercent = 1;
       $maxPercent = 6;
-      $multiplier = ($maxPercent-$minPercent)/($max-$min);
+      $diff = $max-$min;
+      $minPercent = 1;
+      $maxPercent = 6;
+      if ($diff == 0) {
+        $diff = 1;
+      }
+      $multiplier = ($maxPercent-$minPercent)/($diff);
 
       foreach ($words_count_array as $key => $word_count) {
         $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
@@ -767,7 +773,6 @@ function ecomma_word_cloud($node) {
         }
         $output .= "<h$title_size class='word_cloud_tag'>" . l($key, '#') . "</h$title_size>";
       }
-
     }
   }
 
@@ -828,7 +833,10 @@ function ecomma_comment_cloud($node) {
         $min = min($words_count_array);
         $minPercent = 1;
         $maxPercent = 6;
-        $multiplier = ($maxPercent-$minPercent)/($max-$min);
+        if ($diff == 0) {
+          $diff = 1;
+        }
+        $multiplier = ($maxPercent-$minPercent)/($diff);
 
         foreach ($words_count_array as $key => $word_count) {
           $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
