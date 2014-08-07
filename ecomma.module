@@ -244,9 +244,11 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
       if ($ecomma_enabled) {
 
         $field_name = $field_data['field_name'];
-        if ($content->module == 'entity_field') {
-          $content->content = theme('ecomma_formatter_myformatter', array('node' => $node, 'node_field' => $node->$field_name));
-        }
+				if (property_exists('content', 'module')) {
+          if ($content->module == 'entity_field') {
+            $content->content = theme('ecomma_formatter_myformatter', array('node' => $node, 'node_field' => $node->$field_name));
+          }
+				}
       }
     }
   }
