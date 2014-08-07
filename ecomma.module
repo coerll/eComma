@@ -346,7 +346,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['library'][] = array('system', 'ui.sortable');
     }
   }
-  else if (arg(2) == 'types' && array_key_exists(6, arg())) {
+  elseif (arg(2) == 'types' && array_key_exists(6, arg())) {
     $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
   }
   else {
@@ -543,7 +543,6 @@ function ecomma_settings_field_submit($form, &$form_state) {
   $field_name = $form_state['values']['instance']['field_name'];
   $type_name = $form_state['values']['instance']['bundle'];
   $checkbox_value = $form_state['values']['ecomma'] ? 1 : 0;
-  
   $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
 
   if (isset($ecomma_enabled)) {
@@ -556,13 +555,12 @@ function ecomma_settings_field_submit($form, &$form_state) {
     ->execute();
   }
   else {
-  dpm("else");
     db_insert('ecomma_field_enabled')
-    ->fields(array(
-      'field_name' => $field_name,
-      'content_type_name' => $type_name,
-      'ecomma_enabled' => $checkbox_value,
-    ))->execute();
+      ->fields(array(
+        'field_name' => $field_name,
+        'content_type_name' => $type_name,
+        'ecomma_enabled' => $checkbox_value,
+      ))->execute();
     drupal_set_message(t('The ecomma commentary features were @ecomma_enabled_status for @fieldname', array('@ecomma_enabled_status' => ($form_state['values']['ecomma'] ? "enabled" : 'disabled'), '@fieldname' => $field_name)));
   }
 }
@@ -779,7 +777,7 @@ function ecomma_comment_cloud($node) {
   $output = "";
   $query = db_select('comment', 'c');
   $query->join('ecomma_range', 'e', 'c.cid = e.cid');
-  $cids = $query ->fields('c', array('cid'))
+  $cids = $query->fields('c', array('cid'))
     ->condition('c.nid', $node->nid)
     ->orderBy("c.created", "DESC")
     ->execute()
