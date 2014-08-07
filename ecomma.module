@@ -236,7 +236,7 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
 
   if (array_key_exists('argument_entity_id:node_1', $context)) {
     $node = node_load($context['argument_entity_id:node_1']->data->nid);
-    $ecomma_enabled = ecomma_enabled_variable(node_load($context['argument_entity_id:node_1']->data->nid), $context['argument_entity_id:node_1']->data->nid);
+    $ecomma_enabled = ecomma_enabled_variable_by_content_type(node_load($context['argument_entity_id:node_1']->data->nid), $context['argument_entity_id:node_1']->data->nid);
   }
 
   foreach ($content_type_data as $field_name => $field_data) {
@@ -258,7 +258,7 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
  * Implements hook_node_delete().
  */
 function ecomma_node_delete($node) {
-  $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
+  $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
 
   if ($ecomma_enabled) {
     db_delete('ecomma_range')
@@ -274,7 +274,7 @@ function ecomma_node_delete($node) {
 function ecomma_node_prepare($node) {
 
   if (array_key_exists('nid', $node)) {
-    $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
+    $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
 
     if ($ecomma_enabled) {
       global $user;
@@ -312,7 +312,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
   if (arg(0) == 'node' && ctype_digit(arg(1)) && !array_key_exists(2, arg()) || arg(0) == 'ecomma_user_data') {
     $user_role = "user";
     $node = node_load(arg(1));
-    $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
+    $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
 
     if ($user->uid == 0) {
       $user_role = "anonymous";
@@ -346,6 +346,12 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['library'][] = array('system', 'ui.sortable');
     }
   }
+  else if (arg(2) == 'types' && array_key_exists(6, arg())) {
+    $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
+  }
+  else {
+    $ecomma_enabled = 0;
+  }
 
   switch ($form_id) {
     case 'comment_confirm_delete':
@@ -358,19 +364,11 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       // Ecomma enable checkbox will appear on settings for textarea CCK field.
       if ($form['#instance']['widget']['type'] == "text_textarea") {
 
-        // Query db table, returns ecomma status (enabled/disabled).
-        if ($ecomma_enabled) {
-          $ecomma_enabled_display = $ecomma_enabled;
-        }
-        else {
-          $ecomma_enabled_display = 0;
-        }
-
         // Add checkbox for ecomma features the settings for.
         $form['widget']['ecomma'] = array(
           '#type' => 'checkbox',
           '#title' => t('Enable ecomma commentary features'),
-          '#default_value' => $ecomma_enabled_display,
+          '#default_value' => $ecomma_enabled,
           '#weight' => 0,
         );
         // Update status of ecomma features for this text field.
@@ -545,19 +543,20 @@ function ecomma_settings_field_submit($form, &$form_state) {
   $field_name = $form_state['values']['instance']['field_name'];
   $type_name = $form_state['values']['instance']['bundle'];
   $checkbox_value = $form_state['values']['ecomma'] ? 1 : 0;
-  $node = node_load(arg(1));
-  $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
+  
+  $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
 
-  if ($ecomma_enabled == 1) {
+  if (isset($ecomma_enabled)) {
     db_update('ecomma_field_enabled')
     ->fields(array(
       'content_type_name' => $type_name,
-      'ecomma_enabled' => $ecomma_enabled,
+      'ecomma_enabled' => $checkbox_value,
     ))
     ->condition('field_name', $field_name)
     ->execute();
   }
   else {
+  dpm("else");
     db_insert('ecomma_field_enabled')
     ->fields(array(
       'field_name' => $field_name,
@@ -711,7 +710,7 @@ function ecomma_word_cloud($node) {
   $content_type_data = field_info_instances("node", $content_type_name);
   $ecomma_enabled_check = 0;
   $ecomma_field_name = "";
-  $ecomma_enabled = ecomma_enabled_variable($node, $node->nid);
+  $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
 
   if (arg(0) == "node") {
     foreach ($content_type_data as $field_name => $field_data) {
@@ -778,11 +777,13 @@ function ecomma_word_cloud($node) {
 function ecomma_comment_cloud($node) {
   $comment_texts = "";
   $output = "";
-  $cids = db_select('comment', 'c')
-    ->fields('c', array('cid'))
+  $query = db_select('comment', 'c');
+  $query->join('ecomma_range', 'e', 'c.cid = e.cid');
+  $cids = $query ->fields('c', array('cid'))
     ->condition('c.nid', $node->nid)
     ->orderBy("c.created", "DESC")
-    ->execute();
+    ->execute()
+    ->fetchAll();
 
   if (array_key_exists(0, $cids)) {
     foreach ($cids as $cid_item) {
@@ -880,25 +881,41 @@ function ecomma_views_api() {
 
 
 /**
- * Set and get the shared static $ecomma_enabled variable.
+ * Get the shared static $ecomma_enabled variable.
  *
  * @return int
  *   The value of the $ecomma_enabled variable.
  */
-function ecomma_enabled_variable($node, $nid) {
+function ecomma_enabled_variable_by_content_type($node, $nid) {
   if (isset($node)) {
     $query = db_select('ecomma_field_enabled', 'f');
     $query->join('node', 'n', 'f.content_type_name = n.type');
-    $ecomma_enabled_result = $query
+    $ecomma_enabled = $query
       ->fields('f', array('ecomma_enabled'))
-      ->condition('n.nid', $nid, '=')
+      ->condition('n.nid', $nid)
       ->execute()
       ->fetchField();
 
-    $ecomma_enabled = &drupal_static(__FUNCTION__);
-    if (!isset($ecomma_enabled)) {
-      $ecomma_enabled = $ecomma_enabled_result;
-    }
-    return $ecomma_enabled_result;
+    return $ecomma_enabled;
+  }
+}
+
+
+/**
+ * Get the shared static $ecomma_enabled variable.
+ *
+ * @return int
+ *   The value of the $ecomma_enabled variable.
+ */
+function ecomma_enabled_variable_by_field_name($fieldname) {
+  if (isset($fieldname)) {
+    $query = db_select('ecomma_field_enabled', 'f');
+    $ecomma_enabled = $query
+      ->fields('f', array('ecomma_enabled'))
+      ->condition('f.field_name', $fieldname)
+      ->execute()
+      ->fetchField();
+
+    return $ecomma_enabled;
   }
 }
