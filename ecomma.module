@@ -677,7 +677,7 @@ function ecomma_block_view($delta = '') {
           foreach ($uids_totals as $uid_key => $uid_total) {
             $user_data_table .= '<li class="ec-user-admin">';
             $user_name = theme('username', array('account' => $user));
-            $user_data_table .= l(strip_tags($user_name), '/ecomma_user_data/' . arg(1) . '/' . $uid_key);
+            $user_data_table .= l(strip_tags($user_name), 'ecomma_user_data/' . arg(1) . '/' . $uid_key);
             $user_data_table .= '<span>' . $uid_total . ' annotations</span></li>';
           }
           $user_data_table .= '</ol>';
