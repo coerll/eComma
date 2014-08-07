@@ -242,7 +242,6 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
   foreach ($content_type_data as $field_name => $field_data) {
     if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == TRUE) {
       if ($ecomma_enabled) {
-
         $field_name = $field_data['field_name'];
         if (isset($content)) {
           if ($content->module == 'entity_field') {
@@ -750,18 +749,18 @@ function ecomma_word_cloud($node) {
 
       $max = max($words_count_array);
       $min = min($words_count_array);
-      $minPercent = 1;
-      $maxPercent = 6;
-      $diff = $max-$min;
-      $minPercent = 1;
-      $maxPercent = 6;
+      $min_font = 1;
+      $max_font = 6;
+      $diff = $max - $min;
+      $min_font = 1;
+      $max_font = 6;
       if ($diff == 0) {
         $diff = 1;
       }
-      $multiplier = ($maxPercent-$minPercent)/($diff);
+      $multiplier = ($max_font - $min_font) / ($diff);
 
       foreach ($words_count_array as $key => $word_count) {
-        $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
+        $title_size = round($min_font + (($max - ($max - ($word_count - $min))) * $multiplier));
         if ($title_size < 1 || $increase_all == TRUE) {
           if ($title_size < 1) {
             $title_size = 1;
@@ -773,6 +772,7 @@ function ecomma_word_cloud($node) {
         }
         $output .= "<h$title_size class='word_cloud_tag'>" . l($key, '#') . "</h$title_size>";
       }
+
     }
   }
 
@@ -831,15 +831,16 @@ function ecomma_comment_cloud($node) {
 
         $max = max($words_count_array);
         $min = min($words_count_array);
-        $minPercent = 1;
-        $maxPercent = 6;
+        $diff = $max - $min;
+        $min_font = 1;
+        $max_font = 6;
         if ($diff == 0) {
           $diff = 1;
         }
-        $multiplier = ($maxPercent-$minPercent)/($diff);
+        $multiplier = ($max_font - $min_font) / ($diff);
 
         foreach ($words_count_array as $key => $word_count) {
-          $title_size = round($minPercent + (($max-($max-($word_count-$min)))*$multiplier));
+          $title_size = round($min_font + (($max - ($max - ($word_count - $min))) * $multiplier));
           if ($title_size < 1 || $increase_all == TRUE) {
             if ($title_size < 1) {
               $title_size = 1;
