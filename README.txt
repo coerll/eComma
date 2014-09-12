@@ -18,11 +18,12 @@ INSTALLATION OF ECOMMA MODULE
 Instructions below are based on navigation in admin menu (admin_menu module).
 
 1.  Modules: enable ecomma module and dependencies
+2.  Configuration > Search and metadata > Clean URLs: Check checkbox.
 
-(Go to content management > Content types for step 2-4)
-2.  Structure > Taxonomy: Add Vocabulary.
-3.  Add content type: Add custom content type.
-4.  Edit new content type > Comment settings > Preview comment:Optional
+(Go to content management > Content types for step 3-5)
+3.  Structure > Taxonomy: Add Vocabulary.
+4.  Add content type: Add custom content type.
+5.  Edit new content type > Comment settings > Preview comment:Optional
 6.  Manage fields > Add a new text area field with unlimited values
 7.  Enable ecomma commentary features for that text area field in the settings.
 8.  Manage fields > Add existing field > Term reference > Autocomplete term w.
@@ -46,10 +47,10 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 19. View the node and select text with mouse cursor to start annotating.
 
 Current restrictions:
-	* Does currently not work on IE browser.
+	* Does currently not work on all IE browser.
+	* Must use clean URLs.
 	* Once a group/class has started to tag or comment on a text the text 
 	  cannot be changed in any way or the annotations will be off.
-
 
 *****************************************************************************
 
@@ -112,6 +113,6 @@ USE OF ECOMMA MODULE (see also screenshots at admin/help/ecomma)
 5. Other drupal modules to consider
 
 	-For collaborative class or group assignments try using the organic groups
-	 module in combination with the userplus module.
-	-This module provides some views in ecomma.views.inc.inc that may be used
-	 with the module.
+	 module.
+	-The eComma module provides some views through ecomma.views.inc that can be used
+	 to run queries and download comment data.

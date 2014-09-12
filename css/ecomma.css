@@ -1375,7 +1375,7 @@ div.ec-comment-date,
 
 .comment .permalink,
 .comment .submitted .permalink,
-.comment h3{
+.comment h3 {
   display: none;
 }
 

@@ -6,7 +6,7 @@
  * The script also handles the formatting of the highlighted annotated text.
  * Written by COERLL and based on code from Travis Brown <travis.brown@mail.utexas.edu>.
  */
- 
+
 (function ($){
 // Global variables.
 var ec_tag_list = new Array();
@@ -124,7 +124,7 @@ var comment_list = Array();
               comment_text += $('.ec-p' + t).text() + " ";
             }
             if(beg_range && end_range){
-              someObj.prepend('<div class ="ec-comment-content">' + Drupal.t('@comment_text', {'@comment_text': comment_text}) + '<input id ="highlight_comment_'+cid+'" class ="highlight_comment_'+cid+' form-submit" type ="button" value ="highlight" ></div>');
+              someObj.prepend('<div class ="ec-comment-content">' + Drupal.t('@comment_text', {'@comment_text': comment_text}) + '<input id ="highlight_comment_' + cid + '" class ="highlight_comment_' + cid + ' form-submit" type ="button" value ="highlight" ></div>');
               $('.highlight_comment_' + cid).click(function(){
                 ec_rh(beg_range , end_range, 'single');
               });
@@ -447,7 +447,6 @@ var comment_list = Array();
       if (end_id == null || isNaN(end_id)){
         end = document.getElementById('ec-p' + ec_stanza_end);
         end_id = ec_stanza_end;
-        //end_id = ec_stanza_end - 1;
       }
 
       var stanza = beg.parentNode.parentNode;
@@ -492,7 +491,7 @@ var comment_list = Array();
           $('.floating-box #comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + Drupal.t('@comment_data', {'@comment_data': comment_data}) + "</div>");
           $("ul.ecomma_tabs li:last", context).addClass("active").show();
           $("ul.ecomma_tabs li:first", context).removeClass("active");
-          //Show first tab content
+          // Shows first tab content.
           $(".tab_content:last", context).show();
           $(".tab_content:first", context).hide();
           $('.ec-warning', context).hide();
