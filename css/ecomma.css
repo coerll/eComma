@@ -1539,7 +1539,7 @@ span.punctuation {
 }
 
 .line_number {
-  padding: 0px 0px 8px;
+  padding: 0px 2px 0px 0px;
   margin-right: 12px;
   border-right: 1px #666 solid;
   float: left;

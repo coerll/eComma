@@ -181,20 +181,20 @@ var comment_list = Array();
 
       // Prevent dialog popup from opening for comment editing and reply.
       if(!location.href.match(/\/comment\//)){
-        $('.floating-box p', context).append($('#comment-form'));
+        $('.floating-box p', context).append($('.comment-form'));
       }
-      $('.floating-box #comment-form label span', context).remove();
-      $('#comment-form', context).addClass('tab_content');
-      $('#comment-form', context).append('<div id ="comment_thread" />');
-      $('.floating-box .ecomma_tabs', context).append('<li class ="active"><a href ="#community-tags-form">' + Drupal.t('Add Tag') + '</a></li><li><a href ="#comment-form">' + Drupal.t('Add Comment') + '</a></li>');
+      $('.floating-box .comment-form label span', context).remove();
+      $('.comment-form', context).addClass('tab_content');
+      $('.comment-form', context).append('<div id ="comment_thread" />');
+      $('.floating-box .ecomma_tabs', context).append('<li class ="active"><a href ="#community-tags-form">' + Drupal.t('Add Tag') + '</a></li><li><a href =".comment-form">' + Drupal.t('Add Comment') + '</a></li>');
       $('.floating-box #selection', context).append('<h3>' + Drupal.t('Your selection') + '</h3>');
       $('.floating-box #selection', context).append('<div class ="ec-warning">' + Drupal.t('eComma couldn\'t understand your selection.<br /><b>Please try again.</b>') + '</div>');
       $('.floating-box #selection', context).append('<p id ="ec-selection-text" class ="ec-selection-text"></p>');
       $('.floating-box #community-tags-form', context).append('<input name ="tag-range-beg" id ="tag-range-beg"  type ="hidden" value ="' + beg_id + '">');
       $('.floating-box #community-tags-form', context).append('<input name ="tag-range-end" id ="tag-range-end"  type ="hidden" value ="' + end_id + '">');
       $('.floating-box #community-tags-form', context).append('<input name ="tag-value" id ="tag-value"  type ="hidden" value ="">');
-      $('#comment-form .form-submit', context).before('<input name ="comment-range-beg" id ="comment-range-beg"  type ="hidden" value ="">');
-      $('#comment-form .form-submit', context).before('<input name ="comment-range-end" id ="comment-range-end"  type ="hidden" value ="">');
+      $('.comment-form .form-submit', context).before('<input name ="comment-range-beg" id ="comment-range-beg"  type ="hidden" value ="">');
+      $('.comment-form .form-submit', context).before('<input name ="comment-range-end" id ="comment-range-end"  type ="hidden" value ="">');
 
       // Activate first tab.
       $("ul.ecomma_tabs li:first", context).addClass("active").show();
@@ -221,7 +221,7 @@ var comment_list = Array();
       $('#community-tags-form', context).wrap('<div class ="original-community-tags-form" />');
     }
 
-    $('#comment-form .form-submit', context).click(function() {
+    $('.comment-form .form-submit', context).click(function() {
       $('.comment', context).css('display','block');
     });
 
@@ -461,8 +461,10 @@ var comment_list = Array();
 
       if(range != "" && text != "" && beg_id != null || end_id != null){
         // Show first tab content.
-        $(".tab_content:first", context).show();
-        $('.floating-box #comment-form #comment_thread .comment_wrapper', context).remove();
+        if(!$(".ecomma_tabs li.active").length){
+          $(".tab_content:first", context).show();
+          $('.floating-box .comment-form #comment_thread .comment_wrapper', context).remove();
+        }
 
         if($('#ec-bgr' + beg_id).attr('class') == "comment_token"){
           var someObj = new Object();
@@ -488,7 +490,7 @@ var comment_list = Array();
           });
 
           $('.comment_wrapper', context).remove();
-          $('.floating-box #comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + Drupal.t('@comment_data', {'@comment_data': comment_data}) + "</div>");
+          $('.floating-box .comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + Drupal.t('@comment_data', {'@comment_data': comment_data}) + "</div>");
           $("ul.ecomma_tabs li:last", context).addClass("active").show();
           $("ul.ecomma_tabs li:first", context).removeClass("active");
           // Shows first tab content.
@@ -729,21 +731,7 @@ function ec_comment_select(beg, end, type, color){
         $('#ec-bgr' + i).parent().children('.line_number').css('height', $('#ec-bgr' + i).parent().height() + 'px');
     }
 
-    if(type == "multiple"){
-      $('#ec-bgr' + i).removeClass("not_FE");
-      $('.cloud a').each(function(i){
-        $('#ec-bgr' + i).removeClass($(this).text());
-      });
-      $('#ec-bgr' + i).removeClass('Partner-all');
-      $('#ec-p' + i).css(token_css_wipe);
-      $('#ec-bgr' + i).parent().children('.line_number').css('height', $('#ec-bgr' + i).parent().height() + 'px');
-      $('#ec-bgr' + i).css('width',($('#ec-p' + i).width()) + 'px');
-      $('#ec-bgr' + i).css('height',($('#ec-p' + i).height()) + 'px');
-      $('#ec-bgr' + i).css('left',($('#ec-p' + i).position().left) + 'px');
-      $('#ec-bgr' + i).css('top',($('#ec-p' + i).position().top) + 'px');
-    }
-
-    if (i >= beg && i < end){
+    if (i >= beg && i < end && $('#ec-p' + i).position() != null){
       $('#ec-bgr' + i).addClass("comment_token");
 
       var max_count = ec_max_comment_token_count();
@@ -771,8 +759,8 @@ function ec_comment_select(beg, end, type, color){
             'display'          : 'block',
             'z-index'           : '0',
             'height'           : $('#ec-p' + i).height() + 'px',
-            'left'             : $('#ec-p' + i).position().left + 'px',
-            'top'              : $('#ec-p' + i).position().top + 'px',
+            'left'             : Math.round($('#ec-p' + i).position().left) + 'px',
+            'top'              : Math.round($('#ec-p' + i).position().top) + 'px',
             'padding'          : '1px 3px 1px 3px',
             'opacity'          : '0.5',
             'filter'           :'alpha(opacity =50)'
@@ -792,8 +780,8 @@ function ec_comment_select(beg, end, type, color){
       $('#ec-p' + i).css(token_css);
       $('#ec-bgr' + i).css(token_bgr_css);
       $('#ec-bgr' + i).css('width',($('#ec-p' + i).width()) + 'px');
-      $('#ec-bgr' + i).css('top',($('#ec-p' + i).position().top) + 'px');
-      $('#ec-bgr' + i).css('left',($('#ec-p' + i).position().left) + 'px');
+      $('#ec-bgr' + i).css('top',(Math.round($('#ec-p' + i).position().top)) + 'px');
+      $('#ec-bgr' + i).css('left',(Math.round($('#ec-p' + i).position().left)) + 'px');
       $('#ec-bgr' + i).parent().children('.line_number').css('height',$('#ec-bgr' + i).parent().height() + 'px');
     }
 
@@ -841,7 +829,7 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
     }
 
     if ((i in ec_tag_list) && (ec_tag_list[i] == tag_name || tag_name != "hover_green")){
-      if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
+      if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green" && $('#ec-p' + i).position() != null){
         weight = Math.min(7, Math.ceil(token_list[i] * 30 / max_count));
 
         token_css =
@@ -858,8 +846,8 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
             'position'         : 'absolute',
             'display'          : 'block',
             'z-index'           : '0',
-            'left'             : $('#ec-p' + i).position().left + 'px',
-            'top'              :  $('#ec-p' + i).position().top + 'px',
+            'left'             : Math.round($('#ec-p' + i).position().left) + 'px',
+            'top'              : Math.round($('#ec-p' + i).position().top) + 'px',
             'height'           : $('#ec-p' + i).height() + 'px',
             'padding'          : '1px 3px 1px 3px',
             'opacity'          : ((weight / 16) * token_list[i] / 2.5),
@@ -867,14 +855,14 @@ function ec_token_color(token_list, ec_tag_list, r, g, b){
           };
         }//end if
 
-        if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green"){
+        if(tag_name != "Partner1" && tag_name != "Partner2" && tag_name != "Partners" && tag_name != "hover_green" && $('#ec-p' + i).position() != null){
           $('#ec-bgr' + i).removeClass("FE");
           $('#ec-bgr' + i).addClass("not_FE");
           if(r != 204 && g != 255 && b != 153){
             $('#ec-p' + i).css(token_css);
             $('#ec-bgr' + i).css(token_bgr_css);
             $('#ec-bgr' + i).css('width',$('#ec-p' + i).width() + 'px');
-            $('#ec-bgr' + i).css('left',$('#ec-p' + i).position().left + 'px');
+            $('#ec-bgr' + i).css('left', Math.round($('#ec-p' + i).position().left) + 'px');
           }
         }
 

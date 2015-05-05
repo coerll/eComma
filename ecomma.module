@@ -168,28 +168,34 @@ function theme_ecomma_formatter_myformatter(array $node_vars) {
   // Reducing multiple to single white spaces.
   $whole_text = preg_replace("/([\\x20]+)/u", " ", $whole_text);
 
+  //$whole_text = preg_replace("/(\s)(\n)/", "$2", $whole_text);
   // Splitting string into array. Items will be wrapped in span elements next.
-  $field_words[] = preg_split("/(\s)/", $whole_text);
+	
+  $field_words[] = preg_split("/(\s)(?!\r)|(\s)(\n)/", $whole_text);
+  //$field_words[] = preg_split("/(\s)/", $whole_text);
 
   // Wrap each word/punctuation in span elements.
   $wid = 1;
-  foreach ($field_words[0] as $word) {
+	$new_word = array();
+  foreach ($field_words[0] as $word_key => $word) {
     if ($word != "") {
       // Is a word that contains only letters and is not a paragraph.
-      if (preg_match("/[^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+/u", $word)
-       && !preg_match("/([\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)/u", $word)
+      if (preg_match("/[^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+/", $word)
        && !preg_match("/paragraphparagraph/", $word)) {
         $new_word[] = "<span class='ec-p" . $wid . " token' id='ec-p" . $wid . "'>" . trim($word) . "</span><div id='ec-bgr" . $wid . "' style='display:none;'></div>";
         $wid++;
       }
       // Wrap differently if it is punctuation.
-      if (ctype_punct($word)) {
+      if (preg_match("/[\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+/", $word)
+       && !preg_match("/([\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)([^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)/", $word)
+       && !preg_match("/([^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)([\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)/", $word)
+       && !preg_match("/([^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)([\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)([^\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)/", $word)) {
         $new_word[] = "<span class='ec-p" . $wid . " token punctuation' id='ec-p" . $wid . "'>" . trim($word) . "</span><div id='ec-bgr" . $wid . "' style='display:none;'></div>";
         $wid++;
       }
       // Wrap differently if it contains punctuation and letters.
       if (preg_match("/([^\\x21-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)([\\x20-\\x26\\x28-\\x2F\\x3A-\\x3F]+)([^\\x21-\\x2F\\x3A-\\x40\\x5B-\\x5F\\x7B-\\x7E\\x82\\x84-\\x85\\x87-\\x89\\x8B\\x91-\\x98\\x9B\\xA2-\\xA5\\xAB-\\xAC\\xAF\\xB0-\\xBE]+)/u", $word)) {
-        $new_word[] = "<span class='ec-p" . $wid . " token' id='ec-p" . $wid . "'>" . trim($word) . "</span><div id='ec-bgr" . $wid . "' style='display:none;'></div>";
+        //$new_word[] = "<span class='ec-p" . $wid . " token' id='ec-p" . $wid . "'>" . trim($word) . "</span><div id='ec-bgr" . $wid . "' style='display:none;'></div>";
         $wid++;
       }
       // Wrap differently if it is a paragraph marker.
@@ -199,7 +205,7 @@ function theme_ecomma_formatter_myformatter(array $node_vars) {
     }
 
     // Have to add unix line break character for later substitution.
-    if ($word == ""|| preg_match("/paragraphparagraph/", $word)) {
+    if ($word == "" || preg_match("/paragraphparagraph/", $word)) {
       $new_word[] = "\n";
     }
   }
@@ -223,6 +229,7 @@ function theme_ecomma_formatter_myformatter(array $node_vars) {
       $fields_final .= $fields_array_item_item . "\n<br /><br />";
     }
   }
+
   return $fields_final;
 
 }
@@ -231,27 +238,26 @@ function theme_ecomma_formatter_myformatter(array $node_vars) {
  * Implements hook_panels_pane_content_alter().
  */
 function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
-  $content_type_name = $context['argument_entity_id:node_1']->data->type;
-  $content_type_data = field_info_instances("node", $content_type_name);
-
   if (array_key_exists('argument_entity_id:node_1', $context)) {
+    $content_type_name = $context['argument_entity_id:node_1']->data->type;
+    $content_type_data = field_info_instances("node", $content_type_name);
+
     $node = node_load($context['argument_entity_id:node_1']->data->nid);
     $ecomma_enabled = ecomma_enabled_variable_by_content_type(node_load($context['argument_entity_id:node_1']->data->nid), $context['argument_entity_id:node_1']->data->nid);
-  }
 
-  foreach ($content_type_data as $field_name => $field_data) {
-    if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == TRUE) {
-      if ($ecomma_enabled) {
-        $field_name = $field_data['field_name'];
-        if (isset($content)) {
-          if ($content->module == 'entity_field') {
-            $content->content = theme('ecomma_formatter_myformatter', array('node' => $node, 'node_field' => $node->$field_name));
+    foreach ($content_type_data as $field_name => $field_data) {
+      if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == TRUE) {
+        if ($ecomma_enabled) {
+          $field_name = $field_data['field_name'];
+          if (isset($content)) {
+            if ($content->module == 'entity_field') {
+              $content->content = theme('ecomma_formatter_myformatter', array('node' => $node, 'node_field' => $node->$field_name));
+            }
           }
         }
       }
     }
   }
-
 }
 
 
@@ -347,7 +353,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['library'][] = array('system', 'ui.sortable');
     }
   }
-  elseif (arg(2) == 'types' && array_key_exists(6, arg())) {
+  elseif (arg(2) == 'types' && arg(5) == 'fields' && array_key_exists(6, arg()) && array_key_exists('instance', $form)) {
     $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
   }
   else {
@@ -434,34 +440,35 @@ function ecomma_comment_submit($form, &$form_state) {
   }
   $timestamp = strtotime('now');
 
-  if (isset($cid) && arg(0) != "comment") {
-    db_insert('ecomma_range')
-    ->fields(array(
-      'rid' => NULL,
-      'nid' => $nid,
-      'vid' => $vid,
-      'uid' => $uid,
-      'tid' => $tid,
-      'cid' => $cid,
-      'beg' => $beg,
-      'end' => $end,
-      'created' => $timestamp,
-    ))->execute();
-  }
-  else {
-    $pid = db_select('comment', 'c')
-    ->fields('c', array('pid'))
-    ->condition('c.cid', $cid)
-    ->execute()
-    ->fetchField();
+  if (isset($cid) && arg(0) == "comment") {
+      if(!preg_match('/([^\.]*)\.(.*)/', $form_state['comment']->thread)){
+      db_insert('ecomma_range')
+      ->fields(array(
+        'rid' => NULL,
+        'nid' => $nid,
+        'vid' => $vid,
+        'uid' => $uid,
+        'tid' => $tid,
+        'cid' => $cid,
+        'beg' => $beg,
+        'end' => $end,
+        'created' => $timestamp,
+      ))->execute();
+    }
+    else {
+      $pid = db_select('comment', 'c')
+      ->fields('c', array('pid'))
+      ->condition('c.cid', $cid)
+      ->execute()
+      ->fetchField();
 
-    $range = db_select('ecomma_range', 'e')
-    ->fields('e', array('beg', 'end'))
-    ->condition('e.cid', $pid)
-    ->execute()
-    ->fetchAssoc();
+      $range = db_select('ecomma_range', 'e')
+      ->fields('e', array('beg', 'end'))
+      ->condition('e.cid', $pid)
+      ->execute()
+      ->fetchAssoc();
 
-    db_insert('ecomma_range')
+      db_insert('ecomma_range')
       ->fields(array(
         'rid' => NULL,
         'nid' => $nid,
@@ -473,6 +480,7 @@ function ecomma_comment_submit($form, &$form_state) {
         'end' => $range['end'],
         'created' => $timestamp,
       ))->execute();
+    }
   }
 }
 
@@ -604,10 +612,8 @@ function ecomma_block_view($delta = '') {
     $block = array();
     switch ($delta) {
       case 'ecomma_word_cloud':
-        if ($user->uid) {
-          $block['subject'] = t('eComma Word Cloud');
-          $block['content'] = t('<div class="word_cloud">!word_cloud_final</div>', array('!word_cloud_final' => ecomma_word_cloud($node)));
-        }
+        $block['subject'] = t('eComma Word Cloud');
+        $block['content'] = t('<div class="word_cloud">!word_cloud_final</div>', array('!word_cloud_final' => ecomma_word_cloud($node)));
         break;
 
       case 'ecomma_tag_details':
@@ -624,6 +630,7 @@ function ecomma_block_view($delta = '') {
             $rid = $user_data->ecomma_range_rid;
             $beg = $user_data->ecomma_range_beg;
             $end = $user_data->ecomma_range_end;
+            $uid = $user_data->ecomma_range_uid;
 
             $term_name = db_select('taxonomy_term_data', 't')
             ->fields('t', array('name'))
@@ -638,7 +645,8 @@ function ecomma_block_view($delta = '') {
             ->fetchField();
 
             $date = date('d M Y gA', $timestamp);
-            $user_name = theme('username', array('account' => $user));
+            $current_user = user_load($uid);
+            $user_name = theme('username', array('account' => $current_user));
             $user_data_list .= '<li class="user-data user-data-term' . $tid . '" id="ec-tag-e### ' . $beg . ' ' . $end;
             $user_data_list .= '" style="display: none;" ><div class="ec-tag-item">';
             $user_data_list .= l($term_name, '', array(
