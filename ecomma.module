@@ -5,6 +5,14 @@
  */
 
 /**
+ * Implements hook_init().
+ */
+function ecomma_init() {
+  drupal_add_http_header('Access-Control-Allow-Origin', '*', TRUE);
+  drupal_add_http_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept', TRUE);
+}
+
+/**
  * Implements hook_ctools_plugin_directory().
  */
 function ecomma_ctools_plugin_directory($module, $plugin) {
@@ -215,7 +223,7 @@ function theme_ecomma_formatter_myformatter(array $node_vars) {
   $output = preg_replace("/(\s\s+)/", "\n", $output);
 
   // Substituting div element with line class for \n unix line break.
-  $display_text = "<div class='ecomma_line'>" . preg_replace('/\n/', "</div><br /><div class='ecomma_line'>", $output);
+  $display_text = "<div class='ecomma_line'>" . preg_replace('/\n/', "</div><div class='ecomma_line'>", $output);
   $display_text = preg_replace("/<div class\=\'ecomma_line\'>(?!.*<div class\=\'ecomma_line\'>)/", "", $display_text);
 
   // Splitting into paragraphs for final output.
@@ -440,7 +448,9 @@ function ecomma_comment_submit($form, &$form_state) {
   }
   $timestamp = strtotime('now');
 
-  if (isset($cid) && arg(0) == "comment") {
+  $pid = $form_state['comment']->pid;
+
+  if (isset($cid) && $pid == 0) {
       if(!preg_match('/([^\.]*)\.(.*)/', $form_state['comment']->thread)){
       db_insert('ecomma_range')
       ->fields(array(
@@ -456,12 +466,6 @@ function ecomma_comment_submit($form, &$form_state) {
       ))->execute();
     }
     else {
-      $pid = db_select('comment', 'c')
-      ->fields('c', array('pid'))
-      ->condition('c.cid', $cid)
-      ->execute()
-      ->fetchField();
-
       $range = db_select('ecomma_range', 'e')
       ->fields('e', array('beg', 'end'))
       ->condition('e.cid', $pid)
