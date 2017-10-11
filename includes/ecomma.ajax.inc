@@ -206,3 +206,22 @@ function ecomma_comments_active_text_function($beg, $nid) {
 
   drupal_json_output($result);
 }
+
+/**
+ * Callback to check if text is right-to-left.
+ *
+ * This function is called when comment is loaded, to check if r-to-l text is enabled.
+ *
+ * @param int $cid
+ *   The comment id number.
+ * @param int $rtl_enabled
+ *   A rtl flag
+ */
+function ecomma_comment_rtl_function($cid) {
+  $rtl_enabled = db_select('ecomma_node_text_direction', 'd')
+  ->fields('d', array('rtl_enabled'))
+  ->condition('d.cid', $cid)
+  ->execute()
+  ->fetchField();
+  print $rtl_enabled;
+}
