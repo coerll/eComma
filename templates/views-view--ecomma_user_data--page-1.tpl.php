@@ -5,8 +5,6 @@
  */
   global $base_url;
 
-  $uid = arg(2);
-  $user = user_load($uid);
   $tag_counter = 0;
   $comment_counter = 0;
   $content = '';
@@ -40,21 +38,22 @@
   endforeach;
   $content .= '</table></div>';
 
-  if($comment_counter > 1):
-    $comment_label = "comments";
-  else:
+  if($comment_counter == 1):
     $comment_label = "comment";
+  else:
+    $comment_label = "comments";
   endif;
 
-  if($tag_counter > 1):
-    $tag_label = "tags";
-  else:
+  if($tag_counter == 1):
       $tag_label = "tag";
+  else:
+    $tag_label = "tags";
   endif;
 
   print '<div class="white-box">';
   print '<div class="ecomma_breadcrumb"><a href="' . $base_url . '/node/' . arg(1) . '">Back to text</a></div>';
-  print '<h3>' . check_plain($user->name) . ' (' . check_plain($comment_counter) . ' ' . check_plain($comment_label) . ', ' . check_plain($tag_counter) . ' ' . check_plain($tag_label) . ')</h3>';
+  print '<h3>' . check_plain(ecomma_display_username()) . '</h3>';
+  print '<h6>(' . check_plain($comment_counter) . ' ' . check_plain($comment_label) . ', ' . check_plain($tag_counter) . ' ' . check_plain($tag_label) . ')</h6>';
   print '<table class="ec-item-list">';
   print '<tr class="user_data_sorting">';
   print '<td></td>';
