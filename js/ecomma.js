@@ -25,7 +25,7 @@ var comment_list = Array();
 
     var ec_comment_id = 0;
     var ec_tag_cnt = 0;
-    var base_url;
+    var base_path;
     var user_role;
     var main_text;
     var ec_tag_id = 330;
@@ -40,10 +40,10 @@ var comment_list = Array();
     var comment_cnt = $('.comment', context).length;
     var selected_text = '';
     var isTouchSupported = "ontouchend" in document;
-    var myDown = isTouchSupported ? "touchstart" : "mousedown";
-    var myUp = isTouchSupported ? "touchend" : "mouseup";
+    var myDown = "touchstart mousedown";
+    var myUp = "touchend mouseup";
 
-    base_url = settings.ecomma.base_url_var;
+	base_path = Drupal.settings.basePath;
     user_role = settings.ecomma.user_role;
     if($(".token:last", context).length > 0){
       ec_stanza_end = $(".token:last", context).attr('class').match(/ec-p([\d]+)/i,"")[1];
@@ -90,7 +90,7 @@ var comment_list = Array();
         if(deletedElement.tagName.toLowerCase() == "li" && deletedElement.getAttribute("key")){
           var tag = deletedElement.innerHTML;
           Drupal.detachBehaviors($(this));
-          $.post(base_url + "/tag_range_delete/" + tag + "/" + nid, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
+          $.post(base_path + "tag_range_delete/" + tag + "/" + nid, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
             function(data) {
               location.href = location.href.replace(/#(.*)/,'') + '#tags';
               location.reload();
@@ -101,7 +101,7 @@ var comment_list = Array();
 
     // Add selected text to comments through Ajax call.
     $('.comment', context).each(function(i){
-      if(base_url){
+      if(base_path){
         var bool_reply = false;
         var loc = location.toString().split("/");
         for(var i = 0; i < loc.length; i++){
@@ -114,7 +114,7 @@ var comment_list = Array();
           var someObj = new Object();
           someObj = $(this);
           var cid = parseInt($(this, context).prev()[0].id.replace(/comment-/,""));
-          $.post(base_url + "/comment_query/" + cid + "/" + nid, someObj, function(data) {
+          $.post(base_path + "comment_query/" + cid + "/" + nid, someObj, function(data) {
             var data_array = data.split(" ");
             var beg_range = parseInt(data_array[0]);
             var end_range = parseInt(data_array[1]);
@@ -163,8 +163,11 @@ var comment_list = Array();
 
     if(user_role != "anonymous"){
       $('body', context).prepend('<div class ="floating-box"  title ="Tag / Comment input"  />');
+      $('body', context).prepend('<div class ="ec-warning-outside-box"  title ="eComma Warning">This text range is outside the annotation text area.<br /><b>Please try again.</b></div>');
       $(".floating-box", context).dialog();
       $(".floating-box", context).dialog('close');
+      $('.ec-warning-outside-box', context).dialog();
+      $('.ec-warning-outside-box', context).dialog('close');
       $('.floating-box', context).append('<p />');
       $('.floating-box p', context).append('<ul class ="ecomma_tabs" /><br />');
       $('.floating-box p', context).append('<div id ="selection" />');
@@ -264,7 +267,7 @@ var comment_list = Array();
           $(this, context).addClass("not-ec");
         }
       });
-      $.post(base_url + "/tag_query/" + escape(tag) + "/" + nid, someObj, function(data) {
+      $.post(base_path + "tag_query/" + escape(tag) + "/" + nid, someObj, function(data) {
         if(data){
           for(var k in data){
             if(data[k].tid != undefined) {
@@ -287,6 +290,8 @@ var comment_list = Array();
             }
 
             someObj.unbind(myDown).bind(myDown, function(e){
+              e.preventDefault();
+
               var tid = someObj.attr('id').replace(/ec-t/g,"");
 
               if($('.ec-hi', context).length > 0){
@@ -308,6 +313,8 @@ var comment_list = Array();
               }
 
               ec_th(tid);
+			  
+			  return false;
             });
 
             for(var j in data){
@@ -377,8 +384,58 @@ var comment_list = Array();
 
     });
 
-    // Text selection function.
+
+    $(".node-type-ecomma", context).bind('mouseup touchend', function(e){
+    // there is selction?
+		if(!window.getSelection().isCollapsed) {
+			// find direction of selection
+			var sel = window.getSelection();
+			var range = document.createRange();
+			range.setStart(sel.anchorNode, sel.anchorOffset);
+			range.setEnd(sel.focusNode, sel.focusOffset);
+			var backwards = range.collapsed;
+			range.detach();
+			
+			var parentEl = sel.getRangeAt(0).commonAncestorContainer;
+			var activeEl = document.activeElement;
+			if (parentEl.nodeType != 1) {
+				parentEl = parentEl.className;
+			}
+			if(typeof parentEl != "undefined"){
+				parentElClass = parentEl.className;
+				var match_result = parentElClass.match(/pane-node-field-annotation-text/);
+				if(match_result)
+				  match_result_flag = match_result[0];
+				else
+				  match_result_flag = "";
+			}
+			
+			// get selection rects
+			var rects = sel.getRangeAt(0).getClientRects();
+			var n = rects.length - 1;
+			
+			// display end marker based on direction of selection
+			if( (match_result_flag == "pane-node-field-annotation-text" && activeEl.tagName.toLowerCase() == "body") || parentElClass =="column" || parentElClass =="cloud" || parentElClass =="pane-title" || parentElClass =="indented" || parentElClass =="submitted"  || parentElClass =="undefined"  ||   parentElClass =="word_cloud" && (activeEl.title != "word cloud" || activeEl.title != "tag cloud" || activeEl.title != "list of users with annotation count" || activeEl.title != "comment thread")){
+				if(backwards){
+					//console.log("backwards");
+					$('.ec-warning-outside-box', context).dialog('open');
+				}else{
+					//console.log("forward");
+					$('.ec-warning-outside-box', context).dialog('open');
+					
+				}
+			}
+		}
+		 
+    });
+	
+
+
+	 // Function triggers annotation dialog on text selection 
     $(".ecomma_line", context).bind(myUp, function(e){
+      e.preventDefault();
+	  $('.ec-warning-outside-box', context).dialog('close');			  
+
       $(".line_number_symbol", context).css("display","block");
       var text = "";
       var sel   = null;
@@ -430,12 +487,58 @@ var comment_list = Array();
           }else{
             end = end.parentNode;
           }
-          if (beg.id.substring(0, 4) == 'ec-p'){
-            beg_id = parseInt(beg.id.substring(4));
-          }
-          if (end.id.substring(0, 4) == 'ec-p'){
-            end_id = parseInt(end.id.substring(4)) + 1;
-          }
+		  //element without id/text at beginning and end
+		  if(beg.id == "" && end.id == ""){
+		    end = end.previousSibling;
+			beg = beg.nextSibling;
+
+			if(typeof beg !== "undefined" && beg !== null && typeof end !== "undefined" && end !== null){
+			  if(beg.id == "" && end.id != ""){
+			    beg = beg.nextSibling;
+			  }else if(beg.id != "" && end.id == ""){
+			    end = end.nextSibling;
+			  }
+
+			  if(beg.id == "" || end.id == "" || typeof beg.id === "undefined" || typeof end.id === "undefined"){
+			    beg.id == "";
+			    end.id == "";
+			  }
+			}
+
+		  }else if(beg.id == "" && end.id != ""){
+            beg = beg.nextSibling;
+		  }else if(beg.id != "" && end.id == ""){
+            end = end.nextSibling;
+		  }else if(beg.id == "" || end.id == "" || typeof beg.id === "undefined" || typeof end.id === "undefined"){
+		      beg.id == "";
+		      end.id == "";
+		  }
+		  
+		  if(typeof beg !== "undefined" && beg !== null && typeof end !== "undefined" && end !== null){
+
+		    if(beg.id != "" && end.id != "" && typeof beg.id !== "undefined" && typeof end.id !== "undefined"){
+              if (beg.id.substring(0, 4) == 'ec-p'){
+                beg_id = parseInt(beg.id.substring(4));
+              }
+		      //if selection starts accidentally with background div instead of text span
+              else if (beg.id.substring(0, 6) == 'ec-bgr'){
+                beg_id = parseInt(beg.id.substring(6));
+              }
+              if (end.id.substring(0, 4) == 'ec-p'){
+                end_id = parseInt(end.id.substring(4)) + 1;
+              }
+		      //if selection ends accidentally with background div instead of text span
+              else if (end.id.substring(0, 6) == 'ec-bgr'){
+                end_id = parseInt(end.id.substring(6));
+              }
+		    }else{
+		      beg_id = "";
+			  end_id = "";
+		    }
+		  }else{
+		    beg_id = "";
+		    end_id = "";
+		  }
         }
       }
 
@@ -449,11 +552,6 @@ var comment_list = Array();
         end_id = ec_stanza_end;
       }
 
-      var stanza = beg.parentNode.parentNode;
-      if (beg.parentNode.tagName.toLowerCase() == 'span'){
-        stanza = stanza.parentNode;
-      }
-
       $(".line_number_symbol", context).css("display","none");
       text = text.replace(/#---ecomma_line_symbol([^\d]*)\d(\d)?/g,'');
 
@@ -462,6 +560,7 @@ var comment_list = Array();
       if(range != "" && text != "" && beg_id != null || end_id != null){
         // Show first tab content.
         if(!$(".ecomma_tabs li.active").length){
+          $(".tab_content", context).hide();
           $(".tab_content:first", context).show();
           $('.floating-box .comment-form #comment_thread .comment_wrapper', context).remove();
         }
@@ -473,7 +572,7 @@ var comment_list = Array();
             beg_id_hi = i;
           }
 
-          $.post(base_url + "/comments_active_text/" + beg_id_hi + "/" + nid, someObj,
+          $.post(base_path + "comments_active_text/" + beg_id_hi + "/" + nid, someObj,
           function(data) {
             for(var v = beg_id_hi; v < data.end; v++){
               selected_text += $('#ec-p' + v).text() + " ";
@@ -491,11 +590,6 @@ var comment_list = Array();
 
           $('.comment_wrapper', context).remove();
           $('.floating-box .comment-form #comment_thread', context).html("<div class ='comment_wrapper'><h2>Previous Comments</h2>" + Drupal.t('@comment_data', {'@comment_data': comment_data}) + "</div>");
-          $("ul.ecomma_tabs li:last", context).addClass("active").show();
-          $("ul.ecomma_tabs li:first", context).removeClass("active");
-          // Shows first tab content.
-          $(".tab_content:last", context).show();
-          $(".tab_content:first", context).hide();
           $('.ec-warning', context).hide();
           $('.floating-box', context).show();
           $('.floating-box', context).css('left', $('.floating-box', context).css('left') - 200 + 'px');
@@ -504,8 +598,12 @@ var comment_list = Array();
         if($('#ec-bgr' + beg_id).attr('class') != "comment_token"){
           if(!isNaN(beg_id) && !isNaN(end_id)
           && beg_id != "" && end_id != ""
-          && test_array[test_array.length - 1] != "" && test_array[0] != ""
           && test_array[test_array.length - 1] != "undefined" && test_array[0] != "undefined"){
+            if(end_id-beg_id == 1){
+              sel.text = $('#ec-p' + beg_id).text();
+              text = $('#ec-p' + beg_id).text();
+            }
+
             // Add tag/comment box to body.
             // Activate first tab.
             $("ul.ecomma_tabs li:first", context).addClass("active").show();
@@ -523,6 +621,9 @@ var comment_list = Array();
             $('#ec-selection-text', context).text(Drupal.t('@text', {'@text': text}));
             $('.floating-box #community-tags-form', context).show();
             $(".floating-box", context).dialog('open');
+			if(!$('.floating-box .form-item-tags', context).is(":visible")){
+              $('.floating-box .form-item-tags', context).show();
+			}
             $('.ec-warning', context).hide();
 
             $('#tag-range-beg', context).val(beg_id);
@@ -535,15 +636,38 @@ var comment_list = Array();
             $("ul.ecomma_tabs li:first", context).addClass("active").show();
             // Activate first tab.
             $("ul.ecomma_tabs li:last", context).removeClass("active");
+			$(".tab_content", context).hide();
+			$(".tab_content:first", context).show();
             $('.floating-box', context).show();
             $(".floating-box", context).dialog('open');
             $('#ec-selection-text', context).text("");
-            $('.floating-box #community-tags-form', context).hide();
+            $('.floating-box .form-item-tags', context).hide();
+            $(".floating-box", context).dialog('open');
             $('.ec-warning', context).show();
           }
         }
       }
+	  
+	  if($("ul.ecomma_tabs li:first", context).hasClass("active")) {
+        $(".tab_content").hide();
+        $(".tab_content:first", context).show();
+	  }
+	  
+	  if($("ul.ecomma_tabs li:last", context).hasClass("active")) {
+        $(".tab_content").hide();
+        $(".tab_content:last", context).show();
+	  }
+	  
+	  return false;
     });
+   //end - Function triggers annotation dialog on text selection 
+	
+	$(".ui-dialog-titlebar-close", context).click(function() {
+      $("ul.ecomma_tabs li:first", context).removeClass("active");
+      $("ul.ecomma_tabs li:last", context).removeClass("active");
+      $(".tab_content").hide();
+      $(".tab_content:first", context).show();
+	});
 
     // Submitting tag input by clicking on Add button through Ajax call.
     $(".floating-box #community-tags-form .form-button", context).click(function() {
@@ -553,7 +677,7 @@ var comment_list = Array();
         var tag = $('#tag-value', context).val();
         var beg = $('#tag-range-beg', context).val();
         var end = $('#tag-range-end', context).val();
-        $.post(base_url + "/tag_range/" + tag + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
+        $.post(base_path + "tag_range/" + tag + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
         function(data) {
           location.href = location.href.replace(/#(.*)/,'') + '#tags';
           location.reload();
@@ -575,7 +699,7 @@ var comment_list = Array();
           var tag = $('#tag-value', context).val();
           var beg = $('#tag-range-beg', context).val();
           var end = $('#tag-range-end', context).val();
-          $.post(base_url + "/tag_range/" + escape(tag) + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
+          $.post(base_path + "tag_range/" + escape(tag) + "/" + nid + "/" + beg + "/" + end, {'from_js': true, 'ecomma_token': settings.ecomma.ecommaToken},
           function(data) {
             location.href = location.href.replace(/#(.*)/,'') + '#tags';
             location.reload();
@@ -590,7 +714,9 @@ var comment_list = Array();
       $(this, context).attr('id', class_value);
       $(this, context).attr('href', 'javascript:;');
       $(this, context).bind(myDown, function(e){
-        ec_fh((i + 1));
+		e.preventDefault();
+		ec_fh((i + 1));
+		return false;
       });
       var someObj2 = new Object();
       someObj2 = $(this);
@@ -609,7 +735,7 @@ var comment_list = Array();
     $('.pane-community-tags-0', context).attr('id','pane-community-tags-0');
     $('.pane-node-comments', context).prepend('<input type ="button" class="form-submit comment_export" value ="Download comments" />');
     $('.comment_export').click(function(){
-      window.location = base_url + '/ecomma_comments_export/' + nid;
+      window.location = base_path + '/ecomma_comments_export/' + nid;
     });
     $("#tabs-icons").tabs();
 
@@ -624,22 +750,60 @@ var comment_list = Array();
         $('.pane-ecomma-ecomma-tag-details').css('display','none');
       }
     });
+	
+	  //RTL text direction support for comment form field.
+	  
+	  $("#edit-rtl").click(function() {
+	    if($("#edit-rtl").is(':checked')) { 
+	      $("#comment-form .form-textarea-wrapper textarea").addClass("rtl_dir");
+	    }
+	    else{
+	      $("#comment-form .form-textarea-wrapper textarea").removeClass("rtl_dir");
+	    }
+	  });
+	
 
-   var url_current = window.location.href;
-    var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
-    var url_comm_obj = url_current.match(/([^#]*)#([^-]*)(-\d\d)?/);
-    if(typeof url_tags_obj != null && url_tags_obj != null){
-      if((url_tags_obj[2] != '' || url_comm_obj[2] != '') && (url_tags_obj[2] != null && url_comm_obj[2] != null)){
-        if(url_tags_obj[2] == "tags"){
-          $("#tabs-icons", context).tabs("option", "active", 1);
+    var url_current = window.location.href;
+	if(url_current.match(/([^#]*)#(.*)/)){
+		var url_obj = url_current.match(/([^#]*)#(.*)/);
+		var hashtag = url_obj[2];
+		if(hashtag.match(/([^-]*)-([\d]*)/)){
+		  var url_comm_obj = url_obj[1].match(/([^-]*)-([\d]*)/);
+		  $("#tabs-icons", context).tabs("select", 2);
+		}else{
+		  $("#tabs-icons", context).tabs("select", 1);
+		}
+	}
+    /*var url_tags_obj = url_current.match(/([^#]*)#(.*)/);
+    var url_comm_obj = url_current.match(/([^#]*)#([^-]*)-([\d]*)?/);
+    if(typeof url_tags_obj != null || url_tags_obj != null){ console.log("right");
+      if((url_tags_obj[1] != '' || url_comm_obj[2] != '') && (url_tags_obj[1] != null && url_comm_obj[2] != null)){console.log("tag");
+        if(url_tags_obj[1] == "tags"){
+          $("#tabs-icons", context).tabs("select", 1);
         }else if(url_comm_obj[2] == "comment"){
-          var index = $('#tabs ul').index($('#pane-node-comments'));
-          $("#tabs-icons").tabs("option", "active", 2);
+		  $("#tabs-icons", context).tabs("select", 2);
         }
       }
-    }
+    }*/
+	
+	 $('.ecomma-pane').once('ecomma-pane-processed', function() {
+
+        var element = jQuery(this);
+        var url = element.attr('src');
+
+        jQuery.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'html',
+          success: function (response) {
+            element.replaceWith(response);
+          }
+        });
+      });
+
   }
 };
+
 
 function ec_max(a) {
   var b = 0;
@@ -676,6 +840,7 @@ function ec_th(form_id){
 function ec_th_all(form_id){
   if(!$('#ec-t' + form_id).hasClass('ec-hi')){
     $('#ec-t' + form_id).addClass('ec-hi');
+	ec_clear_color(ec_tag_token_list, ec_tag_name_list);
     ec_tag_select(form_id);
     ec_token_color(ec_tag_token_list, ec_tag_name_list, 172, 26, 47);
   }
@@ -794,6 +959,34 @@ function ec_comment_select(beg, end, type, color){
   ec_tag_token_list.length = 0;
   ec_tag_name_list.length = 0;
 }
+
+
+function ec_clear_color(token_list, ec_tag_list){
+  for (var i = ec_stanza_beg; i < ec_stanza_end; i++)
+  {
+		remove_token_css =
+			{
+				'font-size'        : null,
+				'margin'           : null,
+				'padding'          : null
+			};
+
+		remove_token_bgr_css =
+			{
+				'display'          : 'none',
+				'margin'           : null,
+				'padding'          : null,
+				'opacity'          : null,
+				'filter'           : null
+			};
+			
+			$('#ec-p' + i).css(remove_token_css);
+			$('#ec-bgr' + i).css(remove_token_bgr_css);
+			$('#ec-bgr' + i).removeClass('comment_token');
+			$('#ec-bgr' + i).parent().children('.line_number').css('height', $('#ec-bgr' + i).parent().height() + 'px');
+	}
+}
+
 
 function ec_token_color(token_list, ec_tag_list, r, g, b){
   var max_count = ec_max_tag_token_count();
