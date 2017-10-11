@@ -98,6 +98,29 @@ function ecomma_schema() {
       ),
     ),
   );
+  
+  
+    $schema['ecomma_node_text_direction'] = array(
+
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'nid of the node for which the direction of text has to be set.',
+      ),
+      'cid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'cid of the comment for which the direction of text has to be set.',
+      ),
+      'rtl_enabled' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Indicates if the node text needs to be shown in rlt or lrt direction.',
+      ),
+    ),
+  );
+
 
   return $schema;
 
