@@ -8,8 +8,8 @@
  * Implements hook_init().
  */
 function ecomma_init() {
-  drupal_add_http_header('Access-Control-Allow-Origin', '*', TRUE);
-  drupal_add_http_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept', TRUE);
+  /*drupal_add_http_header('Access-Control-Allow-Origin', '*', TRUE);
+  drupal_add_http_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept', TRUE);*/
 }
 
 /**
@@ -80,6 +80,16 @@ function ecomma_menu() {
     'file' => 'includes/ecomma.ajax.inc',
   );
 
+  $items['comment_rtl/%'] = array(
+    'title' => 'Comment text direction query',
+    'description' => 'Comment table query to return text direction.',
+    'page callback' => 'ecomma_comment_rtl_function',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/ecomma.ajax.inc',
+  );
+
   $items['comments_active_text/%/%'] = array(
     'title' => 'Comment query',
     'description' => 'Comment table query to return data to interface.',
@@ -91,6 +101,53 @@ function ecomma_menu() {
   );
 
   return $items;
+}
+
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ecomma_menu_alter(&$items) {
+  unset($items['node/%node/view']['title']);
+  unset($items['node/%node/edit']['title']);
+  $items['node/%node/view']['title callback'] = 'ecomma_view_tab_title';
+  $items['node/%node/edit']['title callback'] = 'ecomma_edit_tab_title';
+  $items['node/%node/view']['title arguments'] = array(1);
+  $items['node/%node/edit']['title arguments'] = array(1);
+}
+
+
+/**
+ * Callback for tab title of view tab.
+ *
+ * This function is called on node pages.
+ * Returns the title of the view tab.
+ *
+ * @param string $node
+ *   The node of the current node page.
+ */
+function ecomma_view_tab_title($node) {
+  if ($node->type == 'class') {
+    return t('All Class Texts');
+  }
+  return t('View Annotation Text');  
+}
+
+
+/**
+ * Callback for tab title of edit tab.
+ *
+ * This function is called on node pages.
+ * Returns the title of the view tab.
+ *
+ * @param string $node
+ *   The node of the current node page.
+ */
+function ecomma_edit_tab_title($node) {
+  if ($node->type == 'class') {
+    return t('Edit Class');
+  }
+  return t('Edit Annotation Text');  
 }
 
 
@@ -252,10 +309,32 @@ function ecomma_panels_pane_content_alter($content, $pane, $args, $context) {
 
     $node = node_load($context['argument_entity_id:node_1']->data->nid);
     $ecomma_enabled = ecomma_enabled_variable_by_content_type(node_load($context['argument_entity_id:node_1']->data->nid), $context['argument_entity_id:node_1']->data->nid);
+    $rtl_enabled = text_direction_variable($context['argument_entity_id:node_1']->data->nid);
+	$display = panels_load_display($pane->did);
+
 
     foreach ($content_type_data as $field_name => $field_data) {
       if ($field_data['widget']['type'] == 'text_textarea' && $ecomma_enabled == TRUE) {
         if ($ecomma_enabled) {
+
+          if($rtl_enabled){
+            foreach ($display->panel_settings as $key => $values) {
+              if ($key == 'style_settings') {
+              
+              // Unique ID of this region.
+              $id = $display->did . ':' . $pane->panel;
+
+              if (!empty($values['style']) && $pane->panel == "left") {
+                $pane->css += array('css_class' => '');
+                $pane->css['css_class'] .= ' rtl_dir';
+              }else if(empty($values['style']) && $pane->panel == "left"){
+                $pane->css += array('css_class' => '');
+                $pane->css['css_class'] = 'rtl_dir';
+              }
+			  }
+            }
+          }
+
           $field_name = $field_data['field_name'];
           if (isset($content)) {
             if ($content->module == 'entity_field') {
@@ -277,6 +356,10 @@ function ecomma_node_delete($node) {
 
   if ($ecomma_enabled) {
     db_delete('ecomma_range')
+      ->condition('nid', $node->nid)
+      ->execute();
+	  
+    db_delete('ecomma_node_text_direction')
       ->condition('nid', $node->nid)
       ->execute();
   }
@@ -363,9 +446,15 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
   }
   elseif (arg(2) == 'types' && arg(5) == 'fields' && array_key_exists(6, arg()) && array_key_exists('instance', $form)) {
     $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
+	$text_direction = text_direction_variable($form['instance']['nid']);
+  }
+  elseif (arg(0) == 'node' && ctype_digit(arg(1)) && arg(2) == "edit") {
+    $node = node_load(arg(1));
+    $text_direction = text_direction_variable($node->nid);
   }
   else {
     $ecomma_enabled = 0;
+	$text_direction = 0;
   }
 
   switch ($form_id) {
@@ -406,8 +495,53 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       }
       break;
 
+    case 'ecomma_node_form':
+
+      foreach ($form as $key => $element) {
+        if (isset($element) && is_array($element)) {
+          if (array_key_exists(LANGUAGE_NONE, $element)) {
+            if (array_key_exists(0, $element[LANGUAGE_NONE]) && array_key_exists('value', $element[LANGUAGE_NONE][0])) {
+              if($element[LANGUAGE_NONE][0]['value']['#type'] == 'textarea') { 
+			    if($text_direction) {
+				  $form['#attributes']['class'][] = 'rtl_dir';
+				}
+                $form[$key][LANGUAGE_NONE]['add_more']['#value'] = t('Add another paragraph');
+				$form['actions']['preview']['#access'] = FALSE;
+              }
+            }
+          }
+        }
+      }
+	  		
+      // Add checkbox for ecomma features the settings for.
+	  $form['additional_settings']['ecomma']['rtl'] = array(
+	  '#type' => 'checkbox',
+	  '#title' => t('Enable right-to-left text direction'),
+	  '#default_value' => $text_direction, 
+	  '#description' => t('For languages such as Hebrew and Arabic.'));
+	  
+	  break;
+
+    case 'node_delete_confirm';
+	  $form['#submit'][] = 'delete_path_submit';
+	  break;
   }
 }
+
+
+/**
+ * Function is called after a node is deleted. 
+ *
+ * @return 
+ *   Redirects to Group the deleted node belonged to.
+ */
+
+function delete_path_submit($form, &$form_state) {
+  $gid = $form['#node']->og_group_ref[LANGUAGE_NONE][0]['target_id'];
+  
+  drupal_goto('node/' . $gid);
+}
+
 
 /**
  * Implements hook_customize_comment_form().
@@ -550,6 +684,65 @@ function ecomma_comment_delete($comment) {
 
 
 /**
+ * Implements hook_node_submit().
+ */
+
+function ecomma_node_submit($node, $form, &$form_state) {
+  $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
+  if ($ecomma_enabled) {
+    $checkbox_value = $form_state['values']['rtl'] ? 1 : 0;
+    $nid = $form_state['node']->nid;
+
+    $text_direction = text_direction_variable($nid);
+
+    if ($text_direction != "" && $text_direction != NULL) {
+      db_update('ecomma_node_text_direction')
+      ->fields(array(
+        'rtl_enabled' => $checkbox_value,
+      ))
+      ->condition('nid', $nid)
+      ->execute();
+    }
+    else {
+
+      if(isset($node->nid)) {
+        $nid_existing = $nid;
+	  }
+	  else {  
+        global $user;
+
+        $entity = array(
+          'type' => 'article',
+          'title' => 'Example node',
+          'uid' => $user->uid,
+          'created' => REQUEST_TIME
+        );
+        $node_prev = entity_create('node', $entity);
+        node_save($node_prev);
+        $nid_existing = $node_prev->nid;
+	    $nid_existing++;
+	  
+	    db_delete('node')
+	      ->condition('nid', $node_prev->nid)
+	      ->execute();
+	  }
+
+      db_insert('ecomma_node_text_direction')
+        ->fields(array(
+        'nid' => $nid_existing,
+        'cid' => 0,
+        'rtl_enabled' => $checkbox_value,
+        ))->execute();
+
+    }
+    if($text_direction != $checkbox_value) {
+      drupal_set_message(t('Left-to-rigth text direction was @ecomma_text_diretion_status', array('@ecomma_text_diretion_status' => ($form_state['values']['rtl'] ? "enabled" : 'disabled'))));
+    }
+  }
+}
+
+
+/**
  * Implements hook_settings_field_submit().
  */
 function ecomma_settings_field_submit($form, &$form_state) {
@@ -669,9 +862,7 @@ function ecomma_block_view($delta = '') {
 
       case 'ecomma_comment_cloud':
         $block['subject']  = t('eComma Comment Cloud');
-        $block['content']  = '<div class="comment_cloud">';
-        $block['content'] .= t('!comment_texts_final', array('!comment_texts_final' => ecomma_comment_cloud($node)));
-        $block['content'] .= '</div>';
+		$block['content'] = 'The comment cloud can currently not be displayed. We are aware of the problem and are working on a solution.';
         break;
 
       case 'ecomma_user_annotation_total':
@@ -760,8 +951,14 @@ function ecomma_word_cloud($node) {
       $output = '';
       $increase_all = '';
 
-      $max = max($words_count_array);
-      $min = min($words_count_array);
+      if (array_key_exists(0, $words_count_array)) {
+        $max = max($words_count_array);
+        $min = min($words_count_array);
+	  } else {
+	    $max = 0;
+	    $min = 0;
+	  }
+
       $min_font = 1;
       $max_font = 6;
       $diff = $max - $min;
@@ -789,6 +986,21 @@ function ecomma_word_cloud($node) {
     }
   }
 
+  preg_match_all('/h([\d][\d]?[\d]?)/', $output, $h_array);
+ 
+  $h_min = 6;
+  $h_max = 1200;
+  $newNumbers = array_filter(
+    $h_array,
+    function ($value) use($min,$max) {
+      return ($value >= $min && $value <= $max);
+    }
+  );
+
+  if (!array_key_exists(0, $newNumbers)) {
+	$output = (preg_replace_callback("/h([\d][\d]?[\d]?)/", function ($matches){ return "h" . round($matches[1]/6); }, $output));
+  }
+
   return $output;
 }
 
@@ -803,7 +1015,7 @@ function ecomma_comment_cloud($node) {
   $comment_texts = "";
   $output = "";
   $query = db_select('comment', 'c');
-  $query->join('ecomma_range', 'e', 'c.cid = e.cid');
+  $query->join('ecomma_range', 'e', 'c.nid = e.nid');
   $cids = $query->fields('c', array('cid'))
     ->condition('c.nid', $node->nid)
     ->orderBy("c.created", "DESC")
@@ -869,6 +1081,28 @@ function ecomma_comment_cloud($node) {
     }
   }
   return $output;
+}
+
+/**
+ * Get the shared static $ecomma_enabled variable.
+ *
+ * @return int
+ *   The value of the $user->realname variable.
+ */
+function ecomma_display_username() {
+  $uid = arg(2);
+  $author = user_load($uid);
+
+  // Display the user's realname instead of name.
+  if (property_exists($author, 'realname')) {
+    if (isset($author->realname) && $author->realname != "") {
+      return $author->realname;
+    } else {
+      return $author->name;
+    }
+  } else {
+    return $author->name;
+  }
 }
 
 
@@ -954,3 +1188,24 @@ function ecomma_enabled_variable_by_field_name($fieldname) {
     return $ecomma_enabled;
   }
 }
+
+
+/**
+ * Get the shared static $text_direction variable.
+ *
+ * @return int
+ *   The value of the $text_direction variable.
+ */
+function text_direction_variable($nid) {
+  if (isset($nid)) {
+    $query = db_select('ecomma_node_text_direction', 'f');
+    $text_direction = $query
+      ->fields('f', array('rtl_enabled'))
+      ->condition('f.nid', $nid)
+      ->execute()
+      ->fetchField();
+
+    return $text_direction;
+  }
+}
+
