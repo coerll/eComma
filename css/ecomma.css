@@ -16,6 +16,12 @@ ol li {
 
 /* ecomma node view */
 
+.rtl_dir,
+.rtl_dir .form-textarea-wrapper .resizable-textarea{
+  direction: rtl !important;
+  text-align: right !important;
+}
+
 .pane-node-comment-form {
   display: none;
 }
@@ -29,11 +35,19 @@ ol li {
 }
 
 div.ecomma_line {
-  display: inline;
+  /*display: inline;
+  padding: 1px 0px;*/
+  display: block;
+  position: relative;
+  height: 100% !important;
+  min-height: 20px;
+  line-height: 20px;
+  width: 90%;
+  left: 10%; 
 }
 
-.ecomma_line:nth-last-child(4) {
-  display: none !important;
+.rtl_dir div.ecomma_line {
+  left: 0px;
 }
 
 .ec-comment-info {
@@ -49,7 +63,8 @@ div.ecomma_line {
   display: inline;
 }
 
-.ec-warning {
+.ec-warning,
+.ec-warning-outside-box {
   color: #ac1a2f;
   font-size: 14px;
   padding-top: 10px;
@@ -279,6 +294,46 @@ div.tag-widget ul.inline-tags li.not-ec {
   display: none;
 }
 
+#pane-community-tags-0 .level1 {
+  font-size : 1em;
+}
+
+#pane-community-tags-0 .level2 {
+  font-size : 1.2em;
+}
+
+#pane-community-tags-0 .level3 {
+  font-size : 1.4em;
+}
+
+#pane-community-tags-0 .level4 {
+  font-size : 1.6em;
+}
+
+#pane-community-tags-0 .level5 {
+  font-size : 1.8em;
+}
+
+#pane-community-tags-0 .level6 {
+  font-size : 2em;
+}
+
+#pane-community-tags-0 .level7 {
+  font-size : 2.2em;
+}
+
+#pane-community-tags-0 .level8 {
+  font-size : 2.4em;
+}
+
+#pane-community-tags-0 .level9 {
+  font-size : 2.6em;
+}
+
+#pane-community-tags-0 .level10 {
+  font-size : 2.8em;
+}
+
 .front .comment_cloud h1,
 .comment_cloud h1,
 .front .comment_cloud h2,
@@ -504,6 +559,11 @@ ul.ecomma_tabs li.active a:hover {
 }
 .tab_content h3 a {
   color: #254588;
+}
+
+.comments_all_cloud,
+.pane-ecomma-ecomma-comment-cloud{
+  display: none;
 }
 
 /* ****************************************************************************
@@ -1539,12 +1599,19 @@ span.punctuation {
 }
 
 .line_number {
-  padding: 0px 2px 0px 0px;
+  /*padding: 0px 2px 0px 0px;
+  float: left;
+  */
+  position: absolute;
+  padding-right: 2px;
   margin-right: 12px;
   border-right: 1px #666 solid;
-  float: left;
   width: 20px;
+  height: 100% !important;
+  left: -30px
 }
+
+div.pane-node-field-annotation-text div:last-of-type span.line_number{ display: none; }
 
 div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-draggable {
   width: 309px !important;
