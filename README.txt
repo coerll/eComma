@@ -26,7 +26,7 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 5.  Edit new content type > Comment settings > Preview comment:Optional
 6.  Manage fields > Add a new text area field with unlimited values
 7.  Enable ecomma commentary features for that text area field in the settings.
-8.  Manage fields > Add existing field > Term reference > Autocomplete term w.
+8.  Manage fields > Add new field > Term reference > Autocomplete term w.
 9.  Select your Vocabulary from tag field settings.
 10. Configuration > Community tags: Enable community tagging for new vocabulary.
 11. Configuration > jQuery update > jQuery and jQuery UI CDN > Select None.
