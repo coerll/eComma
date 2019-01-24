@@ -406,9 +406,9 @@ function ecomma_form_comment_form_alter(&$form, &$form_state, $form_id) {
 function ecomma_form_alter(&$form, &$form_state, $form_id) {
   global $base_url;
   global $user;
+  $user_role = "user";
 
   if (arg(0) == 'node' && ctype_digit(arg(1)) && !array_key_exists(2, arg()) || arg(0) == 'ecomma_user_data') {
-    $user_role = "user";
     $node = node_load(arg(1));
     $ecomma_enabled = ecomma_enabled_variable_by_content_type($node, $node->nid);
 
@@ -443,6 +443,7 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
       $form['#attached']['library'][] = array('system', 'ui.droppable');
       $form['#attached']['library'][] = array('system', 'ui.sortable');
     }
+
   }
   elseif (arg(2) == 'types' && arg(5) == 'fields' && array_key_exists(6, arg()) && array_key_exists('instance', $form)) {
     $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
@@ -482,6 +483,8 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
 
     case 'community_tags_form':
       $form['tags']['#title'] = 'Delete your tags';
+      unset($form['tags']['#autocomplete_path']);
+
       if ($user->uid == 0) {
         $form['new']['#type'] = 'markup';
         $redirect = drupal_get_destination();
@@ -519,7 +522,33 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
 	  '#title' => t('Enable right-to-left text direction'),
 	  '#default_value' => $text_direction, 
 	  '#description' => t('For languages such as Hebrew and Arabic.'));
-	  
+		  
+	  $form['some_text'] = array(
+	    '#markup' => '<div id="word_count_message"><span class="label">Recommended length:</span> 200 words (faster page loading)<br /><span class="label">Max length:</span> 500 words</div><div id="word_count_wrapper"><span class="label">Word Count: </span><span id="word_count"></span></div><div id="word_count_overlimit">The text saving option is disabled until you lower the word count (max: 500).</div><div id="text_input_note"><span class="label"></span>Place each paragraph into a separate textarea. Avoid line breaks and empty lines inside textareas, unless you want to display a line number at the beginning of a line.</div>'
+	  );
+		  
+      $form['#attached']['js'][] = array(
+        'data' => drupal_get_path('module', 'ecomma') . '/js/ecomma_node_form.js',
+        'type' => 'file',
+      );
+
+      $form['#attached']['js'][] = array(
+        'data' => array(
+          'ecomma' => array(
+            'base_url_var' => $base_url,
+            'user_role' => $user_role,
+            'ecommaToken' => drupal_get_token(),
+          )),
+        'type' => 'setting',
+      );
+
+      $form['#attached']['css'] = array(
+        drupal_get_path('module', 'ecomma') . '/css/ecomma_node_form.css' => array(
+          'type' => 'file',
+        ),
+      );
+		  
+
 	  break;
 
     case 'node_delete_confirm';
@@ -558,8 +587,8 @@ function ecomma_customize_comment_form(&$form) {
 /**
  * Implements hook_comment_submit().
  *
- * When comment is submitted to insert a new database record in ecomma_range
- * database table.
+ * Comment is submitted to insert a new database record in ecomma_range
+ * database table. But no record is entered if comment is edited.
  */
 function ecomma_comment_submit($form, &$form_state) {
 
@@ -584,7 +613,7 @@ function ecomma_comment_submit($form, &$form_state) {
 
   $pid = $form_state['comment']->pid;
 
-  if (isset($cid) && $pid == 0) {
+  if (isset($cid) && isset($beg) && isset($end) && $pid == 0) {
       if(!preg_match('/([^\.]*)\.(.*)/', $form_state['comment']->thread)){
       db_insert('ecomma_range')
       ->fields(array(
@@ -600,24 +629,26 @@ function ecomma_comment_submit($form, &$form_state) {
       ))->execute();
     }
     else {
-      $range = db_select('ecomma_range', 'e')
-      ->fields('e', array('beg', 'end'))
-      ->condition('e.cid', $pid)
-      ->execute()
-      ->fetchAssoc();
+      if (isset($beg) && isset($end)){
+        $range = db_select('ecomma_range', 'e')
+        ->fields('e', array('beg', 'end'))
+        ->condition('e.cid', $pid)
+        ->execute()
+        ->fetchAssoc();
 
-      db_insert('ecomma_range')
-      ->fields(array(
-        'rid' => NULL,
-        'nid' => $nid,
-        'vid' => $vid,
-        'uid' => $uid,
-        'tid' => $tid,
-        'cid' => $cid,
-        'beg' => $range['beg'],
-        'end' => $range['end'],
-        'created' => $timestamp,
-      ))->execute();
+        db_insert('ecomma_range')
+        ->fields(array(
+          'rid' => NULL,
+          'nid' => $nid,
+          'vid' => $vid,
+          'uid' => $uid,
+          'tid' => $tid,
+          'cid' => $cid,
+          'beg' => $range['beg'],
+          'end' => $range['end'],
+          'created' => $timestamp,
+        ))->execute();
+      }
     }
   }
 }
@@ -869,15 +900,31 @@ function ecomma_block_view($delta = '') {
         $user_data_table = "";
         $view_name = 'ecomma_user_data';
         $view = views_get_view($view_name);
-        $view->set_arguments(array(arg(1), "all"));
-        $view->execute_display('default');
-        if ($view->result) {
+        $view_name2 = 'ecomma_user_child_comments';
+        $view2 = views_get_view($view_name2);
+
+		if($view && $view2){
+          $view->set_arguments(array(arg(1), "all"));
+          $view->execute_display('default');
+          $view2->set_arguments(array(arg(1), "all"));
+          $view2->execute_display('default');
+		}
+			
+		$uid_key = 0;
+		if ($view->result && $view2->result) {
           foreach ($view->result as $user_data) {
-            $uids[] = $user_data->ecomma_range_uid;
+            $uids[$uid_key] = $user_data->ecomma_range_uid;
+            $uid_key++;
+          }
+
+          foreach ($view2->result as $user_data2){
+            $uids[$uid_key] = $user_data2->comment_uid;
+			$uid_key++;
           }
 
           $uids_totals = array_count_values($uids);
           $user_data_table = '<ol class="ec-user-list">';
+
           foreach ($uids_totals as $uid_key => $uid_total) {
             $current_user = user_load($uid_key);
             $user_data_table .= '<li class="ec-user-admin">';
@@ -886,7 +933,7 @@ function ecomma_block_view($delta = '') {
             $user_data_table .= '<span>' . $uid_total . ' annotations</span></li>';
           }
           $user_data_table .= '</ol>';
-        }
+		}
 
         $block['subject'] = t('eComma User Annotation Total');
         $block['content'] = $user_data_table;

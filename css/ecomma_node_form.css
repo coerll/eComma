@@ -1,0 +1,29 @@
+@charset "UTF-8";
+/* CSS Document */
+
+#word_count_message .label,
+#word_count_wrapper .label,
+#text_input_note .label{
+	font-weight: bold
+}
+#word_count_wrapper{
+	margin-top: 20px;
+	font-size: 16px;
+}
+
+#word_count_wrapper.overlimit,
+#word_count_overlimit{
+	color: #F70000;
+}
+
+#text_input_note{
+	margin-top: 20px;
+}
+
+#edit-actions.overlimit{
+	display: none;
+}
+
+#word_count_overlimit{
+	display: none;
+}

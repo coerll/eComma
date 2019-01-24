@@ -13,4 +13,11 @@ dependencies[] = text
 dependencies[] = views
 dependencies[] = views_data_export
 
+
 core = 7.x
+
+; Information added by Drupal.org packaging script on 2015-10-09
+version = "7.x-4.2"
+core = "7.x"
+project = "ecomma"
+datestamp = "1444407849"

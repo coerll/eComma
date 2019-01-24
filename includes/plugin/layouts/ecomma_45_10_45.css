@@ -118,7 +118,7 @@ li.tags a {
 }
 
 li.comments a p {
-  color: #69f;
+  color: #0065A8;
 }
 
 li.annotation_count a p {
@@ -226,6 +226,7 @@ li.annotation_count a p {
   padding: 0.2em 0 0.2em 0.2em;
   width: 3.5em;
 }
+
 #tabs-icons .ui-tabs-nav li {
   right: 4px;
   border-right: none;
@@ -235,9 +236,15 @@ li.annotation_count a p {
   -webkit-border-radius: 4px 0px 0px 4px;
   overflow: hidden;
 }
+
+#tabs-icons .ui-tabs-nav li:hover {
+    background: #666666;
+}
+
 #tabs-icons .ui-tabs-nav li.ui-tabs-selected {
   border-right: 1px solid transparent;
 }
+
 #tabs-icons .ui-tabs-nav li a {
   width: 23px;
 }

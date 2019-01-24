@@ -35,8 +35,6 @@ ol li {
 }
 
 div.ecomma_line {
-  /*display: inline;
-  padding: 1px 0px;*/
   display: block;
   position: relative;
   height: 100% !important;
@@ -47,7 +45,7 @@ div.ecomma_line {
 }
 
 .rtl_dir div.ecomma_line {
-  left: 0px;
+  left: -23px;
 }
 
 .ec-comment-info {
@@ -1295,6 +1293,7 @@ ol.ec-tag-list {
   max-height: 180px;
   overflow-y: scroll;
   list-style: none;
+  padding-left: 20px;
 }
 
 ol.ec-item-list {
@@ -1304,6 +1303,7 @@ ol.ec-item-list {
 ol.ec-tag-list li {
   padding: 8px 12px;
   border-top: 1px solid #cbcbb7;
+  margin-left: 0px;
 }
 
 ol.ec-tag-list li a,
@@ -1599,9 +1599,6 @@ span.punctuation {
 }
 
 .line_number {
-  /*padding: 0px 2px 0px 0px;
-  float: left;
-  */
   position: absolute;
   padding-right: 2px;
   margin-right: 12px;
@@ -1609,6 +1606,16 @@ span.punctuation {
   width: 20px;
   height: 100% !important;
   left: -30px
+}
+
+.rtl_dir .line_number {
+    padding-left: 4px;
+    margin-left: 12px;
+    border-left: 1px #666 solid;
+    border-right: 0px;
+    width: 20px;
+    right: -45px;
+    text-align: left;
 }
 
 div.pane-node-field-annotation-text div:last-of-type span.line_number{ display: none; }

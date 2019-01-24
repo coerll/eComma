@@ -6,7 +6,7 @@
 
 $view = new view();
 $view->name = 'ecomma_comments_export';
-$view->description = 'ecomma_comments_export';
+$view->description = 'Export ecomma comments to xml.';
 $view->tag = 'ecomma_comments_export';
 $view->base_table = 'node';
 $view->human_name = '';

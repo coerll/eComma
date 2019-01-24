@@ -36,8 +36,10 @@ Instructions below are based on navigation in admin menu (admin_menu module).
 13. Community_tags: Enable "tag content" for authenticated and anonymous users.
     (Enables unauthenticated users to see the tags, but not to tag.)
 14. Community_tags: Enable "edit own tags" for authenticated.
-15. Comment: Enable “view comments" for anonymous and authenticated users. 
-    (Enables unauthenticated users to see the comments, but not to comment.)
+15. Comment: 
+	-Enable “View comments" for anonymous and authenticated users. 
+	 (Enables unauthenticated users to see the comments, but not to comment.)
+	-Enable "Administer comments and comment settings" for authenticated users.
 16. Structure > Pages:
 	-Enable node_view and click on edit. 
 	-Selection rules > select "Node:type" and then check new content type

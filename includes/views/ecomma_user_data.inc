@@ -6,11 +6,11 @@
 
 $view = new view();
 $view->name = 'ecomma_user_data';
-$view->description = 'ecomma_user_data';
+$view->description = 'Display eComma annotation data for a user.';
 $view->tag = 'ecomma_user_data';
 $view->base_table = 'ecomma_range';
-$view->human_name = '';
-$view->core = 0;
+$view->human_name = 'ecomma_user_data';
+$view->core = 7;
 $view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 

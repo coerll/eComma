@@ -91,15 +91,13 @@ function ecomma_schema() {
         'description' => 'Machine name of a content type that contains a text field which is ecomma enabled.',
       ),
       'ecomma_enabled' => array(
-        'description' => 'MY TIMESTAMP',
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Indicates if the text field of a specific content type is ecomma enabled or not.',
       ),
     ),
   );
-  
-  
+
     $schema['ecomma_node_text_direction'] = array(
 
     'fields' => array(

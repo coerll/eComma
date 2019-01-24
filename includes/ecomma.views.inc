@@ -177,5 +177,13 @@ function ecomma_views_data() {
     ),
   );
 
+  $data['comment']['list_comments'] = array(
+    'title' => t('List of comments'),
+    'help' => t("Display the node's list of comments."),
+    'field' => array(
+      'handler' => 'ecomma_handler_field_list_comments',
+    ),
+  );
+
   return $data;
 }
