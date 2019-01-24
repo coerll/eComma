@@ -1,4 +1,4 @@
-MODULE DEPENDENCIES
+DRUPAL MODULE DEPENDENCIES
 
 - comment
 - community_tags
