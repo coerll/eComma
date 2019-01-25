@@ -445,6 +445,13 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
     }
 
   }
+  else if(arg(0) == 'comment' && arg(1) == 'reply'){
+    $form['#attached']['css'] = array(
+      drupal_get_path('module', 'ecomma') . '/css/ecomma.css' => array(
+        'type' => 'file',
+      ),
+    );
+  }
   elseif (arg(2) == 'types' && arg(5) == 'fields' && array_key_exists(6, arg()) && array_key_exists('instance', $form)) {
     $ecomma_enabled = ecomma_enabled_variable_by_field_name($form['instance']['field_name']['#value']);
 	$text_direction = text_direction_variable($form['instance']['nid']);
@@ -551,8 +558,8 @@ function ecomma_form_alter(&$form, &$form_state, $form_id) {
 
 	  break;
 
-    case 'node_delete_confirm';
-	  $form['#submit'][] = 'delete_path_submit';
+	  case 'node_delete_confirm':
+	    $form['#submit'][] = 'delete_path_submit';
 	  break;
   }
 }
@@ -911,19 +918,22 @@ function ecomma_block_view($delta = '') {
 		}
 			
 		$uid_key = 0;
-		if ($view->result && $view2->result) {
+		if ($view->result) {
           foreach ($view->result as $user_data) {
             $uids[$uid_key] = $user_data->ecomma_range_uid;
             $uid_key++;
           }
+		  
+          if ($view2->result) {
 
-          foreach ($view2->result as $user_data2){
-            $uids[$uid_key] = $user_data2->comment_uid;
-			$uid_key++;
-          }
+            foreach ($view2->result as $user_data2){
+              $uids[$uid_key] = $user_data2->comment_uid;
+			  $uid_key++;
+            }
+		  }
 
           $uids_totals = array_count_values($uids);
-          $user_data_table = '<ol class="ec-user-list">';
+          $user_data_table .= '<ol class="ec-user-list">';
 
           foreach ($uids_totals as $uid_key => $uid_total) {
             $current_user = user_load($uid_key);

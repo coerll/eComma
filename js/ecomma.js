@@ -440,7 +440,7 @@ var comment_list = Array();
 	  $('.ec-warning-outside-box', context).dialog('close');
       selectionEndTimeout = null;
 			  
-      $(".line_number_symbol", context).css("display","block");
+      $(".line_number_symbol", context).show();
       var text = "";
       var sel   = null;
       var range = null;
@@ -453,6 +453,7 @@ var comment_list = Array();
         sel = document.selection.createRange();
         text = sel.htmlText;
       }
+      $(".line_number_symbol", context).hide();
 
       var ie = false;
       if (sel.getRangeAt){
@@ -556,7 +557,6 @@ var comment_list = Array();
         end_id = ec_stanza_end;
       }
 
-      $(".line_number_symbol", context).css("display","none");
       text = text.replace(/#---ecomma_line_symbol([^\d]*)\d(\d)?/g,'');
 
       var test_array = text.split(" ");
@@ -742,7 +742,7 @@ var comment_list = Array();
 
     // Has to be called before var url_current.
     $('.ui-tabs-nav a').click(function(){
-      if($(this).parent().attr('class').match(/tags/)){console.log('tags click');
+      if($(this).parent().attr('class').match(/tags/)){
         if($('.ec-hi').length > 0){
           $('.pane-ecomma-ecomma-tag-details').css('display','block');
         }

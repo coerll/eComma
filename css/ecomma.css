@@ -26,6 +26,11 @@ ol li {
   display: none;
 }
 
+.page-comment-reply .comment .submitted,
+.page-comment-reply .comment-title{
+	display: none;
+}
+
 #ecomma .ecomma-tag-column {
   width: 45%;
 }
@@ -1622,4 +1627,12 @@ div.pane-node-field-annotation-text div:last-of-type span.line_number{ display: 
 
 div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-draggable {
   width: 309px !important;
+}
+
+@media only screen and ( max-width: 50em ) /* 640 */{
+
+	#main{
+		top: 120px !important;
+	}
+	
 }

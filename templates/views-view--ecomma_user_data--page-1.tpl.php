@@ -79,11 +79,6 @@
   print '<h3>' . check_plain(ecomma_display_username()) . '</h3>';
   print '<h6>(' . check_plain($comment_counter) . ' ' . check_plain($comment_label) . ', ' . check_plain($tag_counter) . ' ' . check_plain($tag_label) . ')</h6>';
   print '<table class="ec-item-list">';
-  print '<tr class="user_data_sorting">';
-  print '<td></td>';
-  print '<td><a href="' . $base_url . '/ecomma_user_data/' . arg(1) . '/' . arg(2) . '/dt">Sort by date</a></td>';
-  print '<td></td>';
-  print '</tr>';
 
   foreach ($content_array as $annotation):
     print $annotation;
